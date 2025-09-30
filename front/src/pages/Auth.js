@@ -101,18 +101,17 @@ function Auth() {
     setLoading(true);
     try {
       const allValues = await form.getFieldsValue();
-      console.log(allValues);
+
       const payload = isSignIn
         ? { email: allValues.email, password: allValues.password }
         : { ...allValues };
-      
-        const res = await axios.post(
+
+      const res = await axios.post(
         `${isSignIn ? "sign-in" : "sign-up"}`,
         payload
       );
-      
+
       const { success, token, user } = res.data;
-      console.log(token, user);
 
       if (success) {
         Swal.fire({
@@ -120,7 +119,6 @@ function Auth() {
           title: !isSignIn
             ? "Your account has been created successfully!"
             : "Login successful!",
-          showConfirmButton: false,
         });
 
         if (!isSignIn) {
