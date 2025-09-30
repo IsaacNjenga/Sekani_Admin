@@ -1,8 +1,10 @@
 import UserModel from "../models/User.js";
 import dotenv from "dotenv";
+import jwt from "jsonwebtoken";
+
 dotenv.config();
-const generateToken = () => {
-  return JsonWebTokenError.sign({ userId }, process.env.JWT_SECRET, {
+const generateToken = (userId) => {
+  return jwt.sign({ userId }, process.env.JWT_SECRET, {
     expiresIn: "1h",
   });
 };
@@ -65,12 +67,12 @@ const Login = async (req, res) => {
     }
     const user = await UserModel.findOne({ email });
     if (!user) {
-      return res.status(400).json({ message: "Credentials are invalid" });
+      return res.status(400).json({ message: "Email address is invalid" });
     }
 
     const isPasswordValid = await user.comparePassword(password);
     if (!isPasswordValid) {
-      return res.status(400).json({ message: "Credentials are invalid" });
+      return res.status(400).json({ message: "Password is invalid" });
     }
 
     const token = generateToken(user._id);
