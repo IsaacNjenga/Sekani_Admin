@@ -1,5 +1,13 @@
 import React, { useState } from "react";
-import { Button, FloatButton, Layout, Menu, theme, Typography } from "antd";
+import {
+  Avatar,
+  Button,
+  FloatButton,
+  Layout,
+  Menu,
+  
+  Typography,
+} from "antd";
 import { Link, Outlet, useLocation } from "react-router-dom";
 import logo from "../assets/images/logo3.png";
 import {
@@ -18,10 +26,6 @@ function Navbar() {
   const location = useLocation();
   const [collapsed, setCollapsed] = useState(false);
   const [current, setCurrent] = useState(location.pathname);
-
-  const {
-    token: { colorBgContainer, borderRadiusLG },
-  } = theme.useToken();
 
   const handleClick = (e) => {
     setCurrent(e.key);
@@ -175,36 +179,9 @@ function Navbar() {
                 background: " whitesmoke",
               }}
             >
-              {/* {menuItems.map((item) => (
-                <Menu.Item
-                  key={item?.path || item?.key}
-                  icon={
-                    <span
-                      style={{
-                        borderRadius: "50%",
-                        border: "1px solid #fff",
-                        padding: "7px",
-                        margin: 0,
-                      }}
-                    >
-                      {item.icon}
-                    </span>
-                  }
-                  style={{ color: "whitesmoke", fontSize: "0.9rem" }}
-                >
-                  <Link
-                    to={item.path}
-                    style={{
-                      textDecoration: "none",
-                      color: "whitesmoke",
-                    }}
-                  >
-                    {item.label}
-                  </Link>
-                </Menu.Item>
-              ))} */}
               <Menu.Item>
                 <div>
+                  <Avatar src="d" size="medium" style={{ marginRight: 10 }} />
                   <Button
                     type="primary"
                     icon={<PoweroffOutlined />}
@@ -220,7 +197,7 @@ function Navbar() {
               margin: "0px",
               padding: 20,
               minHeight: "100vh",
-              background: '#ff4411',
+              background: "#ff4411",
               borderRadius: 0,
             }}
           >
