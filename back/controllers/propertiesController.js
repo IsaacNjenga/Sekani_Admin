@@ -38,6 +38,7 @@ const fetchProperties = async (req, res) => {
       .limit(limit);
 
     const totalProperties = await PropertiesModel.countDocuments();
+    
     res.status(200).json({
       success: true,
       properties,

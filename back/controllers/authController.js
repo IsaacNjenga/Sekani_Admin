@@ -41,10 +41,8 @@ const Register = async (req, res) => {
     const newUser = new UserModel({ ...req.body, avatar });
     await newUser.save();
 
-    const token = generateToken(newUser._id);
     res.status(201).json({
       success: true,
-      token,
       user: {
         username: newUser.username,
         email: newUser.email,
