@@ -24,7 +24,11 @@ const propertySchema = new mongoose.Schema(
       name: { type: String },
       phone: { type: String },
     },
-    createdBy: { type: mongoose.Schema.Types.ObjectId, ref: "users" },
+    createdBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "users",
+      required: true,
+    },
   },
   { collection: "properties", timestamps: true }
 );

@@ -2,6 +2,7 @@ import PropertiesModel from "../models/Properties.js";
 
 const createProperty = async (req, res) => {
   try {
+    //TODO: tie image to cloudinary
     const newProperty = new PropertiesModel(req.body);
     await newProperty.save();
     res.status(201).json({ success: true, property: newProperty });
@@ -26,9 +27,24 @@ const fetchProperty = async (req, res) => {
 };
 
 const fetchProperties = async (req, res) => {
+  const page = req.query.page || 1;
+  const limit = req.query.limit || 5;
+  const skip = (page - 1) * limit;
+
   try {
-    const properties = await PropertiesModel.find();
-    res.status(200).json({ success: true, properties });
+    const properties = await PropertiesModel.find({})
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit);
+
+    const totalProperties = await PropertiesModel.countDocuments();
+    res.status(200).json({
+      success: true,
+      properties,
+      currentPage: page,
+      totalProperties,
+      totalPages: Math.ceil(totalProperties / limit),
+    });
   } catch (error) {
     console.error("Error in fetching properties:", error);
     res.status(500).json({ message: "Internal server error" });
