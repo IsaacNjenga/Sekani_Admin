@@ -1,5 +1,13 @@
 import React, { useState } from "react";
-import { Avatar, Button, FloatButton, Layout, Menu, Typography } from "antd";
+import {
+  Avatar,
+  Button,
+  Divider,
+  FloatButton,
+  Layout,
+  Menu,
+  Typography,
+} from "antd";
 import { Link, Outlet, useLocation } from "react-router-dom";
 import logo from "../assets/images/logo3.png";
 import {
@@ -14,11 +22,11 @@ import { useAuth } from "../contexts/AuthContext";
 import Swal from "sweetalert2";
 
 const { Header, Sider, Content } = Layout;
-const { Title } = Typography;
+const { Title, Text } = Typography;
 
 function Navbar() {
   const location = useLocation();
-  const { logout } = useAuth();
+  const { logout, user } = useAuth();
   const [collapsed, setCollapsed] = useState(false);
   const [current, setCurrent] = useState(location.pathname);
 
@@ -93,19 +101,44 @@ function Navbar() {
                   />
                 </div>
                 <div
-                  style={{ display: collapsed ? "none" : "flex", margin: 0 }}
+                  style={{
+                    display: collapsed ? "none" : "flex",
+                    margin: 0,
+                    flexDirection: "column",
+                    alignItems: "center",
+                    transition: "all 0.3s ease-in-out",
+                  }}
                 >
                   <Title
                     style={{
                       color: "whitesmoke",
                       fontFamily: "Raleway",
                       margin: 0,
-                      transition: "all 0.3s ease-in-out",
                     }}
                     level={2}
                   >
                     Sekani Admin
                   </Title>
+                  {user && (
+                    <Divider
+                      style={{
+                        borderColor: "white",
+                        width: "80%",
+                        margin: 0,
+                        padding: 0,
+                      }}
+                    >
+                      <Text
+                        style={{
+                          color: "whitesmoke",
+                          fontFamily: "Raleway",
+                          margin: 0,
+                        }}
+                      >
+                        Hi, {user?.username}
+                      </Text>
+                    </Divider>
+                  )}
                 </div>
               </div>
               <div
@@ -160,9 +193,11 @@ function Navbar() {
           <Header
             style={{
               padding: 0,
+              background:
+                "linear-gradient(to bottom, #000000d6 0%, #232527ff 100%)",
             }}
           >
-            <Menu
+            {/* <Menu
               theme="dark"
               mode="horizontal"
               //selectedKeys={[current]}
@@ -173,34 +208,37 @@ function Navbar() {
                 fontFamily: "Raleway",
                 background: " whitesmoke",
               }}
-            >
-              <Menu.Item>
-                <div>
-                  <Avatar src="d" size="medium" style={{ marginRight: 10 }} />
-                  <Button
-                    type="primary"
-                    icon={<PoweroffOutlined />}
-                    onClick={() => {
-                      Swal.fire({
-                        title: "Are you sure?",
-                        text: "You will be logged out.",
-                        icon: "warning",
-                        showCancelButton: true,
-                        confirmButtonColor: "#3085d6",
-                        cancelButtonColor: "#d33",
-                        confirmButtonText: "Yes",
-                      }).then(async (result) => {
-                        if (result.isConfirmed) {
-                          await logout();
-                        } else {
-                          return;
-                        }
-                      });
-                    }}
-                  />
-                </div>
-              </Menu.Item>
-            </Menu>
+            /> */}
+            <>
+              <div style={{ float: "right", marginRight: 20 }}>
+                <Avatar
+                  src={user?.avatar}
+                  size="medium"
+                  style={{ marginRight: 15 }}
+                />
+                <Button
+                  type="primary"
+                  icon={<PoweroffOutlined />}
+                  onClick={() => {
+                    Swal.fire({
+                      title: "Are you sure?",
+                      text: "You will be logged out.",
+                      icon: "warning",
+                      showCancelButton: true,
+                      confirmButtonColor: "#3085d6",
+                      cancelButtonColor: "#d33",
+                      confirmButtonText: "Yes",
+                    }).then(async (result) => {
+                      if (result.isConfirmed) {
+                        await logout();
+                      } else {
+                        return;
+                      }
+                    });
+                  }}
+                />
+              </div>
+            </>
           </Header>
 
           <Content
@@ -208,7 +246,6 @@ function Navbar() {
               margin: "0px",
               padding: 20,
               minHeight: "100vh",
-              background: "#ff4411",
               borderRadius: 0,
             }}
           >
