@@ -6,6 +6,7 @@ import {
   FloatButton,
   Layout,
   Menu,
+  Tooltip,
   Typography,
 } from "antd";
 import { Link, Outlet, useLocation } from "react-router-dom";
@@ -194,7 +195,7 @@ function Navbar() {
             style={{
               padding: 0,
               background:
-                "linear-gradient(to bottom, #000000d6 0%, #232527ff 100%)",
+                "linear-gradient(to left, #b0a7a7d6 0%, #ffffffff 100%)",
             }}
           >
             {/* <Menu
@@ -216,27 +217,31 @@ function Navbar() {
                   size="medium"
                   style={{ marginRight: 15 }}
                 />
-                <Button
-                  type="primary"
-                  icon={<PoweroffOutlined />}
-                  onClick={() => {
-                    Swal.fire({
-                      title: "Are you sure?",
-                      text: "You will be logged out.",
-                      icon: "warning",
-                      showCancelButton: true,
-                      confirmButtonColor: "#3085d6",
-                      cancelButtonColor: "#d33",
-                      confirmButtonText: "Yes",
-                    }).then(async (result) => {
-                      if (result.isConfirmed) {
-                        await logout();
-                      } else {
-                        return;
-                      }
-                    });
-                  }}
-                />
+                <Tooltip title="Logout">
+                  <Button
+                    type="primary"
+                    icon={<PoweroffOutlined />}
+                    danger
+                    shape="circle"
+                    onClick={() => {
+                      Swal.fire({
+                        title: "Are you sure?",
+                        text: "You will be logged out.",
+                        icon: "warning",
+                        showCancelButton: true,
+                        confirmButtonColor: "#3085d6",
+                        cancelButtonColor: "#d33",
+                        confirmButtonText: "Yes",
+                      }).then(async (result) => {
+                        if (result.isConfirmed) {
+                          await logout();
+                        } else {
+                          return;
+                        }
+                      });
+                    }}
+                  />
+                </Tooltip>
               </div>
             </>
           </Header>

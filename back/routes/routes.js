@@ -12,6 +12,7 @@ import {
   fetchProperty,
   updateProperty,
 } from "../controllers/propertiesController.js";
+import protectRoute from "../middleware/auth.middleware.js";
 const router = express.Router();
 
 //auth routes
@@ -24,10 +25,10 @@ router.put("/change-avatar", updateAvatar);
 router.put("/delete-avatar", deleteAvatar);
 
 //property routes
-router.post("/create-property", createProperty);
-router.get("/fetch-property", fetchProperty);
-router.get("/fetch-all-properties", fetchProperties);
-router.put("/update-property", updateProperty);
-router.delete("/delete-property", deleteProperty);
+router.post("/create-property", protectRoute, createProperty);
+router.get("/fetch-property", protectRoute, fetchProperty);
+router.get("/fetch-all-properties", protectRoute, fetchProperties);
+router.put("/update-property", protectRoute, updateProperty);
+router.delete("/delete-property", protectRoute, deleteProperty);
 
 export { router as Router };

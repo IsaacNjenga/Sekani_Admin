@@ -28,8 +28,9 @@ const fetchProperty = async (req, res) => {
 
 const fetchProperties = async (req, res) => {
   const page = req.query.page || 1;
-  const limit = req.query.limit || 5;
+  const limit = req.query.limit || 8;
   const skip = (page - 1) * limit;
+
 
   try {
     const properties = await PropertiesModel.find({})
@@ -38,7 +39,7 @@ const fetchProperties = async (req, res) => {
       .limit(limit);
 
     const totalProperties = await PropertiesModel.countDocuments();
-    
+
     res.status(200).json({
       success: true,
       properties,
