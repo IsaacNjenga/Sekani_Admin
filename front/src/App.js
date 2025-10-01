@@ -9,6 +9,7 @@ import Auth from "./pages/Auth";
 import { useAuth } from "./contexts/AuthContext";
 import { Spin } from "antd";
 import CreateProperty from "./pages/createProperty";
+import ProtectedRoutes from "./components/ProtectedRoute";
 
 axios.defaults.baseURL = "http://localhost:3001/Sekani";
 axios.defaults.withCredentials = true;
@@ -26,7 +27,14 @@ function App() {
         <Auth />
       ) : (
         <Routes location={location} key={location.pathname}>
-          <Route path="/" element={<Navbar />}>
+          <Route
+            path="/"
+            element={
+              <ProtectedRoutes>
+                <Navbar />
+              </ProtectedRoutes>
+            }
+          >
             <Route index element={<Dash />} />
             <Route path="/properties" element={<Properties />} />
             <Route path="/analytics" element={<Analytics />} />

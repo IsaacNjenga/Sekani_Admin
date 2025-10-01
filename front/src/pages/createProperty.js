@@ -370,7 +370,7 @@ function CreateProperty() {
                         <Option value="rent">For Rent</Option>
                       </Select>
                     </Form.Item>
-                    <Row gutter={[20, 20]}>
+                    <Row gutter={[24, 24]}>
                       <Col span={12}>
                         <Form.Item
                           name={"status"}
@@ -385,7 +385,7 @@ function CreateProperty() {
                           </Select>
                         </Form.Item>
                       </Col>
-                      <Col span={8}>
+                      <Col span={12}>
                         <Form.Item
                           name="furnished"
                           label={<span style={labelStyle}>Furnished</span>}
