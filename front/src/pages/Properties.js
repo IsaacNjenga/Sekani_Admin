@@ -57,51 +57,85 @@ function Properties() {
                       padding: 1,
                     }}
                   >
-                    <Badge.Ribbon
-                      text={`${c.listingType}`}
+                    <div
                       style={{
-                        display: "block",
-                        right: "10px",
-                        background: "#8d8009ff",
-                        padding: "2px 10px",
-                        fontFamily: "Raleway",
+                        display: "flex",
+                        justifyContent: "space-between",
+                        position: "relative",
                       }}
                     >
-                      <Carousel
-                        autoplay
-                        autoplaySpeed={3800}
-                        //fade
-                        dots={false}
+                      <div
+                        style={{
+                          position: "absolute",
+                          display: "block",
+                          top: 10,
+                          left: 10,
+                          zIndex: 10,
+                        }}
                       >
-                        {c.img.length > 1 ? (
-                          c.img.map((img) => (
-                            <Image
-                              src={img}
-                              alt={c.key}
-                              preview={false}
-                              style={{
-                                width: "100%",
-                                height: "100%",
-                                objectFit: "cover",
-                                borderRadius: 12,
-                              }}
-                            />
-                          ))
-                        ) : (
-                          <Image
-                            src={c.img}
-                            alt={c.key}
-                            preview={false}
-                            style={{
-                              width: "100%",
-                              height: "100%",
-                              objectFit: "cover",
-                              borderRadius: 12,
-                            }}
-                          />
-                        )}
-                      </Carousel>
-                    </Badge.Ribbon>
+                        <Button
+                          style={{
+                            borderRadius: 18,
+                            padding: "4px 16px",
+                            fontFamily: "Raleway",
+                            fontWeight: "bold",
+                            background: "rgba(0,0,0,0)",
+                            border: "1px solid #000000ff",
+                            color: "#000000ff",
+                          }}
+                        >
+                          Edit
+                        </Button>
+                      </div>
+                      <div>
+                        <Badge.Ribbon
+                          text={`${c.listingType}`}
+                          style={{
+                            display: "block",
+                            top: 10,
+                            right: 10,
+                            background: "#8d8009ff",
+                            padding: "2px 10px",
+                            fontFamily: "Raleway",
+                          }}
+                        >
+                          <Carousel
+                            autoplay
+                            autoplaySpeed={3800}
+                            //fade
+                            dots={false}
+                          >
+                            {c.img.length > 1 ? (
+                              c.img.map((img) => (
+                                <Image
+                                  src={img}
+                                  alt={c.key}
+                                  preview={false}
+                                  style={{
+                                    width: "100%",
+                                    height: "100%",
+                                    objectFit: "cover",
+                                    borderRadius: 12,
+                                  }}
+                                />
+                              ))
+                            ) : (
+                              <Image
+                                src={c.img}
+                                alt={c.key}
+                                preview={false}
+                                style={{
+                                  width: "100%",
+                                  height: "100%",
+                                  objectFit: "cover",
+                                  borderRadius: 12,
+                                }}
+                              />
+                            )}
+                          </Carousel>
+                        </Badge.Ribbon>
+                      </div>
+                    </div>
                   </div>
                 }
               >
