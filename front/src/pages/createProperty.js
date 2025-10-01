@@ -34,15 +34,176 @@ const labelStyle = {
   fontSize: 15,
 };
 
+const cloudName = process.env.REACT_APP_CLOUD_NAME;
+const presetKey = process.env.REACT_APP_PRESET_KEY;
+
+const ImageSection = ({ setSelectedImages, selectedImages }) => {
+  const [imageUploading, setImageUploading] = useState(false);
+  const handleImageUpload = (e) => {
+    Swal.fire({
+      title: "Uploading your image...",
+      text: "Please wait",
+      allowOutsideClick: false,
+      didOpen: () => {
+        Swal.showLoading();
+      },
+    });
+
+    setImageUploading(true);
+    const files = Array.from(e.target.files); // Get all selected files
+
+    const maxSize = 10 * 1024 * 1024;
+
+    // Check each file size
+    for (let file of files) {
+      if (file.size > maxSize) {
+        setImageUploading(false);
+        return Swal.fire({
+          icon: "error",
+          title: "File exceeds limit!",
+          text: "Please select a file less than 10MB",
+          confirmButtonText: "OK",
+        });
+      }
+    }
+
+    const cloud_name = cloudName;
+    const preset_key = presetKey;
+
+    let newImageUrls = [];
+
+    const uploadPromises = files.map((file) => {
+      const formImageData = new FormData();
+      formImageData.append("file", file);
+      formImageData.append("upload_preset", preset_key);
+
+      return axios
+        .post(
+          `https://api.cloudinary.com/v1_1/${cloud_name}/image/upload`,
+          formImageData,
+          { withCredentials: false }
+        )
+        .then((res) => {
+          // For each uploaded image, update the arrays setImageUploading(true);
+
+          newImageUrls.push(res.data.secure_url);
+        })
+        .catch((error) => {
+          console.log(error);
+          Swal.fire({
+            icon: "error",
+            title: "Failed to upload image",
+            text: "There was an unexpected error. Please try again",
+            confirmButtonText: "OK",
+          });
+        });
+    });
+
+    // After all uploads are done, update the state
+    Promise.all(uploadPromises)
+      .then(async () => {
+        setImageUploading(false);
+        Swal.fire({ icon: "success", title: "Image set successfully" });
+
+        setSelectedImages((prevImages) => [...prevImages, ...newImageUrls]);
+        //console.log(imagePublicIds[0]);
+      })
+      .catch((error) => {
+        setImageUploading(false);
+        console.log(error);
+        Swal.fire({
+          icon: "error",
+          title: "Failed to upload your picture",
+          text: "There was an unexpected error. Please try again",
+          confirmButtonText: "OK",
+        });
+      });
+    //e.target.value = ""; // clear input
+  };
+
+  const removeImage = (e, index) => {
+    e.preventDefault();
+    setSelectedImages((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  return (
+    <div>
+      <Form.Item
+        name="img"
+        label={<span style={labelStyle}>Drop your image(s) here</span>}
+      >
+        <Input
+          type="file"
+          accept="image/*"
+          multiple
+          onChange={handleImageUpload}
+        />
+      </Form.Item>
+
+      <Col span={24}>
+        {imageUploading && (
+          <div style={{ margin: "auto", textAlign: "center" }}>
+            <Spin />
+          </div>
+        )}
+        {selectedImages.length > 0 ? (
+          <Row gutter={[24, 24]}>
+            {selectedImages.map((item, index) => {
+              return (
+                <Col span={12} key={index}>
+                  <div
+                    style={{
+                      position: "relative",
+                      borderRadius: 8,
+                      overflow: "hidden",
+                      width: 220,
+                      height: 220,
+                    }}
+                  >
+                    <Button
+                      icon={<DeleteOutlined />}
+                      type="text"
+                      danger
+                      shape="circle"
+                      style={{
+                        position: "absolute",
+                        top: 8,
+                        right: 8,
+                        zIndex: 2,
+                        background: "white",
+                        border: "1px solid red",
+                      }}
+                      onClick={(e) => removeImage(e, index)}
+                    />
+                    <AntImage
+                      src={item}
+                      alt="uploaded_img"
+                      style={{
+                        width: "100%",
+                        height: "100%",
+                        objectFit: "cover",
+                      }}
+                    />
+                  </div>
+                </Col>
+              );
+            })}
+          </Row>
+        ) : (
+          <div style={{ padding: 20, color: "#666" }}>
+            No images selected yet.
+          </div>
+        )}
+      </Col>
+    </div>
+  );
+};
+
 function CreateProperty() {
   const { user, token } = useAuth();
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
-  const [selectedImages, setSelectedImages] = useState([
-    "https://images.unsplash.com/photo-1631901999319-efd71a712378?w=900",
-    "https://images.unsplash.com/photo-1583847268964-b28dc8f51f92?w=900",
-    "https://plus.unsplash.com/premium_photo-1689609950071-af404daa58a0?w=900",
-  ]);
+  const [selectedImages, setSelectedImages] = useState([]);
 
   const handleSubmit = async () => {
     setLoading(true);
@@ -52,7 +213,7 @@ function CreateProperty() {
         ...allValues,
         createdBy: user?._id,
         agent: { name: allValues.agentName, phone: allValues.agentPhone },
-        img: [],
+        img: selectedImages,
       };
       console.log(values);
 
@@ -62,8 +223,7 @@ function CreateProperty() {
       if (res.data.success) {
         Swal.fire({
           icon: "success",
-          title: "Property Created!",
-          //   text: res.data.message,
+          title: "Property Added Successfully!",
         });
       }
     } catch (error) {
@@ -81,18 +241,6 @@ function CreateProperty() {
 
   if (loading)
     return <Spin fullscreen tip="Creating Property..." size="large" />;
-
-  const removeImage = (e, index) => {
-    e.preventDefault();
-    setSelectedImages((prev) => {
-      const toKeep = prev.filter((_, i) => i !== index);
-      // revoke URL for removed items
-      prev.forEach((it, i) => {
-        if (i === index) URL.revokeObjectURL(it.url);
-      });
-      return toKeep;
-    });
-  };
 
   return (
     <>
@@ -112,69 +260,19 @@ function CreateProperty() {
           layout="vertical"
           onFinish={handleSubmit}
           requiredMark={false}
+          initialValues={{
+            furnished: false, // 👈 ensures the field exists from the start
+          }}
         >
           <Row gutter={[24, 24]}>
             <Col xs={24} md={12}>
-              <div>
-                <Form.Item
-                  name="img"
-                  label={<span style={labelStyle}>Drop your image(s) here</span>}
-                >
-                  <Input type="file" accept="image/*" multiple />
-                </Form.Item>
-
-                <Col span={24}>
-                  {selectedImages.length > 0 ? (
-                    <Row gutter={[24, 24]}>
-                      {selectedImages.map((item, index) => {
-                        return (
-                          <Col span={12} key={index}>
-                            <div
-                              style={{
-                                position: "relative",
-                                borderRadius: 8,
-                                overflow: "hidden",
-                                width: 220,
-                                height: 220,
-                              }}
-                            >
-                              <Button
-                                icon={<DeleteOutlined />}
-                                type="text"
-                                danger
-                                shape="circle"
-                                style={{
-                                  position: "absolute",
-                                  top: 8,
-                                  right: 8,
-                                  zIndex: 2,
-                                  background: "white",
-                                  border: "1px solid red",
-                                }}
-                                onClick={(e) => removeImage(e, index)}
-                              />
-                              <AntImage
-                                src={item}
-                                alt="uploaded_img"
-                                style={{
-                                  width: "100%",
-                                  height: "100%",
-                                  objectFit: "contain",
-                                }}
-                              />
-                            </div>
-                          </Col>
-                        );
-                      })}
-                    </Row>
-                  ) : (
-                    <div style={{ padding: 20, color: "#666" }}>
-                      No images selected yet.
-                    </div>
-                  )}
-                </Col>
-              </div>
+              <ImageSection
+                selectedImages={selectedImages}
+                setSelectedImages={setSelectedImages}
+              />
             </Col>
+
+            {/* Other inputs */}
             <Col xs={24} md={12}>
               <div>
                 <Row gutter={24}>
@@ -272,27 +370,34 @@ function CreateProperty() {
                         <Option value="rent">For Rent</Option>
                       </Select>
                     </Form.Item>
-
-                    <Form.Item
-                      name="furnished"
-                      label={<span style={labelStyle}>Furnished</span>}
-                      valuePropName="checked"
-                    >
-                      <Switch />
-                    </Form.Item>
-
-                    <Form.Item
-                      name={"status"}
-                      label={<span style={labelStyle}>Status</span>}
-                    >
-                      <Select style={inputStyle} placeholder="Select">
-                        <Option value="available">Available</Option>
-                        <Option value="pending">Pending</Option>
-                        <Option value="sold">Sold</Option>
-                        <Option value="rented">Rented</Option>
-                        <Option value="under_offer">Under Offer</Option>
-                      </Select>
-                    </Form.Item>
+                    <Row gutter={[20, 20]}>
+                      <Col span={12}>
+                        <Form.Item
+                          name={"status"}
+                          label={<span style={labelStyle}>Status</span>}
+                        >
+                          <Select style={inputStyle} placeholder="Select">
+                            <Option value="available">Available</Option>
+                            <Option value="pending">Pending</Option>
+                            <Option value="sold">Sold</Option>
+                            <Option value="rented">Rented</Option>
+                            <Option value="under_offer">Under Offer</Option>
+                          </Select>
+                        </Form.Item>
+                      </Col>
+                      <Col span={8}>
+                        <Form.Item
+                          name="furnished"
+                          label={<span style={labelStyle}>Furnished</span>}
+                          valuePropName="checked"
+                        >
+                          <Switch
+                            checkedChildren="Yes"
+                            unCheckedChildren="No"
+                          />
+                        </Form.Item>
+                      </Col>
+                    </Row>
                   </Col>
                 </Row>
 
