@@ -17,13 +17,28 @@ import {
   HomeOutlined,
   MenuFoldOutlined,
   MenuUnfoldOutlined,
+  PlusCircleOutlined,
   PoweroffOutlined,
 } from "@ant-design/icons";
 import { useAuth } from "../contexts/AuthContext";
 import Swal from "sweetalert2";
+import "../assets/css/navbar.css";
 
 const { Header, Sider, Content } = Layout;
 const { Title, Text } = Typography;
+
+function getItem(label, path, key, icon, children) {
+  return { key, icon, path, children, label };
+}
+
+const items = [
+  getItem("Dashboard", "/", 1, AppstoreOutlined),
+  getItem("Properties", "", 2, HomeOutlined, [
+    getItem("View Properties", "/properties", 3, HomeOutlined),
+    getItem("Create Property", "/create-property", 4, PlusCircleOutlined),
+  ]),
+  getItem("Analytics", "/analytics", 5, CustomerServiceFilled),
+];
 
 function Navbar() {
   const location = useLocation();
@@ -35,11 +50,11 @@ function Navbar() {
     setCurrent(e.key);
   };
 
-  const navItems = [
-    { label: "Dashboard", path: "/", icon: AppstoreOutlined },
-    { label: "Properties", path: "/properties", icon: HomeOutlined },
-    { label: "Analytics", path: "/analytics", icon: CustomerServiceFilled },
-  ];
+  // const navItems = [
+  //   { label: "Dashboard", path: "/", icon: AppstoreOutlined },
+  //   { label: "Properties", path: "/properties", icon: HomeOutlined },
+  //   { label: "Analytics", path: "/analytics", icon: CustomerServiceFilled },
+  // ];
 
   return (
     <>
@@ -162,16 +177,16 @@ function Navbar() {
                 border: "none",
                 background: "transparent",
               }}
-              items={navItems.map(({ key, icon, label, path }) => ({
+              items={items.map(({ key, icon, label, path, children }) => ({
                 key: path || key,
                 icon: React.createElement(icon, {
                   style: {
                     fontSize: collapsed ? "1.5rem" : "1.7rem",
                     color: "whitesmoke",
-                    margin: "7px 0px",
+                    margin: "7px 0",
                   },
                 }),
-                label: (
+                label: path ? (
                   <Link
                     to={path}
                     style={{
@@ -181,7 +196,40 @@ function Navbar() {
                   >
                     {label}
                   </Link>
+                ) : (
+                  <Text
+                    style={{
+                      fontSize: "18px",
+                      color: "whitesmoke",
+                      fontFamily: "Raleway",
+                    }}
+                  >
+                    {label}
+                  </Text>
                 ),
+                children: children?.map((child) => ({
+                  key: child.path || child.key,
+                  icon: React.createElement(child.icon, {
+                    style: {
+                      fontSize: collapsed ? "1.5rem" : "1.7rem",
+                      color: "whitesmoke",
+                      margin: "7px 0px",
+                    },
+                  }),
+                  label: (
+                    <Link
+                      to={child.path}
+                      style={{
+                        fontSize: "16px",
+                        color: "whitesmoke",
+                        background: "transparent",
+                        fontFamily: "Raleway",
+                      }}
+                    >
+                      {child.label}
+                    </Link>
+                  ),
+                })),
                 style: {
                   textAlign: "left",
                   margin: collapsed ? "14px 4.1px" : "19px 4.1px",
@@ -195,21 +243,10 @@ function Navbar() {
             style={{
               padding: 0,
               background:
-                "linear-gradient(to left, #b0a7a7d6 0%, #ffffffff 100%)",
+                "linear-gradient(to left, #ffffffd6 0%, #ffffffff 100%)",
+              borderBottom: "1px solid #ccc",
             }}
           >
-            {/* <Menu
-              theme="dark"
-              mode="horizontal"
-              //selectedKeys={[current]}
-              //onClick={handleClick}
-              style={{
-                justifyContent: "right",
-                fontWeight: "light",
-                fontFamily: "Raleway",
-                background: " whitesmoke",
-              }}
-            /> */}
             <>
               <div style={{ float: "right", marginRight: 20 }}>
                 <Avatar

@@ -8,6 +8,7 @@ import axios from "axios";
 import Auth from "./pages/Auth";
 import { useAuth } from "./contexts/AuthContext";
 import { Spin } from "antd";
+import CreateProperty from "./pages/createProperty";
 
 axios.defaults.baseURL = "http://localhost:3001/Sekani";
 axios.defaults.withCredentials = true;
@@ -29,6 +30,7 @@ function App() {
             <Route index element={<Dash />} />
             <Route path="/properties" element={<Properties />} />
             <Route path="/analytics" element={<Analytics />} />
+            <Route path="/create-property" element={<CreateProperty />} />
           </Route>
         </Routes>
       )}

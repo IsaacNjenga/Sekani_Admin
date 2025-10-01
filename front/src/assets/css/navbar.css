@@ -1,0 +1,9 @@
+/* Removes the default purple/gray background of submenu container */
+.ant-menu-sub {
+  background: transparent !important;
+}
+
+/* If you also have horizontal mode (popup style) */
+.ant-menu-submenu-popup > .ant-menu {
+  background: transparent !important;
+}
