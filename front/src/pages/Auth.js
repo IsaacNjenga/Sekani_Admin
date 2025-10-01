@@ -5,6 +5,7 @@ import { Button, Card, Divider, Form, Input, Typography } from "antd";
 import { EyeInvisibleOutlined, EyeTwoTone } from "@ant-design/icons";
 import axios from "axios";
 import Swal from "sweetalert2";
+import { useAuth } from "../contexts/AuthContext";
 
 const { Title, Text } = Typography;
 
@@ -81,6 +82,7 @@ const signInTextStyle = { cursor: "pointer" };
 
 function Auth() {
   const [form] = Form.useForm();
+  const { login } = useAuth();
   const [isSignIn, setIsSignIn] = useState(true);
   const [values, setValues] = useState({
     username: "",
@@ -125,6 +127,8 @@ function Auth() {
           setIsSignIn(true);
           return;
         }
+
+        login(user, token);
       }
     } catch (error) {
       console.log(error);

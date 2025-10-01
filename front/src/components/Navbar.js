@@ -1,13 +1,5 @@
 import React, { useState } from "react";
-import {
-  Avatar,
-  Button,
-  FloatButton,
-  Layout,
-  Menu,
-  
-  Typography,
-} from "antd";
+import { Avatar, Button, FloatButton, Layout, Menu, Typography } from "antd";
 import { Link, Outlet, useLocation } from "react-router-dom";
 import logo from "../assets/images/logo3.png";
 import {
@@ -18,12 +10,15 @@ import {
   MenuUnfoldOutlined,
   PoweroffOutlined,
 } from "@ant-design/icons";
+import { useAuth } from "../contexts/AuthContext";
+import Swal from "sweetalert2";
 
 const { Header, Sider, Content } = Layout;
 const { Title } = Typography;
 
 function Navbar() {
   const location = useLocation();
+  const { logout } = useAuth();
   const [collapsed, setCollapsed] = useState(false);
   const [current, setCurrent] = useState(location.pathname);
 
@@ -185,7 +180,23 @@ function Navbar() {
                   <Button
                     type="primary"
                     icon={<PoweroffOutlined />}
-                    //onClick={handleLogout}
+                    onClick={() => {
+                      Swal.fire({
+                        title: "Are you sure?",
+                        text: "You will be logged out.",
+                        icon: "warning",
+                        showCancelButton: true,
+                        confirmButtonColor: "#3085d6",
+                        cancelButtonColor: "#d33",
+                        confirmButtonText: "Yes",
+                      }).then(async (result) => {
+                        if (result.isConfirmed) {
+                          await logout();
+                        } else {
+                          return;
+                        }
+                      });
+                    }}
                   />
                 </div>
               </Menu.Item>
