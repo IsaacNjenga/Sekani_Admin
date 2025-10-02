@@ -299,7 +299,6 @@ function CreateProperty() {
                         <Option value="Apartment">Apartment</Option>
                         <Option value="Land">Land</Option>
                         <Option value="Airbnb">Airbnb</Option>
-
                       </Select>
                     </Form.Item>
 
@@ -411,6 +410,17 @@ function CreateProperty() {
                       label={<span style={labelStyle}>Description</span>}
                     >
                       <TextArea rows={4} style={{ borderRadius: 8 }} />
+                    </Form.Item>
+                  </Col>
+                </Row>
+
+                <Row gutter={24}>
+                  <Col span={24}>
+                    <Form.Item
+                      name="nearby"
+                      title={<span style={labelStyle}>Nearby Landmarks</span>}
+                    >
+                      <Input />
                     </Form.Item>
                   </Col>
                 </Row>
