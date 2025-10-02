@@ -215,7 +215,7 @@ function CreateProperty() {
         agent: { name: allValues.agentName, phone: allValues.agentPhone },
         img: selectedImages,
       };
-      console.log(values);
+      //console.log(values);
 
       const res = await axios.post("create-property", values, {
         headers: { Authorization: `Bearer ${token}` },
@@ -236,6 +236,7 @@ function CreateProperty() {
     } finally {
       setLoading(false);
       form.resetFields();
+      setSelectedImages([]);
     }
   };
 
@@ -418,9 +419,42 @@ function CreateProperty() {
                   <Col span={24}>
                     <Form.Item
                       name="nearby"
-                      title={<span style={labelStyle}>Nearby Landmarks</span>}
+                      label={<span style={labelStyle}>Nearby Landmarks</span>}
+                      extra="Separate each entry with the 'Enter' Button"
                     >
-                      <Input />
+                      <Select
+                        mode="tags"
+                        placeholder="E.g. School, Hospital"
+                        style={{ ...inputStyle, width: "100%" }}
+                      />
+                    </Form.Item>
+                  </Col>
+
+                  <Col span={24}>
+                    <Form.Item
+                      name="amenities"
+                      label={<span style={labelStyle}>Amenities</span>}
+                      extra="Separate each entry with the 'Enter' Button"
+                    >
+                      <Select
+                        mode="tags"
+                        placeholder="E.g. Swimming Pool, Gym"
+                        style={{ ...inputStyle, width: "100%" }}
+                      />
+                    </Form.Item>
+                  </Col>
+
+                  <Col span={24}>
+                    <Form.Item
+                      name="paymentOptions"
+                      label={<span style={labelStyle}>Payment Options</span>}
+                      extra="Separate each entry with the 'Enter' Button"
+                    >
+                      <Select
+                        mode="tags"
+                        placeholder="E.g. Cash, Credit Card, Check"
+                        style={{ ...inputStyle, width: "100%" }}
+                      />
                     </Form.Item>
                   </Col>
                 </Row>

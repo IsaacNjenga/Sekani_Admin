@@ -54,6 +54,7 @@ function ViewProperty({ openModal, setOpenModal, loading, content }) {
                   width={500}
                   style={{
                     width: "100%",
+                    height: "100%",
                     objectFit: "cover",
                     borderRadius: 18,
                   }}
@@ -67,6 +68,7 @@ function ViewProperty({ openModal, setOpenModal, loading, content }) {
                 width={500}
                 style={{
                   width: "100%",
+                  height: "100%",
                   objectFit: "cover",
                   borderRadius: 18,
                 }}
