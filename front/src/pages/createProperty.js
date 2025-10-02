@@ -295,9 +295,11 @@ function CreateProperty() {
                       rules={[{ required: true }]}
                     >
                       <Select style={inputStyle} placeholder="Select type">
-                        <Option value="house">House</Option>
-                        <Option value="apartment">Apartment</Option>
-                        <Option value="land">Land</Option>
+                        <Option value="House">House</Option>
+                        <Option value="Apartment">Apartment</Option>
+                        <Option value="Land">Land</Option>
+                        <Option value="Airbnb">Airbnb</Option>
+
                       </Select>
                     </Form.Item>
 
@@ -366,8 +368,8 @@ function CreateProperty() {
                       label={<span style={labelStyle}>Listing Type</span>}
                     >
                       <Select style={inputStyle} placeholder="Select">
-                        <Option value="sale">For Sale</Option>
-                        <Option value="rent">For Rent</Option>
+                        <Option value="Sale">For Sale</Option>
+                        <Option value="Rent">For Rent</Option>
                       </Select>
                     </Form.Item>
                     <Row gutter={[24, 24]}>
@@ -377,11 +379,11 @@ function CreateProperty() {
                           label={<span style={labelStyle}>Status</span>}
                         >
                           <Select style={inputStyle} placeholder="Select">
-                            <Option value="available">Available</Option>
-                            <Option value="pending">Pending</Option>
-                            <Option value="sold">Sold</Option>
-                            <Option value="rented">Rented</Option>
-                            <Option value="under_offer">Under Offer</Option>
+                            <Option value="Available">Available</Option>
+                            <Option value="Pending">Pending</Option>
+                            <Option value="Sold">Sold</Option>
+                            <Option value="Rented">Rented</Option>
+                            <Option value="Under Offer">Under Offer</Option>
                           </Select>
                         </Form.Item>
                       </Col>

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import useFetchAllProperties from "../hooks/fetchAllProperties";
 import {
   Typography,
@@ -13,12 +13,27 @@ import {
   Divider,
   Spin,
 } from "antd";
+import { DeleteOutlined } from "@ant-design/icons";
+import Swal from "sweetalert2";
+import { useNavigate } from "react-router-dom";
+import ViewProperty from "../components/ViewProperty";
 
 const { Title, Text } = Typography;
 
 function Properties() {
+  const navigate = useNavigate();
   const { properties, propertiesLoading, propertiesRefresh, handleLoadMore } =
     useFetchAllProperties();
+  const [openModal, setOpenModal] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [content, setContent] = useState(null);
+
+  const viewProperty = (property) => {
+    setLoading(true);
+    setContent(property);
+    setOpenModal(true);
+    setTimeout(() => setLoading(false), 100);
+  };
 
   if (propertiesLoading) {
     return <Spin size="large" fullscreen tip="Loading..." />;
@@ -27,9 +42,7 @@ function Properties() {
     <div>
       <Title>Properties</Title>
       <Divider />
-      <Button onClick={handleLoadMore}>Load More</Button>
-      {propertiesLoading && <p>Loading...</p>}
-      <Button onClick={propertiesRefresh}>Refresh</Button>
+      {/* <Button onClick={propertiesRefresh}>Refresh</Button> */}
       <div style={{ marginTop: 20 }}>
         <Row gutter={[32, 32]}>
           {properties.map((c) => (
@@ -77,15 +90,27 @@ function Properties() {
                           style={{
                             borderRadius: 18,
                             padding: "4px 16px",
-                            fontFamily: "Raleway",
-                            fontWeight: "bold",
-                            background: "rgba(0,0,0,0)",
-                            border: "1px solid #000000ff",
-                            color: "#000000ff",
+                            border: "1px solid #00000000",
+                            color: "#fff",
                           }}
-                        >
-                          Edit
-                        </Button>
+                          danger
+                          shape="circle"
+                          type="primary"
+                          icon={<DeleteOutlined />}
+                          onClick={() => {
+                            Swal.fire({
+                              title: "Are you sure?",
+                              text: "You won't be able to revert this!",
+                              icon: "warning",
+                              showCancelButton: true,
+                              confirmButtonColor: "blue",
+                            }).then(async (result) => {
+                              if (result.isConfirmed) {
+                                alert("Delete functionality to be implemented");
+                              }
+                            });
+                          }}
+                        />
                       </div>
                       <div>
                         <Badge.Ribbon
@@ -236,33 +261,69 @@ function Properties() {
                     justifyContent: "space-between",
                     alignItems: "center",
                     marginBottom: 0,
-                    gap: 6,
+                    gap: 2,
                   }}
                 >
-                  <Title level={4} style={{ fontFamily: "Raleway" }}>
-                    KES. {c.price.toLocaleString()}
-                  </Title>
-                  <Button
-                    type="primary"
-                    style={{
-                      borderRadius: 18,
-                      padding: "4px 16px",
-                      fontFamily: "Raleway",
-                      fontWeight: "bold",
-                      background: "rgba(0,0,0,0)",
-                      border: "1px solid #333",
-                      color: "#333",
-                    }}
-                    //onClick={() => viewProperty(c)}
-                  >
-                    View
-                  </Button>
+                  <div>
+                    <Title level={4} style={{ fontFamily: "Raleway" }}>
+                      KES. {c.price.toLocaleString()}
+                    </Title>
+                  </div>
+                  <div style={{ display: "flex", gap: 5 }}>
+                    <Button
+                      type="primary"
+                      style={{
+                        borderRadius: 18,
+                        padding: "4px 16px",
+                        fontFamily: "Raleway",
+                        fontWeight: "bold",
+                        background: "rgba(0,0,0,0)",
+                        border: "1px solid #333",
+                        color: "#333",
+                      }}
+                      onClick={() => navigate(`/update-property/${c._id}`)}
+                    >
+                      Edit
+                    </Button>
+                    <Button
+                      type="primary"
+                      style={{
+                        borderRadius: 18,
+                        padding: "4px 16px",
+                        fontFamily: "Raleway",
+                        fontWeight: "bold",
+                        background: "rgba(0,0,0,0)",
+                        border: "1px solid #333",
+                        color: "#333",
+                      }}
+                      onClick={() => viewProperty(c)}
+                    >
+                      View
+                    </Button>
+                  </div>
                 </div>
               </Card>
             </Col>
           ))}
         </Row>
       </div>
+      <div style={{ marginTop: 20, marginBottom: 50, textAlign: "center" }}>
+        <Button
+          onClick={handleLoadMore}
+          type="primary"
+          size="large"
+          style={{ fontFamily: "Raleway" }}
+        >
+          Load More
+        </Button>
+      </div>
+
+      <ViewProperty
+        setOpenModal={setOpenModal}
+        openModal={openModal}
+        loading={loading}
+        content={content}
+      />
     </div>
   );
 }

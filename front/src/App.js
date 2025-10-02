@@ -9,6 +9,7 @@ import Auth from "./pages/Auth";
 import { useAuth } from "./contexts/AuthContext";
 import { Spin } from "antd";
 import CreateProperty from "./pages/createProperty";
+import UpdateProperty from "./pages/updateProperty";
 import ProtectedRoutes from "./components/ProtectedRoute";
 
 axios.defaults.baseURL = "http://localhost:3001/Sekani";
@@ -39,6 +40,7 @@ function App() {
             <Route path="/properties" element={<Properties />} />
             <Route path="/analytics" element={<Analytics />} />
             <Route path="/create-property" element={<CreateProperty />} />
+            <Route path="/update-property/:id" element={<UpdateProperty />} />
           </Route>
         </Routes>
       )}
