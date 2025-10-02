@@ -17,6 +17,7 @@ import { useAuth } from "../contexts/AuthContext";
 import Swal from "sweetalert2";
 import axios from "axios";
 import { DeleteOutlined } from "@ant-design/icons";
+import { useNavigate } from "react-router-dom";
 
 const { Title } = Typography;
 const { TextArea } = Input;
@@ -201,6 +202,7 @@ const ImageSection = ({ setSelectedImages, selectedImages }) => {
 
 function CreateProperty() {
   const { user, token } = useAuth();
+  const navigate = useNavigate();
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
   const [selectedImages, setSelectedImages] = useState([]);
@@ -225,6 +227,7 @@ function CreateProperty() {
           icon: "success",
           title: "Property Added Successfully!",
         });
+        navigate("/properties");
       }
     } catch (error) {
       console.error(error);

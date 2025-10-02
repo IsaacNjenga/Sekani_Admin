@@ -12,16 +12,20 @@ import {
   Tag,
   Divider,
   Spin,
+  Tooltip,
 } from "antd";
-import { DeleteOutlined } from "@ant-design/icons";
+import { DeleteOutlined, ReloadOutlined } from "@ant-design/icons";
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
 import ViewProperty from "../components/ViewProperty";
+import axios from "axios";
+import { useAuth } from "../contexts/AuthContext";
 
 const { Title, Text } = Typography;
 
 function Properties() {
   const navigate = useNavigate();
+  const { token } = useAuth();
   const { properties, propertiesLoading, propertiesRefresh, handleLoadMore } =
     useFetchAllProperties();
   const [openModal, setOpenModal] = useState(false);
@@ -42,7 +46,15 @@ function Properties() {
     <div>
       <Title>Properties</Title>
       <Divider />
-      {/* <Button onClick={propertiesRefresh}>Refresh</Button> */}
+      <div style={{ display: "flex", justifyContent: "flex-end" }}>
+        <Tooltip title="Refresh">
+          <Button
+            onClick={propertiesRefresh}
+            type="primary"
+            icon={<ReloadOutlined />}
+          />
+        </Tooltip>
+      </div>
       <div style={{ marginTop: 20 }}>
         <Row gutter={[32, 32]}>
           {properties.map((c) => (
@@ -63,104 +75,93 @@ function Properties() {
                     style={{
                       position: "relative",
                       width: "100%",
-                      height: 350,
+                      height: 300,
                       overflow: "hidden",
                       borderTopLeftRadius: 12,
                       borderTopRightRadius: 12,
-                      padding: 1,
                     }}
                   >
-                    <div
+                    {/* Carousel background */}
+                    <Badge.Ribbon
+                      text={`${c.listingType}`}
                       style={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        position: "relative",
+                        position: "absolute",
+                        top: 10,
+                        right: 10,
+                        background: "#8d8009ff",
+                        padding: "2px 10px",
+                        fontFamily: "Raleway",
                       }}
                     >
-                      <div
-                        style={{
-                          position: "absolute",
-                          display: "block",
-                          top: 10,
-                          left: 10,
-                          zIndex: 10,
-                        }}
+                      <Carousel
+                        autoplay
+                        autoplaySpeed={3800}
+                        dots={false}
+                        style={{ height: "100%" }}
                       >
-                        <Button
-                          style={{
-                            borderRadius: 18,
-                            padding: "4px 16px",
-                            border: "1px solid #00000000",
-                            color: "#fff",
-                          }}
-                          danger
-                          shape="circle"
-                          type="primary"
-                          icon={<DeleteOutlined />}
-                          onClick={() => {
-                            Swal.fire({
-                              title: "Are you sure?",
-                              text: "You won't be able to revert this!",
-                              icon: "warning",
-                              showCancelButton: true,
-                              confirmButtonColor: "blue",
-                            }).then(async (result) => {
-                              if (result.isConfirmed) {
-                                alert("Delete functionality to be implemented");
-                              }
-                            });
-                          }}
-                        />
-                      </div>
-                      <div>
-                        <Badge.Ribbon
-                          text={`${c.listingType}`}
-                          style={{
-                            display: "block",
-                            top: 10,
-                            right: 10,
-                            background: "#8d8009ff",
-                            padding: "2px 10px",
-                            fontFamily: "Raleway",
-                          }}
-                        >
-                          <Carousel
-                            autoplay
-                            autoplaySpeed={3800}
-                            //fade
-                            dots={false}
-                          >
-                            {c.img.length > 1 ? (
-                              c.img.map((img) => (
-                                <Image
-                                  src={img}
-                                  alt={c.key}
-                                  preview={false}
-                                  style={{
-                                    width: "100%",
-                                    height: "100%",
-                                    objectFit: "cover",
-                                    borderRadius: 12,
-                                  }}
-                                />
-                              ))
-                            ) : (
-                              <Image
-                                src={c.img}
+                        {(Array.isArray(c.img) ? c.img : [c.img]).map(
+                          (img, i) => (
+                            <div key={i} style={{ width: "100%", height: 300 }}>
+                              <img
+                                src={img}
                                 alt={c.key}
-                                preview={false}
                                 style={{
                                   width: "100%",
                                   height: "100%",
                                   objectFit: "cover",
                                   borderRadius: 12,
+                                  display: "block",
                                 }}
                               />
-                            )}
-                          </Carousel>
-                        </Badge.Ribbon>
-                      </div>
-                    </div>
+                            </div>
+                          )
+                        )}
+                      </Carousel>
+                    </Badge.Ribbon>
+
+                    {/* Delete button overlay */}
+                    <Button
+                      style={{
+                        position: "absolute",
+                        top: 10,
+                        left: 10,
+                        zIndex: 10,
+                        borderRadius: 18,
+                        padding: "4px 16px",
+                        border: "1px solid #00000000",
+                        color: "#fff",
+                      }}
+                      danger
+                      shape="circle"
+                      type="primary"
+                      icon={<DeleteOutlined />}
+                      onClick={() => {
+                        Swal.fire({
+                          title: "Are you sure?",
+                          text: "You won't be able to revert this!",
+                          icon: "warning",
+                          showCancelButton: true,
+                          confirmButtonColor: "lightgreen",
+                          cancelButtonColor: "red",
+                        }).then(async (result) => {
+                          if (result.isConfirmed) {
+                            const res = await axios.delete(
+                              `delete-property?id=${c._id}`,
+                              {
+                                headers: { Authorization: `Bearer ${token}` },
+                              }
+                            );
+                            if (res.data.success) {
+                              Swal.fire({
+                                icon: "success",
+                                title: "Property Deleted Successfully!",
+                              });
+                              propertiesRefresh();
+                            }
+                          }
+                        });
+                      }}
+                    />
                   </div>
                 }
               >

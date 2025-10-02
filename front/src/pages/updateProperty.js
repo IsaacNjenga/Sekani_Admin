@@ -519,7 +519,7 @@ function UpdateProperty() {
               size="large"
               style={{ borderRadius: 8 }}
             >
-              {loading ? "Updating..." : "Updating"}
+              {loading ? "Updating..." : "Update"}
             </Button>
           </Form.Item>
         </Form>
