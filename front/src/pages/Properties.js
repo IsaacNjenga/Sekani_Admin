@@ -44,7 +44,7 @@ function Properties() {
   }
   return (
     <div>
-      <Title>Properties</Title>
+      <Title style={{ marginTop: 15, fontFamily: "Raleway" }}>Properties</Title>
       <Divider />
       <div style={{ display: "flex", justifyContent: "flex-end" }}>
         <Tooltip title="Refresh">
