@@ -115,7 +115,7 @@ function Emails() {
             display: "flex",
             margin: "10px 0",
             marginTop: 0,
-            gap: 10,
+            gap: 8,
             alignItems: "center",
           }}
         >
