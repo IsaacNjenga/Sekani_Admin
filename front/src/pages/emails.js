@@ -1,16 +1,50 @@
-import { Button, Divider, Spin, Table, Tag, Typography } from "antd";
+import { Avatar, Button, Divider, Spin, Table, Tag, Typography } from "antd";
 import { useMemo, useState } from "react";
 import { emailData } from "../assets/data/data";
 import { format } from "date-fns";
 import ViewMessage from "../components/ViewMessage";
+import {
+  CarryOutFilled,
+  CarryOutOutlined,
+  CheckSquareFilled,
+  CheckSquareOutlined,
+  ClockCircleFilled,
+  ClockCircleOutlined,
+  StarFilled,
+  StarOutlined,
+} from "@ant-design/icons";
 
 const { Title, Text } = Typography;
 
 const miniBtns = [
-  { key: 1, label: "Unread", color: "red" },
-  { key: 2, label: "Read", color: "blue" },
-  { key: 3, label: "Sent", color: "green" },
-  { key: 4, label: "Starred", color: "gold" },
+  {
+    key: 1,
+    label: "Unread",
+    color: "red",
+    icon: ClockCircleFilled,
+    icon2: ClockCircleOutlined,
+  },
+  {
+    key: 2,
+    label: "Read",
+    color: "blue",
+    icon: CarryOutFilled,
+    icon2: CarryOutOutlined,
+  },
+  {
+    key: 3,
+    label: "Sent",
+    color: "green",
+    icon: CheckSquareFilled,
+    icon2: CheckSquareOutlined,
+  },
+  {
+    key: 4,
+    label: "Starred",
+    color: "gold",
+    icon: StarFilled,
+    icon2: StarOutlined,
+  },
 ];
 
 function Emails() {
@@ -41,7 +75,19 @@ function Emails() {
       title: "Full Name",
       dataIndex: "full_name",
       key: "full_name",
-      render: (text) => <Text style={{ fontFamily: "Raleway" }}>{text}</Text>,
+      render: (text) => (
+        <div
+          style={{
+            gap: 8,
+            flexDirection: "row",
+            display: "flex",
+            alignItems: "center",
+          }}
+        >
+          <Avatar style={{ background: "brown" }}>{text.charAt(0)}</Avatar>{" "}
+          <Text style={{ fontFamily: "Raleway" }}>{text}</Text>
+        </div>
+      ),
     },
     {
       title: "Email Address",
@@ -133,7 +179,8 @@ function Emails() {
                 color: selectedTab === btn.key ? "white" : "",
               }}
             >
-              {btn.label}
+              {selectedTab === btn.key ? <btn.icon /> : <btn.icon2 />}
+              <span>{btn.label}</span>
             </Tag>
           ))}
         </div>

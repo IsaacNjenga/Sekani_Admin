@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import useFetchAllProperties from "../hooks/fetchAllProperties";
 import {
   Typography,
-  Image,
   Row,
   Col,
   Card,
