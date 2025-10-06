@@ -13,8 +13,8 @@ import { Link, Outlet, useLocation } from "react-router-dom";
 import logo from "../assets/images/logo3.png";
 import {
   AppstoreOutlined,
-  CustomerServiceFilled,
   HomeOutlined,
+  MailOutlined,
   MenuFoldOutlined,
   MenuUnfoldOutlined,
   PlusCircleOutlined,
@@ -37,7 +37,7 @@ const items = [
     getItem("View Properties", "/properties", 3, HomeOutlined),
     getItem("Create Property", "/create-property", 4, PlusCircleOutlined),
   ]),
-  getItem("Analytics", "/analytics", 5, CustomerServiceFilled),
+  getItem("Emails", "/emails", 5, MailOutlined),
 ];
 
 function Navbar() {

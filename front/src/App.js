@@ -11,6 +11,7 @@ import { Spin } from "antd";
 import CreateProperty from "./pages/createProperty";
 import UpdateProperty from "./pages/updateProperty";
 import ProtectedRoutes from "./components/ProtectedRoute";
+import Emails from "./pages/emails";
 
 axios.defaults.baseURL = "http://localhost:3001/Sekani";
 axios.defaults.withCredentials = true;
@@ -39,6 +40,7 @@ function App() {
             <Route index element={<Dash />} />
             <Route path="/properties" element={<Properties />} />
             <Route path="/analytics" element={<Analytics />} />
+            <Route path="/emails" element={<Emails />} />
             <Route path="/create-property" element={<CreateProperty />} />
             <Route path="/update-property/:id" element={<UpdateProperty />} />
           </Route>
