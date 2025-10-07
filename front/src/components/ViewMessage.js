@@ -9,7 +9,7 @@ import {
   Typography,
   Button,
 } from "antd";
-import { formatDistanceToNowStrict } from "date-fns";
+import { format, formatDistanceToNowStrict } from "date-fns";
 import React, { useState } from "react";
 
 const { Title, Text, Paragraph } = Typography;
@@ -50,6 +50,11 @@ function ViewMessage({ setOpenModal, openModal, loading, content }) {
         {/* Left: Message Details */}
         <Col xs={24} md={12}>
           <Card
+            title={
+              <Title level={4} style={{ margin: 0 }}>
+                Message Details
+              </Title>
+            }
             style={{
               borderRadius: 12,
               boxShadow: "0 4px 12px rgba(0,0,0,0.08)",
@@ -57,34 +62,34 @@ function ViewMessage({ setOpenModal, openModal, loading, content }) {
               height: "100%",
             }}
           >
-            <Title level={4} style={{ marginBottom: 12 }}>
-              Message Details
-            </Title>
+            <div style={{ display: "flex", justifyContent: "space-between" }}>
+              <div style={{ marginBottom: 12 }}>
+                <Text strong style={{ display: "block" }}>
+                  From:
+                </Text>
+                <Text>{content?.full_name || "N/A"}</Text>
+              </div>
 
-            <div style={{ marginBottom: 12 }}>
-              <Text strong style={{ display: "block" }}>
-                From:
-              </Text>
-              <Text>{content?.full_name || "N/A"}</Text>
+              <div style={{ marginBottom: 12 }}>
+                <Text strong style={{ display: "block" }}>
+                  Email Address:
+                </Text>
+                <a href={`mailto:${content?.email_address}`}>
+                  {content?.email_address}
+                </a>
+              </div>
             </div>
-
-            <div style={{ marginBottom: 12 }}>
-              <Text strong style={{ display: "block" }}>
-                Email Address:
-              </Text>
-              <a href={`mailto:${content?.email_address}`}>
-                {content?.email_address}
-              </a>
-            </div>
-
             <div style={{ marginBottom: 12 }}>
               <Text type="secondary">
-                Received{" "}
-                {formatDistanceToNowStrict(new Date(content?.createdAt))} ago
+                {content?.createdAt
+                  ? `Received ${formatDistanceToNowStrict(
+                      new Date(content?.createdAt)
+                    )} ago`
+                  : format(new Date(content.createdAt), "Pp")}
               </Text>
             </div>
 
-            <Divider />
+            <Divider style={{ borderColor: "#ccc" }} />
 
             <div>
               <Text strong style={{ display: "block", marginBottom: 8 }}>
@@ -108,7 +113,7 @@ function ViewMessage({ setOpenModal, openModal, loading, content }) {
         <Col xs={24} md={12}>
           <Card
             title={
-              <Title level={5} style={{ margin: 0 }}>
+              <Title level={4} style={{ margin: 0 }}>
                 Reply to {content?.full_name || "Sender"}
               </Title>
             }
