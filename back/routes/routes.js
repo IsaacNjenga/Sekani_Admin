@@ -58,7 +58,7 @@ router.put("/mail-read", protectRoute, emailRead);
 router.put("/mail-starred", protectRoute, emailStarred);
 
 //reply routes
-router.post("/create-reply", createReply);
+router.post("/create-reply", protectRoute, createReply);
 router.get("/fetch-replies", fetchReplies);
 router.get("/fetch-reply", fetchReply);
 

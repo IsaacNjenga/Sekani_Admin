@@ -46,16 +46,25 @@ const readMail = async (req, res) => {
 const emailRead = async (req, res) => {
   const { id } = req.query;
   try {
-    const mail = await MailsModel.findByIdAndUpdate(
-      id,
-      { read: true },
-      { new: true }
-    );
+    // const mail = await MailsModel.findByIdAndUpdate(
+    //   id,
+    //   { read: true },
+    //   { new: true }
+    // );
+    // if (!mail) {
+    //   return res
+    //     .status(404)
+    //     .json({ success: false, message: "Mail not found" });
+    // }
+    // return res.status(200).json({ success: true, mail: mail });
+    const mail = await MailsModel.findById(id);
     if (!mail) {
       return res
         .status(404)
         .json({ success: false, message: "Mail not found" });
     }
+    mail.read = !mail.read;
+    await mail.save();
     return res.status(200).json({ success: true, mail: mail });
   } catch (error) {
     console.error("Error in mail reading:", error);

@@ -1,4 +1,13 @@
-import { Avatar, Button, Divider, Spin, Table, Tag, Typography } from "antd";
+import {
+  Avatar,
+  Button,
+  Divider,
+  Dropdown,
+  Spin,
+  Table,
+  Tag,
+  Typography,
+} from "antd";
 import { useMemo, useState } from "react";
 //import { emailData } from "../assets/data/data";
 import { format } from "date-fns";
@@ -10,10 +19,13 @@ import {
   CheckSquareOutlined,
   ClockCircleFilled,
   ClockCircleOutlined,
+  MoreOutlined,
   StarFilled,
   StarOutlined,
 } from "@ant-design/icons";
 import useFetchAllEmails from "../hooks/fetchAllEmails";
+import axios from "axios";
+import { useAuth } from "../contexts/AuthContext";
 
 const { Title, Text } = Typography;
 
@@ -48,13 +60,26 @@ const miniBtns = [
   },
 ];
 
+const moreItems = [
+  {
+    label: "Mark as Read/Unread",
+    key: "toggle-read",
+  },
+  {
+    label: "Star / Unstar",
+    key: "toggle-star",
+  },
+];
+
 function Emails() {
+  const { token } = useAuth();
   const { emails, emailsLoading, emailsRefresh } = useFetchAllEmails();
   const emailData = emails ? emails : [];
   const [openModal, setOpenModal] = useState(false);
   const [content, setContent] = useState(null);
   const [loading, setLoading] = useState(false);
   const [selectedTab, setSelectedTab] = useState(1);
+  const [activeDropdownId, setActiveDropdownId] = useState(null);
 
   const { readMessages, unreadMessages, starredMessages } = useMemo(() => {
     return {
@@ -62,7 +87,7 @@ function Emails() {
       unreadMessages: emailData?.filter((m) => !m.read),
       starredMessages: emailData?.filter((m) => m.starred),
     };
-  }, []);
+  }, [emailData]);
 
   const viewMessage = (message) => {
     setLoading(true);
@@ -71,6 +96,45 @@ function Emails() {
     setTimeout(() => {
       setLoading(false);
     }, 100);
+  };
+
+  const updateEmailReadStatus = async (id, updateData) => {
+    try {
+      const res = await axios.put(`mail-read?id=${id}`, updateData, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (res.data.success) {
+        console.log("success");
+      }
+    } catch (error) {
+      console.error("Failed to update mail", error);
+    }
+  };
+
+  const updateEmailStarredStatus = async (id, updateData) => {
+    try {
+      const res = await axios.put(`mail-starred?id=${id}`, updateData, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (res.data.success) {
+        console.log("success");
+      }
+    } catch (error) {
+      console.error("Failed to update mail", error);
+    }
+  };
+
+  const handleMenuClick = async (e, record) => {
+    const { key } = e;
+    setActiveDropdownId(null); // close after click
+
+    if (key === "toggle-read") {
+      await updateEmailReadStatus(record._id, { read: !record.read });
+    } else if (key === "toggle-star") {
+      await updateEmailStarredStatus(record._id, { starred: !record.starred });
+    }
+
+    emailsRefresh(); // refresh the list
   };
 
   const columns = [
@@ -99,10 +163,6 @@ function Emails() {
       render: (text) => (
         <Text style={{ fontFamily: "Raleway", color: "#1677ff" }}>{text}</Text>
       ),
-      //render: (text) => {
-      // <a href={`mailto:${email}`} style={{ color: "#1677ff" }}>
-      //{email}
-      //</a>;
     },
     {
       title: "Message",
@@ -136,6 +196,29 @@ function Emails() {
         </Button>
       ),
     },
+    {
+      title: "Action",
+      key: "item-action",
+      render: (record) => (
+        <Dropdown
+          menu={{
+            items: moreItems,
+            onClick: (e) => handleMenuClick(e, record),
+          }}
+          trigger={["click"]}
+          open={activeDropdownId === record._id}
+          onOpenChange={(nextOpen) =>
+            setActiveDropdownId(nextOpen ? record._id : null)
+          }
+        >
+          <Button
+            type="text"
+            icon={<MoreOutlined />}
+            onClick={(e) => e.stopPropagation()}
+          />
+        </Dropdown>
+      ),
+    },
   ];
 
   const getFilteredData = () => {
@@ -158,7 +241,7 @@ function Emails() {
     <>
       <Title style={{ marginTop: 15, fontFamily: "Raleway" }}>Emails</Title>
       <Divider />
-      <div style={{ margin: 10, padding: 10 }}>
+      <div style={{ margin: 5, padding: 5 }}>
         <div
           style={{
             display: "flex",
