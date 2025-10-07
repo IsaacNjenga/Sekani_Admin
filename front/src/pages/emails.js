@@ -1,6 +1,6 @@
 import { Avatar, Button, Divider, Spin, Table, Tag, Typography } from "antd";
 import { useMemo, useState } from "react";
-import { emailData } from "../assets/data/data";
+//import { emailData } from "../assets/data/data";
 import { format } from "date-fns";
 import ViewMessage from "../components/ViewMessage";
 import {
@@ -13,6 +13,7 @@ import {
   StarFilled,
   StarOutlined,
 } from "@ant-design/icons";
+import useFetchAllEmails from "../hooks/fetchAllEmails";
 
 const { Title, Text } = Typography;
 
@@ -48,6 +49,8 @@ const miniBtns = [
 ];
 
 function Emails() {
+  const { emails, emailsLoading, emailsRefresh } = useFetchAllEmails();
+  const emailData = emails ? emails : [];
   const [openModal, setOpenModal] = useState(false);
   const [content, setContent] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -55,9 +58,9 @@ function Emails() {
 
   const { readMessages, unreadMessages, starredMessages } = useMemo(() => {
     return {
-      readMessages: emailData.filter((m) => m.read),
-      unreadMessages: emailData.filter((m) => !m.read),
-      starredMessages: emailData.filter((m) => m.starred),
+      readMessages: emailData?.filter((m) => m.read),
+      unreadMessages: emailData?.filter((m) => !m.read),
+      starredMessages: emailData?.filter((m) => m.starred),
     };
   }, []);
 
@@ -148,7 +151,7 @@ function Emails() {
     }
   };
 
-  if (loading)
+  if (loading || emailsLoading)
     return <Spin fullscreen tip="Loading. Please wait..." size="large" />;
 
   return (

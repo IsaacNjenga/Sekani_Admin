@@ -52,14 +52,14 @@ router.delete("/delete-property", protectRoute, deleteProperty);
 
 //mail routes
 router.post("/create-mail", createMail);
-router.get("/get-mails", protectRoute, readMails);
-router.get("/get-mail", protectRoute, readMail);
+router.get("/fetch-mails", protectRoute, readMails);
+router.get("/fetch-mail", protectRoute, readMail);
 router.put("/mail-read", protectRoute, emailRead);
 router.put("/mail-starred", protectRoute, emailStarred);
 
 //reply routes
 router.post("/create-reply", createReply);
-router.get("/get-replies", fetchReplies);
-router.get("/get-reply", fetchReply);
+router.get("/fetch-replies", fetchReplies);
+router.get("/fetch-reply", fetchReply);
 
 export { router as Router };

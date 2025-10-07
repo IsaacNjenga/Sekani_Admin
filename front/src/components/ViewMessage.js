@@ -9,8 +9,8 @@ import {
   Typography,
   Button,
 } from "antd";
-import { format, formatDistanceToNowStrict } from "date-fns";
-import React, { useState } from "react";
+import { formatDistanceToNowStrict } from "date-fns";
+import { useState } from "react";
 
 const { Title, Text, Paragraph } = Typography;
 
@@ -80,13 +80,13 @@ function ViewMessage({ setOpenModal, openModal, loading, content }) {
               </div>
             </div>
             <div style={{ marginBottom: 12 }}>
-              <Text type="secondary">
-                {content?.createdAt
-                  ? `Received ${formatDistanceToNowStrict(
-                      new Date(content?.createdAt)
-                    )} ago`
-                  : format(new Date(content.createdAt), "Pp")}
-              </Text>
+              {content?.createdAt && (
+                <Text type="secondary">
+                  {`Received ${formatDistanceToNowStrict(
+                    new Date(content?.createdAt)
+                  )} ago`}
+                </Text>
+              )}
             </div>
 
             <Divider style={{ borderColor: "#ccc" }} />
