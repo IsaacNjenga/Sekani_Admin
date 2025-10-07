@@ -113,7 +113,7 @@ function Emails() {
       key: "createdAt",
       render: (text) => {
         return (
-          <Text style={{ fontFamily: "Raleway" }}>
+          <Text style={{ fontFamily: "Roboto" }}>
             {format(new Date(text), "Pp")}
           </Text>
         );
