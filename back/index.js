@@ -8,7 +8,11 @@ dotenv.config();
 
 const app = express();
 const corsOptions = {
-  origin: ["http://localhost:3000", "https://sekani-admin.vercel.app"],
+  origin: [
+    "http://localhost:3000",
+    "https://sekani-admin.vercel.app",
+    "https://sekani-properties.vercel.app/",
+  ],
   methods: ["GET", "POST", "PUT", "DELETE"],
   credentials: true,
   allowedHeaders: ["Content-Type", "Authorization"],
