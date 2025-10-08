@@ -3,6 +3,7 @@ import {
   Button,
   Divider,
   Dropdown,
+  Input,
   Spin,
   Table,
   Tag,
@@ -19,6 +20,7 @@ import {
   CheckSquareOutlined,
   ClockCircleFilled,
   ClockCircleOutlined,
+  MailOutlined,
   MoreOutlined,
   StarFilled,
   StarOutlined,
@@ -28,6 +30,7 @@ import axios from "axios";
 import { useAuth } from "../contexts/AuthContext";
 
 const { Title, Text } = Typography;
+const { Search } = Input;
 
 const miniBtns = [
   {
@@ -69,6 +72,8 @@ function Emails() {
   const [loading, setLoading] = useState(false);
   const [selectedTab, setSelectedTab] = useState(1);
   const [activeDropdownId, setActiveDropdownId] = useState(null);
+  const [searchValue, setSearchValue] = useState(null);
+  const [mail, setMail] = useState([]);
 
   const { readMessages, unreadMessages, starredMessages } = useMemo(() => {
     return {
@@ -183,11 +188,28 @@ function Emails() {
           menu={{
             items: [
               {
-                label: record.read ? "Mark as Unread" : "Mark as Read",
+                label: record.read ? (
+                  <span style={{ color: "red" }}>
+                    <MailOutlined style={{ color: "red" }} /> Mark as Unread
+                  </span>
+                ) : (
+                  <span style={{ color: "green" }}>
+                    <CarryOutOutlined style={{ color: "green" }} /> Mark as Read
+                  </span>
+                ),
                 key: "toggle-read",
               },
               {
-                label: record.starred ? "Unstar" : "Star",
+                label: record.starred ? (
+                  <span style={{ color: "gold", fontWeight: 500 }}>
+                    <StarOutlined style={{ color: "gold", fontWeight: 500 }} />{" "}
+                    Unstar
+                  </span>
+                ) : (
+                  <span style={{ color: "gold", fontWeight: 500 }}>
+                    <StarFilled style={{ color: "gold" }} /> Star this mail
+                  </span>
+                ),
                 key: "toggle-star",
               },
             ],
@@ -226,6 +248,23 @@ function Emails() {
     }
   };
 
+  const handleSearch = (e) => {
+    const value = e.target.value.toLowerCase().trim();
+    setSearchValue(value);
+    
+    if (!value) {
+      setMail([]);
+      return;
+    }
+
+    const filteredSearchData = emailData.filter((item) =>
+      Object.values(item).some(
+        (val) => typeof val === "string" && val.toLowerCase().includes(value)
+      )
+    );
+    setMail(filteredSearchData);
+  };
+
   if (loading)
     return <Spin fullscreen tip="Loading. Please wait..." size="large" />;
 
@@ -234,6 +273,16 @@ function Emails() {
       <Title style={{ marginTop: 15, fontFamily: "Raleway" }}>Emails</Title>
       <Divider />
       <div style={{ margin: 5, padding: 5 }}>
+        <div style={{ margin: 10 }}>
+          <Search
+            placeholder="Search..."
+            size="large"
+            loading={loading}
+            enterButton
+            onChange={handleSearch}
+            style={{ width: "100%", height: 50 }}
+          />
+        </div>
         <div
           style={{
             display: "flex",
@@ -262,11 +311,21 @@ function Emails() {
             </Tag>
           ))}
         </div>
+
+        <div>
+          {searchValue && (
+            <div style={{ marginBottom: 20, marginTop: 0 }}>
+              <Title level={5} style={{ fontFamily: "Roboto" }}>
+                Results for "{searchValue}"
+              </Title>
+            </div>
+          )}
+        </div>
         <Table
-          dataSource={getFilteredData()}
+          dataSource={searchValue ? mail : getFilteredData()}
           columns={columns}
           rowKey="_id"
-          pagination={{ pageSize: 6 }}
+          pagination={{ pageSize: 15 }}
           showHeader
           size="small"
           style={{ fontFamily: "Raleway" }}
