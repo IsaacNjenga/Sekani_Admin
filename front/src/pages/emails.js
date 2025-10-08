@@ -49,13 +49,6 @@ const miniBtns = [
   },
   {
     key: 3,
-    label: "Sent",
-    color: "green",
-    icon: CheckSquareFilled,
-    icon2: CheckSquareOutlined,
-  },
-  {
-    key: 4,
     label: "Starred",
     color: "gold",
     icon: StarFilled,
@@ -155,7 +148,7 @@ function Emails() {
       //ellipsis: true,
     },
     {
-      title: "v",
+      title: "",
       dataIndex: "createdAt",
       key: "createdAt",
       render: (text) => {
@@ -241,7 +234,7 @@ function Emails() {
         return unreadMessages;
       case 2:
         return readMessages;
-      case 4:
+      case 3:
         return starredMessages;
       default:
         return emailData;
