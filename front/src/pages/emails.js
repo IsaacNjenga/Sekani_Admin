@@ -122,7 +122,7 @@ function Emails() {
 
   const columns = [
     {
-      title: "Full Name",
+      title: "",
       dataIndex: "full_name",
       key: "full_name",
       render: (text) => (
@@ -140,7 +140,7 @@ function Emails() {
       ),
     },
     {
-      title: "Email Address",
+      title: "",
       dataIndex: "email_address",
       key: "email_address",
       render: (text) => (
@@ -148,14 +148,14 @@ function Emails() {
       ),
     },
     {
-      title: "Message",
+      title: "",
       dataIndex: "message",
       key: "message",
       render: (text) => <Text style={{ fontFamily: "Raleway" }}>{text}</Text>,
       //ellipsis: true,
     },
     {
-      title: "Date",
+      title: "v",
       dataIndex: "createdAt",
       key: "createdAt",
       render: (text) => {
@@ -251,7 +251,7 @@ function Emails() {
   const handleSearch = (e) => {
     const value = e.target.value.toLowerCase().trim();
     setSearchValue(value);
-    
+
     if (!value) {
       setMail([]);
       return;
@@ -273,7 +273,7 @@ function Emails() {
       <Title style={{ marginTop: 15, fontFamily: "Raleway" }}>Emails</Title>
       <Divider />
       <div style={{ margin: 5, padding: 5 }}>
-        <div style={{ margin: 10 }}>
+        <div style={{ margin: "10px 0" }}>
           <Search
             placeholder="Search..."
             size="large"
