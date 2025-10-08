@@ -8,7 +8,7 @@ import {
   Tag,
   Typography,
 } from "antd";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 //import { emailData } from "../assets/data/data";
 import { format } from "date-fns";
 import ViewMessage from "../components/ViewMessage";
@@ -60,21 +60,10 @@ const miniBtns = [
   },
 ];
 
-const moreItems = [
-  {
-    label: "Mark as Read/Unread",
-    key: "toggle-read",
-  },
-  {
-    label: "Star / Unstar",
-    key: "toggle-star",
-  },
-];
-
 function Emails() {
   const { token } = useAuth();
-  const { emails, emailsLoading, emailsRefresh } = useFetchAllEmails();
-  const emailData = emails ? emails : [];
+  const { emails, emailsRefresh } = useFetchAllEmails();
+  const emailData = useMemo(() => (emails ? emails : []), [emails]);
   const [openModal, setOpenModal] = useState(false);
   const [content, setContent] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -89,31 +78,20 @@ function Emails() {
     };
   }, [emailData]);
 
-  const viewMessage = (message) => {
+  const viewMessage = async (message, record) => {
     setLoading(true);
+    await updateEmail(record._id, { read: true });
     setContent(message);
     setOpenModal(true);
     setTimeout(() => {
       setLoading(false);
-    }, 100);
+    }, 0);
+    emailsRefresh();
   };
 
-  const updateEmailReadStatus = async (id, updateData) => {
+  const updateEmail = async (id, updateData) => {
     try {
-      const res = await axios.put(`mail-read?id=${id}`, updateData, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      if (res.data.success) {
-        console.log("success");
-      }
-    } catch (error) {
-      console.error("Failed to update mail", error);
-    }
-  };
-
-  const updateEmailStarredStatus = async (id, updateData) => {
-    try {
-      const res = await axios.put(`mail-starred?id=${id}`, updateData, {
+      const res = await axios.put(`mail-update?id=${id}`, updateData, {
         headers: { Authorization: `Bearer ${token}` },
       });
       if (res.data.success) {
@@ -129,9 +107,9 @@ function Emails() {
     setActiveDropdownId(null); // close after click
 
     if (key === "toggle-read") {
-      await updateEmailReadStatus(record._id, { read: !record.read });
+      await updateEmail(record._id, { read: !record.read });
     } else if (key === "toggle-star") {
-      await updateEmailStarredStatus(record._id, { starred: !record.starred });
+      await updateEmail(record._id, { starred: !record.starred });
     }
 
     emailsRefresh(); // refresh the list
@@ -169,6 +147,7 @@ function Emails() {
       dataIndex: "message",
       key: "message",
       render: (text) => <Text style={{ fontFamily: "Raleway" }}>{text}</Text>,
+      //ellipsis: true,
     },
     {
       title: "Date",
@@ -184,12 +163,12 @@ function Emails() {
       sorter: (a, b) => new Date(a.createdAt) - new Date(b.createdAt),
     },
     {
-      title: "View",
+      title: "",
       key: "action",
-      render: (item) => (
+      render: (item, record) => (
         <Button
           type="primary"
-          onClick={() => viewMessage(item)}
+          onClick={() => viewMessage(item, record)}
           style={{ fontFamily: "Raleway" }}
         >
           Open
@@ -197,12 +176,21 @@ function Emails() {
       ),
     },
     {
-      title: "Action",
+      title: "",
       key: "item-action",
       render: (record) => (
         <Dropdown
           menu={{
-            items: moreItems,
+            items: [
+              {
+                label: record.read ? "Mark as Unread" : "Mark as Read",
+                key: "toggle-read",
+              },
+              {
+                label: record.starred ? "Unstar" : "Star",
+                key: "toggle-star",
+              },
+            ],
             onClick: (e) => handleMenuClick(e, record),
           }}
           trigger={["click"]}
@@ -221,6 +209,10 @@ function Emails() {
     },
   ];
 
+  useEffect(() => {
+    emailsRefresh();
+  }, [selectedTab]);
+
   const getFilteredData = () => {
     switch (selectedTab) {
       case 1:
@@ -234,7 +226,7 @@ function Emails() {
     }
   };
 
-  if (loading || emailsLoading)
+  if (loading)
     return <Spin fullscreen tip="Loading. Please wait..." size="large" />;
 
   return (
@@ -275,6 +267,9 @@ function Emails() {
           columns={columns}
           rowKey="_id"
           pagination={{ pageSize: 6 }}
+          showHeader
+          size="small"
+          style={{ fontFamily: "Raleway" }}
         />
       </div>
       <ViewMessage

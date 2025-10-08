@@ -20,8 +20,7 @@ import protectRoute from "../middleware/auth.middleware.js";
 
 import {
   createMail,
-  emailRead,
-  emailStarred,
+  emailUpdate,
   readMail,
   readMails,
 } from "../controllers/mailController.js";
@@ -54,8 +53,7 @@ router.delete("/delete-property", protectRoute, deleteProperty);
 router.post("/create-mail", createMail);
 router.get("/fetch-mails", protectRoute, readMails);
 router.get("/fetch-mail", protectRoute, readMail);
-router.put("/mail-read", protectRoute, emailRead);
-router.put("/mail-starred", protectRoute, emailStarred);
+router.put("/mail-update", protectRoute, emailUpdate);
 
 //reply routes
 router.post("/create-reply", protectRoute, createReply);

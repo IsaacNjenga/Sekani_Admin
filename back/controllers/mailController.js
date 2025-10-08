@@ -15,7 +15,7 @@ const createMail = async (req, res) => {
 
 const readMails = async (req, res) => {
   try {
-    const mails = await MailsModel.find({});
+    const mails = await MailsModel.find({}).sort({ createdAt: -1 });
     return res.status(200).json({ success: true, mails });
   } catch (error) {
     console.error("Error in mails fetch:", error);
@@ -43,20 +43,29 @@ const readMail = async (req, res) => {
   }
 };
 
+const emailUpdate = async (req, res) => {
+  const { id } = req.query;
+  const updateData = req.body;
+  try {
+    const updateMail = await MailsModel.findByIdAndUpdate(id, updateData, {
+      new: true,
+    });
+    if (!updateMail) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Mail not found" });
+    }
+    return res.status(200).json({ success: true, mail: updateMail });
+  } catch (error) {
+    console.error("Error in mail update:", error);
+    return res
+      .status(500)
+      .json({ success: false, message: "Internal server error" });
+  }
+};
 const emailRead = async (req, res) => {
   const { id } = req.query;
   try {
-    // const mail = await MailsModel.findByIdAndUpdate(
-    //   id,
-    //   { read: true },
-    //   { new: true }
-    // );
-    // if (!mail) {
-    //   return res
-    //     .status(404)
-    //     .json({ success: false, message: "Mail not found" });
-    // }
-    // return res.status(200).json({ success: true, mail: mail });
     const mail = await MailsModel.findById(id);
     if (!mail) {
       return res
@@ -66,12 +75,7 @@ const emailRead = async (req, res) => {
     mail.read = !mail.read;
     await mail.save();
     return res.status(200).json({ success: true, mail: mail });
-  } catch (error) {
-    console.error("Error in mail reading:", error);
-    return res
-      .status(500)
-      .json({ success: false, message: "Internal server error" });
-  }
+  } catch (error) {}
 };
 
 const emailStarred = async (req, res) => {
@@ -141,4 +145,5 @@ export {
   deleteMail,
   emailRead,
   emailStarred,
+  emailUpdate,
 };
