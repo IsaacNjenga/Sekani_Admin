@@ -9,12 +9,16 @@ import {
   Typography,
   Button,
 } from "antd";
+import axios from "axios";
 import { formatDistanceToNowStrict } from "date-fns";
 import { useState } from "react";
+import { useAuth } from "../contexts/AuthContext";
+import Swal from "sweetalert2";
 
 const { Title, Text, Paragraph } = Typography;
 
 function ViewMessage({ setOpenModal, openModal, loading, content }) {
+  const { token } = useAuth();
   const [form] = Form.useForm();
   const [sendLoading, setSendLoading] = useState(false);
 
@@ -22,12 +26,33 @@ function ViewMessage({ setOpenModal, openModal, loading, content }) {
     setSendLoading(true);
     try {
       const values = await form.validateFields();
-      console.log(values);
+      const allValues = {
+        to: content.email_address,
+        message: values.reply,
+        name: content.full_name,
+      };
+      //console.log(allValues);
+      const res = await axios.post("reply-to-email", allValues, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      if (res.data.success) {
+        Swal.fire({
+          icon: "success",
+          title: "Reply Sent Successfully!",
+        });
+      }
     } catch (error) {
       console.log(error);
+      Swal.fire({
+        icon: "warning",
+        title: "Error",
+        text: "An unexpected error occurred. Please try again or call for assistance.",
+      });
     } finally {
       form.resetFields();
       setSendLoading(false);
+      setOpenModal(false);
     }
   };
 

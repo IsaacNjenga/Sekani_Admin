@@ -30,6 +30,7 @@ import {
   fetchReplies,
   fetchReply,
 } from "../controllers/repliesController.js";
+import { replyToEmail } from "../controllers/emailReplyController.js";
 
 const router = express.Router();
 
@@ -56,7 +57,7 @@ router.get("/fetch-mail", protectRoute, readMail);
 router.put("/mail-update", protectRoute, emailUpdate);
 
 //reply routes
-router.post("/create-reply", protectRoute, createReply);
+router.post("/reply-to-email", protectRoute, replyToEmail);
 router.get("/fetch-replies", fetchReplies);
 router.get("/fetch-reply", fetchReply);
 
