@@ -17,8 +17,10 @@ import {
   MailOutlined,
   MenuFoldOutlined,
   MenuUnfoldOutlined,
+  MessageOutlined,
   PlusCircleOutlined,
   PoweroffOutlined,
+  SendOutlined,
 } from "@ant-design/icons";
 import { useAuth } from "../contexts/AuthContext";
 import Swal from "sweetalert2";
@@ -38,6 +40,7 @@ const items = [
     getItem("Create Property", "/create-property", 4, PlusCircleOutlined),
   ]),
   getItem("Emails", "/emails", 5, MailOutlined),
+  getItem("Sent Emails", "/sent-mails", 5, SendOutlined),
 ];
 
 function Navbar() {

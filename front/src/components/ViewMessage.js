@@ -39,15 +39,22 @@ function ViewMessage({ setOpenModal, openModal, loading, content }) {
       };
 
       //console.log(allValues);
-      const [res, res2] = await Promise.all([
+      const [res, res2, res3] = await Promise.all([
         axios.post("reply-to-email", mailValues, {
           headers: { Authorization: `Bearer ${token}` },
         }),
         axios.post("reply-to-db", replyValues, {
           headers: { Authorization: `Bearer ${token}` },
         }),
+        axios.put(
+          `mail-update?id=${content._id}`,
+          { replied_to: true },
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        ),
       ]);
-      if (res.data.success && res2.data.success) {
+      if (res.data.success && res2.data.success && res3.data.success) {
         Swal.fire({
           icon: "success",
           title: "Reply sent",
@@ -72,7 +79,7 @@ function ViewMessage({ setOpenModal, openModal, loading, content }) {
       open={openModal}
       onCancel={() => setOpenModal(false)}
       confirmLoading={loading}
-      width="80%"
+      width="90%"
       style={{
         top: 20,
         padding: "30px 32px",
@@ -160,12 +167,22 @@ function ViewMessage({ setOpenModal, openModal, loading, content }) {
               height: "100%",
             }}
           >
-            <Form layout="vertical" form={form} onFinish={handleSubmit}>
+            <Form
+              layout="vertical"
+              form={form}
+              onFinish={handleSubmit}
+              requiredMark={false}
+            >
               <Form.Item
-                label="Your Reply"
+                label="Your Reply (Will go to their email address)"
                 name="reply"
                 rules={[{ required: true, message: "Please write a reply" }]}
               >
+                {content?.replied_to && (
+                  <span style={{ color: "red" }}>
+                    This message has already been replied to.
+                  </span>
+                )}
                 <Input.TextArea
                   rows={10}
                   placeholder="Type your reply here..."

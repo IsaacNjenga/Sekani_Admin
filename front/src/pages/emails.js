@@ -26,7 +26,6 @@ import {
 import useFetchAllEmails from "../hooks/fetchAllEmails";
 import axios from "axios";
 import { useAuth } from "../contexts/AuthContext";
-import Dash from "./Dash";
 
 const { Title, Text } = Typography;
 const { Search } = Input;
@@ -153,7 +152,7 @@ function Emails() {
       render: (text) => {
         return (
           <Text style={{ fontFamily: "Roboto" }}>
-            {format(new Date(text), "Pp")}
+            {format(new Date(text), "LLL d")}
           </Text>
         );
       },
@@ -332,7 +331,7 @@ function Emails() {
           dataSource={searchValue ? mail : getFilteredData()}
           columns={columns}
           rowKey="_id"
-          pagination={{ pageSize: 15 }}
+          pagination={{ pageSize: 10 }}
           showHeader
           size="small"
           style={{ fontFamily: "Raleway" }}
