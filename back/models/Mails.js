@@ -7,6 +7,7 @@ const mailSchema = new mongoose.Schema(
     read: { type: Boolean, default: false },
     starred: { type: Boolean, default: false },
     message: { type: String, required: true },
+    replied_to: { type: Boolean, default: false },
   },
   { collection: "mail", timestamps: true }
 );

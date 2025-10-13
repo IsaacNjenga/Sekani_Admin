@@ -8,42 +8,56 @@ import {
   Timeline,
   Button,
   Divider,
+  Spin,
 } from "antd";
 import {
   MailOutlined,
   StarOutlined,
   SendOutlined,
   HomeOutlined,
-  UserOutlined,
-  SettingOutlined,
   BarChartOutlined,
   PlusOutlined,
 } from "@ant-design/icons";
-import { useAuth } from "../contexts/AuthContext";
+import { format } from "date-fns";
+import { useNavigate } from "react-router-dom";
+import useFetchAvailableProperties from "../hooks/fetchAvailableProperty";
+import useFetchAllEmails from "../hooks/fetchAllEmails";
+import useFetchAllReplies from "../hooks/fetchAllReplies";
 
 const { Title, Text } = Typography;
 
 function Dash() {
-  const { user } = useAuth();
-
   // static placeholders for now
+  const navigate = useNavigate();
+  const { properties, propertiesLoading } = useFetchAvailableProperties();
+  const { emails, emailsLoading } = useFetchAllEmails();
+  const { replies, repliesLoading } = useFetchAllReplies();
+
+  const unreadMessages = emails?.filter((email) => email.read === false);
+  const starredMessages = emails?.filter((email) => email.starred === true);
+
   const stats = [
     {
       title: "Unread Messages",
-      value: 8,
+      value: emailsLoading ? <Spin /> : unreadMessages.length,
       icon: <MailOutlined />,
       color: "#1890ff",
     },
-    { title: "Starred", value: 3, icon: <StarOutlined />, color: "#faad14" },
+    {
+      title: "Starred",
+      value: emailsLoading ? <Spin /> : starredMessages.length,
+      icon: <StarOutlined />,
+      color: "#faad14",
+    },
     {
       title: "Replies Sent",
-      value: 15,
+      value: repliesLoading ? <Spin /> : replies?.length,
       icon: <SendOutlined />,
       color: "#52c41a",
     },
     {
       title: "Active Properties",
-      value: 12,
+      value: propertiesLoading ? <Spin /> : properties?.length,
       icon: <HomeOutlined />,
       color: "#722ed1",
     },
@@ -76,13 +90,28 @@ function Dash() {
 
   return (
     <div style={{ padding: 0 }}>
-      {/* Greeting */}
-      <Title level={3} style={{ fontFamily: "Raleway" }}>
-        Hey there, 👋
-      </Title>
-      <Text type="secondary" style={{ fontFamily: "Roboto" }}>
-        Here’s an overview...
-      </Text>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <div>
+          <Title level={3} style={{ fontFamily: "Raleway" }}>
+            Hey there, 👋
+          </Title>
+          <Text type="secondary" style={{ fontFamily: "Roboto" }}>
+            Here’s an overview...
+          </Text>
+        </div>
+        <div>
+          <Title level={4} style={{ fontFamily: "Roboto" }}>
+            {format(new Date(), "EEEE, do MMMM")}
+          </Title>
+        </div>
+      </div>
 
       <Divider />
 
@@ -158,6 +187,7 @@ function Dash() {
           </Card>
         </Col>
 
+        {/* Quick actions */}
         <Col xs={24} md={8}>
           <Card title="Quick Actions" style={{ borderRadius: 12 }}>
             <div
@@ -167,12 +197,31 @@ function Dash() {
                 gridTemplateColumns: "1fr 1fr",
               }}
             >
-              <Button icon={<PlusOutlined />} type="primary">
+              <Button
+                icon={<PlusOutlined />}
+                type="primary"
+                onClick={() => navigate("/create-property")}
+              >
                 Add Property
               </Button>
-              <Button icon={<MailOutlined />}>View Messages</Button>
-              <Button icon={<UserOutlined />}>Manage Users</Button>
-              <Button icon={<SettingOutlined />}>Settings</Button>
+              <Button
+                icon={<MailOutlined />}
+                onClick={() => navigate("/emails")}
+              >
+                View Messages
+              </Button>
+              {/* <Button
+                icon={<UserOutlined />}
+                onClick={() => navigate("/create-property")}
+              >
+                Manage Users
+              </Button>
+              <Button
+                icon={<SettingOutlined />}
+                onClick={() => navigate("/create-property")}
+              >
+                Settings
+              </Button> */}
             </div>
           </Card>
         </Col>

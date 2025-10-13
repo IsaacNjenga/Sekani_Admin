@@ -11,6 +11,7 @@ import { deleteAvatar, updateAvatar } from "../controllers/userController.js";
 import {
   createProperty,
   deleteProperty,
+  fetchAvailableProperties,
   fetchProperties,
   fetchProperty,
   updateProperty,
@@ -47,6 +48,11 @@ router.put("/delete-avatar", deleteAvatar);
 router.post("/create-property", protectRoute, createProperty);
 router.get("/fetch-property", protectRoute, fetchProperty);
 router.get("/fetch-all-properties", protectRoute, fetchProperties);
+router.get(
+  "/fetch-available-properties",
+  protectRoute,
+  fetchAvailableProperties
+);
 router.put("/update-property", protectRoute, updateProperty);
 router.delete("/delete-property", protectRoute, deleteProperty);
 

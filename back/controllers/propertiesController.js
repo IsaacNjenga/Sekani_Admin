@@ -31,7 +31,6 @@ const fetchProperties = async (req, res) => {
   const limit = req.query.limit || 8;
   const skip = (page - 1) * limit;
 
-
   try {
     const properties = await PropertiesModel.find({})
       .sort({ createdAt: -1 })
@@ -50,6 +49,20 @@ const fetchProperties = async (req, res) => {
   } catch (error) {
     console.error("Error in fetching properties:", error);
     res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+const fetchAvailableProperties = async (req, res) => {
+  try {
+    const availableProperty = await PropertiesModel.find({
+      status: "Available",
+    });
+    res.status(200).json({ success: true, availableProperty });
+  } catch (error) {
+    console.log("Error in fetching available properties", error);
+    return res
+      .status(500)
+      .json({ success: false, message: "Internal server error" });
   }
 };
 
@@ -90,5 +103,6 @@ export {
   fetchProperty,
   fetchProperties,
   updateProperty,
+  fetchAvailableProperties,
   deleteProperty,
 };
