@@ -18,7 +18,7 @@ import Swal from "sweetalert2";
 const { Title, Text, Paragraph } = Typography;
 
 function ViewMessage({ setOpenModal, openModal, loading, content }) {
-  const { token } = useAuth();
+  const { token, user } = useAuth();
   const [form] = Form.useForm();
   const [sendLoading, setSendLoading] = useState(false);
 
@@ -26,20 +26,31 @@ function ViewMessage({ setOpenModal, openModal, loading, content }) {
     setSendLoading(true);
     try {
       const values = await form.validateFields();
-      const allValues = {
+      const mailValues = {
         to: content.email_address,
         message: values.reply,
         name: content.full_name,
       };
-      //console.log(allValues);
-      const res = await axios.post("reply-to-email", allValues, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
 
-      if (res.data.success) {
+      const replyValues = {
+        original_message: content._id,
+        message: values.reply,
+        createdBy: user._id,
+      };
+
+      //console.log(allValues);
+      const [res, res2] = await Promise.all([
+        axios.post("reply-to-email", mailValues, {
+          headers: { Authorization: `Bearer ${token}` },
+        }),
+        axios.post("reply-to-db", replyValues, {
+          headers: { Authorization: `Bearer ${token}` },
+        }),
+      ]);
+      if (res.data.success && res2.data.success) {
         Swal.fire({
           icon: "success",
-          title: "Reply Sent Successfully!",
+          title: "Reply sent",
         });
       }
     } catch (error) {

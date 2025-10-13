@@ -151,7 +151,7 @@ function Navbar() {
                           margin: 0,
                         }}
                       >
-                        Hi, {user?.username}
+                        {user?.username}
                       </Text>
                     </Divider>
                   )}

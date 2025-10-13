@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 
 const repliesSchema = new mongoose.Schema(
   {
-    reply_message: { type: String, required: true },
+    message: { type: String, required: true },
     original_message: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "mail",

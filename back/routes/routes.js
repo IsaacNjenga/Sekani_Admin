@@ -58,6 +58,7 @@ router.put("/mail-update", protectRoute, emailUpdate);
 
 //reply routes
 router.post("/reply-to-email", protectRoute, replyToEmail);
+router.post("/reply-to-db", protectRoute, createReply);
 router.get("/fetch-replies", fetchReplies);
 router.get("/fetch-reply", fetchReply);
 

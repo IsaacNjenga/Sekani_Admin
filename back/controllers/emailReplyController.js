@@ -48,7 +48,7 @@ const replyToEmail = async (req, res) => {
         </p>
         <p style="margin-top: 30px; font-size: 14px; color: #555; text-align: left;">
           Best regards,<br/>
-          <strong>Sekani Properties Team</strong><br/>
+          <strong>Sekani Properties Team.</strong><br/><br/>
           <a href="https://sekani-properties.vercel.app" 
              style="color: #1d4ed8; text-decoration: none;">
             Visit our website

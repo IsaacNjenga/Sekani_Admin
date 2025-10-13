@@ -16,8 +16,6 @@ import ViewMessage from "../components/ViewMessage";
 import {
   CarryOutFilled,
   CarryOutOutlined,
-  CheckSquareFilled,
-  CheckSquareOutlined,
   ClockCircleFilled,
   ClockCircleOutlined,
   MailOutlined,
@@ -241,6 +239,19 @@ function Emails() {
     }
   };
 
+  const getFilteredLength = (tabKey) => {
+    switch (tabKey) {
+      case 1:
+        return unreadMessages;
+      case 2:
+        return readMessages;
+      case 3:
+        return starredMessages;
+      default:
+        return emailData;
+    }
+  };
+
   const handleSearch = (e) => {
     const value = e.target.value.toLowerCase().trim();
     setSearchValue(value);
@@ -300,7 +311,9 @@ function Emails() {
               }}
             >
               {selectedTab === btn.key ? <btn.icon /> : <btn.icon2 />}
-              <span>{btn.label}</span>
+              <span>
+                {btn.label} [{getFilteredLength(btn.key)?.length || 0}]
+              </span>
             </Tag>
           ))}
         </div>
