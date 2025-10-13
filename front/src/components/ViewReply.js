@@ -1,14 +1,4 @@
-import {
-  Modal,
-  Card,
-  Col,
-  Divider,
-  Form,
-  Input,
-  Row,
-  Typography,
-  Button,
-} from "antd";
+import { Modal, Card, Col, Divider, Row, Typography } from "antd";
 import React from "react";
 import { formatDistanceToNowStrict } from "date-fns";
 import { useAuth } from "../contexts/AuthContext";
@@ -16,6 +6,7 @@ import { useAuth } from "../contexts/AuthContext";
 const { Title, Text, Paragraph } = Typography;
 function ViewReply({ setOpenModal, openModal, loading, content }) {
   const { user } = useAuth();
+  
   return (
     <Modal
       open={openModal}

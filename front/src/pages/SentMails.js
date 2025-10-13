@@ -1,4 +1,4 @@
-import { Avatar, Button, Divider, Spin, Table, Typography } from "antd";
+import { Button, Divider, Spin, Table, Typography } from "antd";
 import React, { useState } from "react";
 import useFetchAllReplies from "../hooks/fetchAllReplies";
 import { format } from "date-fns";
