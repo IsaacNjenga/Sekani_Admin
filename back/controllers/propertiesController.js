@@ -1,9 +1,20 @@
 import PropertiesModel from "../models/Properties.js";
+import { logActivity } from "../utils/logActivity.js";
 
 const createProperty = async (req, res) => {
   try {
     //TODO: tie image to cloudinary
     const newProperty = new PropertiesModel(req.body);
+
+    //logging the activity
+    await logActivity(
+      "property",
+      newProperty._id,
+      "created",
+      `New ${newProperty.propertyType} listed at ${newProperty.city}, ${newProperty.county}, ${newProperty.zip}`,
+      `${newProperty.bedrooms} bedrooms, ${newProperty.bathrooms} bathrooms at ${newProperty.price}`
+    );
+
     await newProperty.save();
     res.status(201).json({ success: true, property: newProperty });
   } catch (error) {
@@ -77,6 +88,15 @@ const updateProperty = async (req, res) => {
     if (!updatedProperty) {
       return res.status(404).json({ message: "Property not found" });
     }
+
+    await logActivity(
+      "property",
+      updatedProperty._id,
+      "updated",
+      `${updatedProperty.propertyType} was updated`,
+      `Priced at ${updatedProperty.price}`
+    );
+
     res.status(200).json({ success: true, property: updatedProperty });
   } catch (error) {
     console.error("Error in updating property:", error);
@@ -91,6 +111,14 @@ const deleteProperty = async (req, res) => {
     if (!deletedProperty) {
       return res.status(404).json({ message: "Property not found" });
     }
+
+    await logActivity(
+      "property",
+      deletedProperty._id,
+      "deleted",
+      `${deletedProperty.propertyType} was deleted`
+    );
+
     res.status(200).json({ success: true, message: "Deleted Successfully" });
   } catch (error) {
     console.error("Error in deleting property:", error);

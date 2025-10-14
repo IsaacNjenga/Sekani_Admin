@@ -12,5 +12,39 @@ const mailSchema = new mongoose.Schema(
   { collection: "mail", timestamps: true }
 );
 
+// Log creation
+// mailSchema.post("save", async function (doc) {
+//   await Activity.create({
+//     type: "mail",
+//     refId: doc._id,
+//     action: "created",
+//     title: `New mail from ${doc.full_name}`,
+//   });
+// });
+
+// Log update
+// mailSchema.post("findOneAndUpdate", async function (doc) {
+//   if (doc) {
+//     await Activity.create({
+//       type: "mail",
+//       refId: doc._id,
+//       action: "updated",
+//       title: `${doc.full_name}'s mail was updated`,
+//     });
+//   }
+// });
+
+// Log delete
+// mailSchema.post("findOneAndDelete", async function (doc) {
+//   if (doc) {
+//     await Activity.create({
+//       type: "mail",
+//       refId: doc._id,
+//       action: "deleted",
+//       title: `${doc.full_name}'s mail was deleted`,
+//     });
+//   }
+// });
+
 const MailsModel = mongoose.model("mail", mailSchema);
 export default MailsModel;

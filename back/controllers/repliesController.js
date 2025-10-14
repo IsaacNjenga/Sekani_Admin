@@ -1,8 +1,18 @@
 import RepliesModel from "../models/Replies.js";
+import { logActivity } from "../utils/logActivity.js";
 
 const createReply = async (req, res) => {
   try {
     const newReply = new RepliesModel(req.body);
+
+    //logging the activity
+    await logActivity(
+      "reply",
+      newReply._id,
+      "created",
+      `New reply to message: ${newReply.original_message}`
+    );
+
     await newReply.save();
     res.status(201).json({ success: true, reply: newReply });
   } catch (error) {

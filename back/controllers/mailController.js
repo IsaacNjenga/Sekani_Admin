@@ -1,8 +1,19 @@
 import MailsModel from "../models/Mails.js";
+import { logActivity } from "../utils/logActivity.js";
 
 const createMail = async (req, res) => {
   try {
     const newMail = new MailsModel(req.body);
+    
+    //logging the activity
+    await logActivity(
+      "mail",
+      newMail._id,
+      "created",
+      `New mail from ${newMail.full_name}`,
+      `${newMail.email_address} sent a message`
+    );
+
     await newMail.save();
     return res.status(201).json({ success: true, mail: newMail });
   } catch (error) {

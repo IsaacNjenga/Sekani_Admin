@@ -19,10 +19,11 @@ import {
   PlusOutlined,
 } from "@ant-design/icons";
 import { format } from "date-fns";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import useFetchAvailableProperties from "../hooks/fetchAvailableProperty";
 import useFetchAllEmails from "../hooks/fetchAllEmails";
 import useFetchAllReplies from "../hooks/fetchAllReplies";
+import useFetchActivity from "../hooks/fetchActivity";
 
 const { Title, Text } = Typography;
 
@@ -32,6 +33,10 @@ function Dash() {
   const { properties, propertiesLoading } = useFetchAvailableProperties();
   const { emails, emailsLoading } = useFetchAllEmails();
   const { replies, repliesLoading } = useFetchAllReplies();
+  const { activities, activitiesLoading, activitiesRefresh } =
+    useFetchActivity();
+
+  console.log(activities);
 
   const unreadMessages = emails?.filter((email) => email.read === false);
   const starredMessages = emails?.filter((email) => email.starred === true);
@@ -81,7 +86,7 @@ function Dash() {
     },
   ];
 
-  const activities = [
+  const activitiess = [
     "New message from John Doe (5 mins ago)",
     "Property 'Modern Villa' updated (1 hour ago)",
     "Email reply sent to Ayanna Freeman (2 hours ago)",
@@ -120,7 +125,6 @@ function Dash() {
         {stats.map((item, i) => (
           <Col xs={24} sm={12} md={6} key={i}>
             <Card
-              bordered={false}
               style={{
                 background: "#fff",
                 borderRadius: 12,
@@ -168,7 +172,7 @@ function Dash() {
         <Col xs={24} md={16}>
           <Card
             title="Recent Messages"
-            extra={<a href="#">View All</a>}
+            extra={<Link to="/emails">View All</Link>}
             style={{ borderRadius: 12 }}
           >
             <List
@@ -239,7 +243,7 @@ function Dash() {
         style={{ borderRadius: 12 }}
       >
         <Timeline
-          items={activities.map((a) => ({ children: a }))}
+          items={activitiess.map((a) => ({ children: a }))}
           size="large"
         />
       </Card>
