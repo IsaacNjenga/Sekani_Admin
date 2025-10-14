@@ -6,6 +6,7 @@ export const logActivity = async (
   action,
   title,
   description = "",
+  refModel,
   res
 ) => {
   try {
@@ -15,6 +16,7 @@ export const logActivity = async (
       action,
       title,
       description,
+      refModel,
     });
   } catch (error) {
     console.error("Error logging activity", error);

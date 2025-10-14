@@ -4,14 +4,15 @@ import { logActivity } from "../utils/logActivity.js";
 const createMail = async (req, res) => {
   try {
     const newMail = new MailsModel(req.body);
-    
+
     //logging the activity
     await logActivity(
       "mail",
       newMail._id,
       "created",
       `New mail from ${newMail.full_name}`,
-      `${newMail.email_address} sent a message`
+      `${newMail.email_address} sent a message`,
+      "mail"
     );
 
     await newMail.save();

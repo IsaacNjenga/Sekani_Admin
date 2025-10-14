@@ -4,19 +4,25 @@ const activitySchema = new mongoose.Schema(
   {
     type: {
       type: String,
-      required: true, // e.g. "message", "donation", "volunteer"
+      required: true,
     },
     refId: {
       type: mongoose.Schema.Types.ObjectId,
       required: true,
+      refPath: "refModel",
     },
     action: {
       type: String,
       enum: ["created", "updated", "deleted"],
       required: true,
     },
-    title: String, // e.g. "New message from John Doe"
-    description: String, // optional longer text
+    title: String,
+    description: String,
+    refModel: {
+      type: String,
+      required: true,
+      enum: ["mail", "user", "properties", "replies"],
+    },
   },
   { collection: "activity", timestamps: true }
 );

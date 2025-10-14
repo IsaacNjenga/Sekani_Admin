@@ -4,7 +4,8 @@ const fetchActivities = async (req, res) => {
   try {
     const activities = await ActivityModel.find({})
       .sort({ createdAt: -1 })
-      .limit(10);
+      .limit(10)
+      .populate("refId");
     return res.status(200).json({ success: true, activities });
   } catch (error) {
     console.error("Error in fetching activities:", error);

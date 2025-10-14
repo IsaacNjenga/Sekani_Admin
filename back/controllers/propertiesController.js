@@ -3,7 +3,6 @@ import { logActivity } from "../utils/logActivity.js";
 
 const createProperty = async (req, res) => {
   try {
-    //TODO: tie image to cloudinary
     const newProperty = new PropertiesModel(req.body);
 
     //logging the activity
@@ -12,7 +11,8 @@ const createProperty = async (req, res) => {
       newProperty._id,
       "created",
       `New ${newProperty.propertyType} listed at ${newProperty.city}, ${newProperty.county}, ${newProperty.zip}`,
-      `${newProperty.bedrooms} bedrooms, ${newProperty.bathrooms} bathrooms at ${newProperty.price}`
+      `${newProperty.bedrooms} bedrooms, ${newProperty.bathrooms} bathrooms at ${newProperty.price}`,
+      "properties"
     );
 
     await newProperty.save();
@@ -94,7 +94,9 @@ const updateProperty = async (req, res) => {
       updatedProperty._id,
       "updated",
       `${updatedProperty.propertyType} was updated`,
-      `Priced at ${updatedProperty.price}`
+      `Priced at ${updatedProperty.price}`,
+      "",
+      "properties"
     );
 
     res.status(200).json({ success: true, property: updatedProperty });
@@ -116,7 +118,9 @@ const deleteProperty = async (req, res) => {
       "property",
       deletedProperty._id,
       "deleted",
-      `${deletedProperty.propertyType} was deleted`
+      `${deletedProperty.propertyType} was deleted`,
+      "",
+      "properties"
     );
 
     res.status(200).json({ success: true, message: "Deleted Successfully" });

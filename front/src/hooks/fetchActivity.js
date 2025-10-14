@@ -6,7 +6,6 @@ function useFetchActivity() {
   const { token } = useAuth();
   const [activities, setActivities] = useState([]);
   const [activitiesLoading, setActivitiesLoading] = useState(false);
-  const [refreshKey, setRefreshKey] = useState(0);
 
   const fetchActivities = async () => {
     setActivitiesLoading(true);
@@ -24,14 +23,49 @@ function useFetchActivity() {
     }
   };
 
+  //fetch every 30 seconds
+  //   useEffect(() => {
+  //     fetchActivities();
+
+  //     const interval = setInterval(fetchActivities, 30000); // 30 seconds
+  //     return () => clearInterval(interval);
+  //   }, [token]);
+
+  //fetch while user looks at dashboard. - more efficient
   useEffect(() => {
+    let interval;
+
+    const startPolling = () => {
+      interval = setInterval(fetchActivities, 30000);
+    };
+
+    const stopPolling = () => {
+      clearInterval(interval);
+    };
+
+    //start immediately
     fetchActivities();
-  }, [refreshKey]);
+    startPolling();
+
+    //pause when tab is not visible
+    document.addEventListener("visibilitychange", () => {
+      if (document.hidden) stopPolling();
+      else {
+        fetchActivities();
+        startPolling();
+      }
+    });
+
+    return () => {
+      stopPolling();
+      document.removeEventListener("visibilitychange", () => {});
+    };
+  }, [token]);
 
   return {
     activities,
     activitiesLoading,
-    activitiesRefresh: () => setRefreshKey((prev) => prev + 1),
+    activitiesRefresh: fetchActivities,
   };
 }
 

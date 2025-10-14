@@ -10,7 +10,9 @@ const createReply = async (req, res) => {
       "reply",
       newReply._id,
       "created",
-      `New reply to message: ${newReply.original_message}`
+      `New reply to message: ${newReply.original_message}`,
+      "",
+      "replies"
     );
 
     await newReply.save();

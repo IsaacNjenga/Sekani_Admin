@@ -18,7 +18,7 @@ import {
   BarChartOutlined,
   PlusOutlined,
 } from "@ant-design/icons";
-import { format } from "date-fns";
+import { format, formatDistanceToNow } from "date-fns";
 import { Link, useNavigate } from "react-router-dom";
 import useFetchAvailableProperties from "../hooks/fetchAvailableProperty";
 import useFetchAllEmails from "../hooks/fetchAllEmails";
@@ -177,14 +177,18 @@ function Dash() {
           >
             <List
               itemLayout="horizontal"
-              dataSource={recentMessages}
+              dataSource={activities.filter(
+                (activity) => activity.type === "mail"
+              )}
               renderItem={(item) => (
                 <List.Item>
                   <List.Item.Meta
-                    title={<Text strong>{item.name}</Text>}
-                    description={item.message}
+                    title={<Text strong>{item.title}</Text>}
+                    description={item.description}
                   />
-                  <Text type="secondary">{item.time}</Text>
+                  <Text type="secondary">
+                    {formatDistanceToNow(new Date(item.createdAt))} ago
+                  </Text>
                 </List.Item>
               )}
             />
