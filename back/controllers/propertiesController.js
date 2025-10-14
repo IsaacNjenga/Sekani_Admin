@@ -10,7 +10,7 @@ const createProperty = async (req, res) => {
       "property",
       newProperty._id,
       "created",
-      `New ${newProperty.propertyType} listed at ${newProperty.city}, ${newProperty.county}, ${newProperty.zip}`,
+      `New ${newProperty.propertyType} listed at ${newProperty.city}, ${newProperty.county}`,
       `${newProperty.bedrooms} bedrooms, ${newProperty.bathrooms} bathrooms at ${newProperty.price}`,
       "properties"
     );
@@ -93,7 +93,7 @@ const updateProperty = async (req, res) => {
       "property",
       updatedProperty._id,
       "updated",
-      `${updatedProperty.propertyType} was updated`,
+      `A property was updated: ${updatedProperty.propertyType} at ${updatedProperty.city}, ${updatedProperty.county}`,
       `Priced at ${updatedProperty.price}`,
       "",
       "properties"
@@ -118,7 +118,7 @@ const deleteProperty = async (req, res) => {
       "property",
       deletedProperty._id,
       "deleted",
-      `${deletedProperty.propertyType} was deleted`,
+      `A property was deleted: ${deletedProperty.propertyType} at ${deletedProperty.city}, ${deletedProperty.county}`,
       "",
       "properties"
     );

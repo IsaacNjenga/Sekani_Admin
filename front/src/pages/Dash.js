@@ -33,10 +33,7 @@ function Dash() {
   const { properties, propertiesLoading } = useFetchAvailableProperties();
   const { emails, emailsLoading } = useFetchAllEmails();
   const { replies, repliesLoading } = useFetchAllReplies();
-  const { activities, activitiesLoading, activitiesRefresh } =
-    useFetchActivity();
-
-  console.log(activities);
+  const { activities, activitiesLoading } = useFetchActivity();
 
   const unreadMessages = emails?.filter((email) => email.read === false);
   const starredMessages = emails?.filter((email) => email.starred === true);
@@ -68,30 +65,7 @@ function Dash() {
     },
   ];
 
-  const recentMessages = [
-    {
-      name: "John Doe",
-      message: "Is the apartment still available?",
-      time: "5 mins ago",
-    },
-    {
-      name: "Ayanna Freeman",
-      message: "Can I schedule a visit?",
-      time: "30 mins ago",
-    },
-    {
-      name: "Michael Kim",
-      message: "Price negotiation details",
-      time: "1 hour ago",
-    },
-  ];
-
-  const activitiess = [
-    "New message from John Doe (5 mins ago)",
-    "Property 'Modern Villa' updated (1 hour ago)",
-    "Email reply sent to Ayanna Freeman (2 hours ago)",
-    "Starred message from Sarah Johnson (Yesterday)",
-  ];
+  const activitiesDescriptions = activities.map((activity) => activity.title);
 
   return (
     <div style={{ padding: 0 }}>
@@ -175,23 +149,36 @@ function Dash() {
             extra={<Link to="/emails">View All</Link>}
             style={{ borderRadius: 12 }}
           >
-            <List
-              itemLayout="horizontal"
-              dataSource={activities.filter(
-                (activity) => activity.type === "mail"
-              )}
-              renderItem={(item) => (
-                <List.Item>
-                  <List.Item.Meta
-                    title={<Text strong>{item.title}</Text>}
-                    description={item.description}
-                  />
-                  <Text type="secondary">
-                    {formatDistanceToNow(new Date(item.createdAt))} ago
-                  </Text>
-                </List.Item>
-              )}
-            />
+            {activitiesLoading ? (
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                <Spin size="large" />
+              </div>
+            ) : (
+              <List
+                itemLayout="horizontal"
+                dataSource={activities.filter(
+                  (activity) =>
+                    activity.type === "mail" 
+                )}
+                renderItem={(item) => (
+                  <List.Item>
+                    <List.Item.Meta
+                      title={<Text strong>{item.title}</Text>}
+                      description={item.description}
+                    />
+                    <Text type="secondary">
+                      {formatDistanceToNow(new Date(item.createdAt))} ago
+                    </Text>
+                  </List.Item>
+                )}
+              />
+            )}
           </Card>
         </Col>
 
@@ -246,10 +233,22 @@ function Dash() {
         }
         style={{ borderRadius: 12 }}
       >
-        <Timeline
-          items={activitiess.map((a) => ({ children: a }))}
-          size="large"
-        />
+        {activitiesLoading ? (
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <Spin size="large" />
+          </div>
+        ) : (
+          <Timeline
+            items={activitiesDescriptions.map((a) => ({ children: a }))}
+            size="large"
+          />
+        )}
       </Card>
     </div>
   );

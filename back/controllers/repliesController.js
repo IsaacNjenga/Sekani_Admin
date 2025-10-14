@@ -5,12 +5,13 @@ const createReply = async (req, res) => {
   try {
     const newReply = new RepliesModel(req.body);
 
+    await newReply.populate("original_message", "full_name");
     //logging the activity
     await logActivity(
       "reply",
       newReply._id,
       "created",
-      `New reply to message: ${newReply.original_message}`,
+      `New reply to an email from ${newReply.original_message.full_name}`,
       "",
       "replies"
     );
