@@ -56,7 +56,7 @@ const miniBtns = [
 
 function Emails() {
   const { token } = useAuth();
-  const { emails, emailsRefresh } = useFetchAllEmails();
+  const { emails, emailsLoading, emailsRefresh } = useFetchAllEmails();
   const emailData = useMemo(() => (emails ? emails : []), [emails]);
   const [openModal, setOpenModal] = useState(false);
   const [content, setContent] = useState(null);
@@ -334,6 +334,7 @@ function Emails() {
           pagination={{ pageSize: 10 }}
           showHeader
           size="small"
+          loading={emailsLoading}
           style={{ fontFamily: "Raleway" }}
         />
       </div>
