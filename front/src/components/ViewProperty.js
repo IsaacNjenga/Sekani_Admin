@@ -8,6 +8,7 @@ import {
   Tag,
   Divider,
   Space,
+  Card,
 } from "antd";
 import {
   HomeOutlined,
@@ -26,12 +27,13 @@ function ViewProperty({ openModal, setOpenModal, loading, content }) {
       open={openModal}
       onCancel={() => setOpenModal(false)}
       confirmLoading={loading}
-      width={"90vw"}
+      width={"85vw"}
       style={{
         width: "auto",
         marginTop: 0,
         marginBottom: 0,
         top: 20,
+        padding: 20,
       }}
     >
       <Row gutter={[24, 24]}>
@@ -44,15 +46,23 @@ function ViewProperty({ openModal, setOpenModal, loading, content }) {
             background: "linear-gradient(to right, #8f820b60, #def7e4)",
           }}
         >
-          <Carousel autoplay autoplaySpeed={4500} dots arrows>
-            {(Array.isArray(content?.img) ? content?.img : [content?.img]).map(
-              (img, i) => (
+          <Card
+            style={{
+              background: "transparent",
+              borderColor: "#8d3c3c00",
+              margin: 0,
+              padding: 0,
+              borderRadius: 0,
+            }}
+          >
+            <Carousel autoplay autoplaySpeed={4500} dots arrows>
+              {(Array.isArray(content?.img)
+                ? content?.img
+                : [content?.img]
+              ).map((img, i) => (
                 <div
                   key={i}
                   style={{
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
                     backgroundColor: "#8f810b",
                   }}
                 >
@@ -62,18 +72,18 @@ function ViewProperty({ openModal, setOpenModal, loading, content }) {
                     height={500}
                     width={500}
                     style={{
-                      maxWidth: "100%",
+                      width: "100%",
                       maxHeight: "100%",
-                      objectFit: "contain",
-                      borderRadius: 18,
+                      objectFit: "cover",
+                      borderRadius: 0,
                       display: "block",
-                      margin: "0 auto",
+                      margin: "10px auto",
                     }}
                   />
                 </div>
-              )
-            )}
-          </Carousel>
+              ))}
+            </Carousel>
+          </Card>
         </Col>
 
         {/* Right Column - Details */}
