@@ -26,13 +26,24 @@ function ViewProperty({ openModal, setOpenModal, loading, content }) {
       open={openModal}
       onCancel={() => setOpenModal(false)}
       confirmLoading={loading}
-      width={"90%"}
-      bodyStyle={{ padding: 24, backgroundColor: "whitesmoke" }}
-      style={{ top: 8 }}
+      width={"90vw"}
+      style={{
+        width: "auto",
+        marginTop: 0,
+        marginBottom: 0,
+        top: 20,
+      }}
     >
       <Row gutter={[24, 24]}>
         {/* Left Column - Images */}
-        <Col xs={24} md={12}>
+        <Col
+          xs={24}
+          sm={24}
+          md={12}
+          style={{
+            background: "linear-gradient(to right, #8f820b60, #def7e4)",
+          }}
+        >
           <Carousel autoplay autoplaySpeed={4500} dots arrows>
             {(Array.isArray(content?.img) ? content?.img : [content?.img]).map(
               (img, i) => (
@@ -42,13 +53,14 @@ function ViewProperty({ openModal, setOpenModal, loading, content }) {
                     display: "flex",
                     justifyContent: "center",
                     alignItems: "center",
-                    height: 300,
-                    background: "#f9f9f9", // optional: to help the image stand out
+                    backgroundColor: "#8f810b",
                   }}
                 >
                   <Image
                     src={img}
-                    alt={content?.name}
+                    alt="img"
+                    height={500}
+                    width={500}
                     style={{
                       maxWidth: "100%",
                       maxHeight: "100%",
@@ -65,7 +77,15 @@ function ViewProperty({ openModal, setOpenModal, loading, content }) {
         </Col>
 
         {/* Right Column - Details */}
-        <Col xs={24} md={12}>
+        <Col
+          xs={24}
+          sm={24}
+          md={12}
+          style={{
+            background: "linear-gradient(to left, #8f820b42, #def7e425)",
+            padding: 10,
+          }}
+        >
           <Title
             level={2}
             style={{ marginBottom: 0, fontFamily: "Alegreya Sans" }}
