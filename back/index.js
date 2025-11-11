@@ -7,6 +7,7 @@ import "./config/db.js";
 dotenv.config();
 
 const app = express();
+
 const corsOptions = {
   origin: [
     "http://localhost:3000",

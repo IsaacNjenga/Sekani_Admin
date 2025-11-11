@@ -224,6 +224,7 @@ function Emails() {
 
   useEffect(() => {
     emailsRefresh();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedTab]);
 
   const getFilteredData = () => {

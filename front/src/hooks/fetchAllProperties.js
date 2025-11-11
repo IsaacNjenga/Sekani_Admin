@@ -1,10 +1,8 @@
 import { useEffect, useState } from "react";
-import { useAuth } from "../contexts/AuthContext";
 import axios from "axios";
 import Swal from "sweetalert2";
 
 function useFetchAllProperties() {
-  const { token } = useAuth();
   const [properties, setProperties] = useState([]);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
@@ -19,10 +17,7 @@ function useFetchAllProperties() {
       if (refresh) setRefreshing(true);
 
       const res = await axios.get(
-        `/fetch-all-properties?page=${pageNum}&limit=8`,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
+        `/fetch-all-properties?page=${pageNum}&limit=8`
       );
 
       if (res.data.success) {
@@ -64,6 +59,7 @@ function useFetchAllProperties() {
 
   useEffect(() => {
     fetchProperties();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [refreshKey]);
 
   const handleLoadMore = async () => {

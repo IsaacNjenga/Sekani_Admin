@@ -32,47 +32,34 @@ function ViewProperty({ openModal, setOpenModal, loading, content }) {
     >
       <Row gutter={[24, 24]}>
         {/* Left Column - Images */}
-        <Col
-          xs={24}
-          md={12}
-          style={{
-            alignItems: "center",
-          }}
-        >
-          <Carousel
-            autoplay={{ dotDuration: true }}
-            autoplaySpeed={3000}
-            arrows
-          >
-            {Array.isArray(content?.img) && content?.img.length > 0 ? (
-              content.img.map((img, index) => (
-                <Image
-                  key={index}
-                  src={img}
-                  alt={content?.listingId}
-                  height={500}
-                  width={500}
+        <Col xs={24} md={12}>
+          <Carousel autoplay autoplaySpeed={4500} dots arrows>
+            {(Array.isArray(content?.img) ? content?.img : [content?.img]).map(
+              (img, i) => (
+                <div
+                  key={i}
                   style={{
-                    width: "100%",
-                    height: "100%",
-                    objectFit: "cover",
-                    borderRadius: 18,
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    height: 300,
+                    background: "#f9f9f9", // optional: to help the image stand out
                   }}
-                />
-              ))
-            ) : (
-              <Image
-                src={content?.img}
-                alt={content?.listingId}
-                height={500}
-                width={500}
-                style={{
-                  width: "100%",
-                  height: "100%",
-                  objectFit: "cover",
-                  borderRadius: 18,
-                }}
-              />
+                >
+                  <Image
+                    src={img}
+                    alt={content?.name}
+                    style={{
+                      maxWidth: "100%",
+                      maxHeight: "100%",
+                      objectFit: "contain",
+                      borderRadius: 18,
+                      display: "block",
+                      margin: "0 auto",
+                    }}
+                  />
+                </div>
+              )
             )}
           </Carousel>
         </Col>

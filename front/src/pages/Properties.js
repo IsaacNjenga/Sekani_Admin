@@ -106,10 +106,11 @@ function Properties() {
                                 alt={c.key}
                                 style={{
                                   width: "100%",
-                                  height: "100%",
+                                  height: 300,
                                   objectFit: "cover",
-                                  borderRadius: 12,
                                   display: "block",
+                                  borderTopLeftRadius: 12,
+                                  borderTopRightRadius: 12,
                                 }}
                               />
                             </div>
