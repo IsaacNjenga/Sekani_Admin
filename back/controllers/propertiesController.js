@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import PropertiesModel from "../models/Properties.js";
 import { logActivity } from "../utils/logActivity.js";
 
@@ -26,7 +27,19 @@ const createProperty = async (req, res) => {
 const fetchProperty = async (req, res) => {
   const { id } = req.query;
   try {
-    const property = await PropertiesModel.findById(id);
+    const property = await PropertiesModel.aggregate([
+      { $match: { _id: new mongoose.Types.ObjectId(req.params.id) } },
+
+      {
+        $lookup: {
+          from: "reviews",
+          localField: "_id",
+          foreignField: "propertyId",
+          as: "reviews",
+        },
+      },
+    ]);
+
     if (!property) {
       return res.status(404).json({ message: "Property not found" });
     }
@@ -38,15 +51,33 @@ const fetchProperty = async (req, res) => {
 };
 
 const fetchProperties = async (req, res) => {
-  const page = req.query.page || 1;
-  const limit = req.query.limit || 8;
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 12;
   const skip = (page - 1) * limit;
 
   try {
-    const properties = await PropertiesModel.find({})
-      .sort({ createdAt: -1 })
-      .skip(skip)
-      .limit(limit);
+    const properties = await PropertiesModel.aggregate([
+      { $sort: { createdAt: -1 } },
+      { $skip: skip },
+      { $limit: limit },
+
+      //join reviews
+      {
+        $lookup: {
+          from: "reviews",
+          localField: "_id",
+          foreignField: "propertyId",
+          as: "reviews",
+        },
+      },
+
+      // OPTIONAL: sort reviews newest first
+      {
+        $addFields: {
+          reviews: { $reverseArray: "$reviews" },
+        },
+      },
+    ]);
 
     const totalProperties = await PropertiesModel.countDocuments();
 
@@ -65,9 +96,19 @@ const fetchProperties = async (req, res) => {
 
 const fetchAvailableProperties = async (req, res) => {
   try {
-    const availableProperty = await PropertiesModel.find({
-      status: "Available",
-    });
+    const availableProperty = await PropertiesModel.aggregate([
+      { $match: { status: "Available" } },
+
+      {
+        $lookup: {
+          from: "reviews",
+          localField: "_id",
+          foreignField: "propertyId",
+          as: "reviews",
+        },
+      },
+    ]);
+
     res.status(200).json({ success: true, availableProperty });
   } catch (error) {
     console.log("Error in fetching available properties", error);
@@ -94,7 +135,7 @@ const updateProperty = async (req, res) => {
       updatedProperty._id,
       "updated",
       `A property was updated: ${updatedProperty.propertyType} at ${updatedProperty.city}, ${updatedProperty.county}`,
-      `Priced at ${updatedProperty.price}`,      
+      `Priced at ${updatedProperty.price}`,
       "properties"
     );
 

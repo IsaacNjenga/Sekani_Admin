@@ -9,8 +9,7 @@ import {
   Avatar,
   Rate,
   Skeleton,
-  Select,
-  Button,
+  Select,  
   Space,
   Divider,
   Modal,
@@ -28,57 +27,57 @@ import {
 
 const { Title, Text, Paragraph } = Typography;
 
-const reviews = [
-  {
-    name: "Susan K",
-    rating: 4.5,
-    review:
-      "Great place to live with excellent amenities and friendly neighbors. The location is perfect for families.",
-    title: "Amazing Property",
-    createdAt: "2025-01-01T00:00:00.000Z",
-    updatedAt: "2025-01-01T00:00:00.000Z",
-  },
-  {
-    name: "John N",
-    rating: 4.5,
-    review:
-      "Great place to stay. Very peaceful and secure neighborhood with easy access to shopping centers.",
-    title: "Highly Recommended",
-    createdAt: "2024-12-15T00:00:00.000Z",
-    updatedAt: "2024-12-15T00:00:00.000Z",
-  },
-  {
-    name: "Jane N",
-    rating: 3.5,
-    review:
-      "Good property overall but could use some updates in the kitchen area.",
-    title: "Good but needs improvements",
-    createdAt: "2024-11-20T00:00:00.000Z",
-    updatedAt: "2024-11-20T00:00:00.000Z",
-  },
-  {
-    name: "Alex P",
-    rating: 5,
-    review:
-      "Absolutely perfect! Everything exceeded our expectations. The agent was very professional.",
-    title: "Perfect Home",
-    createdAt: "2024-10-10T00:00:00.000Z",
-    updatedAt: "2024-10-10T00:00:00.000Z",
-  },
-  {
-    name: "Clair M",
-    rating: 4,
-    review: "Very satisfied with the purchase. Great value for money.",
-    title: "Great Value",
-    createdAt: "2024-09-05T00:00:00.000Z",
-    updatedAt: "2024-09-05T00:00:00.000Z",
-  },
-];
+// const reviews = [
+//   {
+//     name: "Susan K",
+//     rating: 4.5,
+//     review:
+//       "Great place to live with excellent amenities and friendly neighbors. The location is perfect for families.",
+//     title: "Amazing Property",
+//     createdAt: "2025-01-01T00:00:00.000Z",
+//     updatedAt: "2025-01-01T00:00:00.000Z",
+//   },
+//   {
+//     name: "John N",
+//     rating: 4.5,
+//     review:
+//       "Great place to stay. Very peaceful and secure neighborhood with easy access to shopping centers.",
+//     title: "Highly Recommended",
+//     createdAt: "2024-12-15T00:00:00.000Z",
+//     updatedAt: "2024-12-15T00:00:00.000Z",
+//   },
+//   {
+//     name: "Jane N",
+//     rating: 3.5,
+//     review:
+//       "Good property overall but could use some updates in the kitchen area.",
+//     title: "Good but needs improvements",
+//     createdAt: "2024-11-20T00:00:00.000Z",
+//     updatedAt: "2024-11-20T00:00:00.000Z",
+//   },
+//   {
+//     name: "Alex P",
+//     rating: 5,
+//     review:
+//       "Absolutely perfect! Everything exceeded our expectations. The agent was very professional.",
+//     title: "Perfect Home",
+//     createdAt: "2024-10-10T00:00:00.000Z",
+//     updatedAt: "2024-10-10T00:00:00.000Z",
+//   },
+//   {
+//     name: "Clair M",
+//     rating: 4,
+//     review: "Very satisfied with the purchase. Great value for money.",
+//     title: "Great Value",
+//     createdAt: "2024-09-05T00:00:00.000Z",
+//     updatedAt: "2024-09-05T00:00:00.000Z",
+//   },
+// ];
 
 function ReviewModal({ content, setOpenModal, openModal, loading }) {
   const [selectedRating, setSelectedRating] = useState("all");
   const [sortBy, setSortBy] = useState("latest");
-  //eslint-disable-next-line
+  const reviews = content?.reviews
 
   const averageRating =
     reviews?.length > 0
@@ -89,11 +88,11 @@ function ReviewModal({ content, setOpenModal, openModal, loading }) {
 
   // Calculate rating distribution
   const ratingDistribution = {
-    5: reviews.filter((r) => r.rating === 5).length,
-    4: reviews.filter((r) => r.rating >= 4 && r.rating < 5).length,
-    3: reviews.filter((r) => r.rating >= 3 && r.rating < 4).length,
-    2: reviews.filter((r) => r.rating >= 2 && r.rating < 3).length,
-    1: reviews.filter((r) => r.rating >= 1 && r.rating < 2).length,
+    5: reviews?.filter((r) => r.rating === 5).length,
+    4: reviews?.filter((r) => r.rating >= 4 && r.rating < 5).length,
+    3: reviews?.filter((r) => r.rating >= 3 && r.rating < 4).length,
+    2: reviews?.filter((r) => r.rating >= 2 && r.rating < 3).length,
+    1: reviews?.filter((r) => r.rating >= 1 && r.rating < 2).length,
   };
 
   return (
@@ -205,7 +204,7 @@ function ReviewModal({ content, setOpenModal, openModal, loading }) {
                           fontFamily: "Raleway",
                         }}
                       >
-                        Based on {reviews.length} reviews
+                        Based on {reviews?.length} reviews
                       </Text>
                     </div>
                   </Col>
@@ -249,7 +248,7 @@ function ReviewModal({ content, setOpenModal, openModal, loading }) {
                             <div
                               style={{
                                 width: `${
-                                  (ratingDistribution[star] / reviews.length) *
+                                  (ratingDistribution[star] / reviews?.length) *
                                   100
                                 }%`,
                                 height: "100%",
@@ -360,7 +359,7 @@ function ReviewModal({ content, setOpenModal, openModal, loading }) {
                         <Skeleton active avatar paragraph={{ rows: 3 }} />
                       </Card>
                     ))
-                ) : reviews.length === 0 ? (
+                ) : reviews?.length === 0 ? (
                   <Card
                     style={{
                       borderRadius: 16,
@@ -387,7 +386,7 @@ function ReviewModal({ content, setOpenModal, openModal, loading }) {
                     </Text>
                   </Card>
                 ) : (
-                  reviews.map((review, idx) => (
+                  reviews?.map((review, idx) => (
                     <Card
                       key={idx}
                       style={{
@@ -427,7 +426,7 @@ function ReviewModal({ content, setOpenModal, openModal, loading }) {
                               fontWeight: 600,
                             }}
                           >
-                            {review.name[0]}
+                            {review?.name[0]}
                           </Avatar>
                           <div>
                             <Text
@@ -439,7 +438,7 @@ function ReviewModal({ content, setOpenModal, openModal, loading }) {
                                 color: "#1e293b",
                               }}
                             >
-                              {review.name}
+                              {review?.name}
                             </Text>
                             <Text
                               style={{
@@ -449,7 +448,7 @@ function ReviewModal({ content, setOpenModal, openModal, loading }) {
                               }}
                             >
                               {formatDistanceToNowStrict(
-                                new Date(review.createdAt)
+                                new Date(review?.createdAt)
                               )}{" "}
                               ago
                             </Text>
@@ -458,7 +457,7 @@ function ReviewModal({ content, setOpenModal, openModal, loading }) {
                         <Rate
                           disabled
                           allowHalf
-                          value={review.rating}
+                          value={review?.rating}
                           style={{ fontSize: 18 }}
                         />
                       </div>
@@ -473,7 +472,7 @@ function ReviewModal({ content, setOpenModal, openModal, loading }) {
                             color: "#334155",
                           }}
                         >
-                          {review.title}
+                          {review?.title}
                         </Title>
                         <Paragraph
                           style={{
@@ -484,7 +483,7 @@ function ReviewModal({ content, setOpenModal, openModal, loading }) {
                             marginBottom: 0,
                           }}
                         >
-                          {review.review}
+                          {review?.review}
                         </Paragraph>
                       </div>
                     </Card>
@@ -742,28 +741,7 @@ function ReviewModal({ content, setOpenModal, openModal, loading }) {
                       </div>
                     </div>
 
-                    {/* CTA Button */}
-                    <Button
-                      type="primary"
-                      size="large"
-                      block
-                      icon={<PhoneOutlined />}
-                      onClick={() =>
-                        (window.location.href = `tel:${content?.agent.phone}`)
-                      }
-                      style={{
-                        background: "linear-gradient(135deg, #bdb890, #a8a378)",
-                        border: "none",
-                        borderRadius: 12,
-                        height: 48,
-                        fontFamily: "Raleway",
-                        fontWeight: 600,
-                        fontSize: 16,
-                        boxShadow: "0 4px 16px rgba(189, 184, 144, 0.4)",
-                      }}
-                    >
-                      Contact Agent
-                    </Button>
+                 
                   </div>
                 </Card>
               </div>

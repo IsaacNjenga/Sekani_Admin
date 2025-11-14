@@ -22,15 +22,17 @@ import axios from "axios";
 import { useAuth } from "../contexts/AuthContext";
 
 const { Title, Text } = Typography;
-function PropertyCard({
-  c,
-  viewReviews,
-  viewProperty,
-  propertiesRefresh,
-  source,
-}) {
+function PropertyCard({ c, viewReviews, viewProperty, propertiesRefresh }) {
   const { token } = useAuth();
   const navigate = useNavigate();
+  const reviews = c?.reviews;
+
+  const averageRating =
+    reviews?.length > 0
+      ? (
+          reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length
+        ).toFixed(1)
+      : 0;
 
   return (
     <Card
@@ -93,7 +95,7 @@ function PropertyCard({
             </Carousel>
           </Badge.Ribbon>
 
-          {/* Delete button overlay */}
+          {/* button overlay */}
 
           <Tooltip title="Edit property">
             <Button
@@ -296,7 +298,7 @@ function PropertyCard({
                 gap: 10,
               }}
             >
-              <Rate disabled allowHalf defaultValue={4.5} />{" "}
+              <Rate disabled allowHalf value={parseFloat(averageRating)} />{" "}
               <Text
                 type="secondary"
                 style={{
@@ -305,7 +307,7 @@ function PropertyCard({
                   fontSize: 14,
                 }}
               >
-                (5)
+                ({reviews?.length})
               </Text>
             </div>
           </div>
