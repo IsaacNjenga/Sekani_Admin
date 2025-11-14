@@ -9,7 +9,7 @@ import {
   Avatar,
   Rate,
   Skeleton,
-  Select,  
+  Select,
   Space,
   Divider,
   Modal,
@@ -27,57 +27,10 @@ import {
 
 const { Title, Text, Paragraph } = Typography;
 
-// const reviews = [
-//   {
-//     name: "Susan K",
-//     rating: 4.5,
-//     review:
-//       "Great place to live with excellent amenities and friendly neighbors. The location is perfect for families.",
-//     title: "Amazing Property",
-//     createdAt: "2025-01-01T00:00:00.000Z",
-//     updatedAt: "2025-01-01T00:00:00.000Z",
-//   },
-//   {
-//     name: "John N",
-//     rating: 4.5,
-//     review:
-//       "Great place to stay. Very peaceful and secure neighborhood with easy access to shopping centers.",
-//     title: "Highly Recommended",
-//     createdAt: "2024-12-15T00:00:00.000Z",
-//     updatedAt: "2024-12-15T00:00:00.000Z",
-//   },
-//   {
-//     name: "Jane N",
-//     rating: 3.5,
-//     review:
-//       "Good property overall but could use some updates in the kitchen area.",
-//     title: "Good but needs improvements",
-//     createdAt: "2024-11-20T00:00:00.000Z",
-//     updatedAt: "2024-11-20T00:00:00.000Z",
-//   },
-//   {
-//     name: "Alex P",
-//     rating: 5,
-//     review:
-//       "Absolutely perfect! Everything exceeded our expectations. The agent was very professional.",
-//     title: "Perfect Home",
-//     createdAt: "2024-10-10T00:00:00.000Z",
-//     updatedAt: "2024-10-10T00:00:00.000Z",
-//   },
-//   {
-//     name: "Clair M",
-//     rating: 4,
-//     review: "Very satisfied with the purchase. Great value for money.",
-//     title: "Great Value",
-//     createdAt: "2024-09-05T00:00:00.000Z",
-//     updatedAt: "2024-09-05T00:00:00.000Z",
-//   },
-// ];
-
 function ReviewModal({ content, setOpenModal, openModal, loading }) {
   const [selectedRating, setSelectedRating] = useState("all");
   const [sortBy, setSortBy] = useState("latest");
-  const reviews = content?.reviews
+  const reviews = content?.reviews;
 
   const averageRating =
     reviews?.length > 0
@@ -740,8 +693,6 @@ function ReviewModal({ content, setOpenModal, openModal, loading }) {
                         </Text>
                       </div>
                     </div>
-
-                 
                   </div>
                 </Card>
               </div>
