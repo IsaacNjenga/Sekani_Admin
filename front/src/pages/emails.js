@@ -1,31 +1,36 @@
 import {
   Avatar,
   Button,
-  Divider,
-  Dropdown,
   Input,
   Spin,
   Table,
+  Dropdown,
   Tag,
   Typography,
 } from "antd";
 import { useEffect, useMemo, useState } from "react";
-//import { emailData } from "../assets/data/data";
+//import { emailData, replyData } from "../assets/data/data";
 import { format } from "date-fns";
 import ViewMessage from "../components/ViewMessage";
+import ViewReply from "../components/ViewReply";
 import {
   CarryOutFilled,
   CarryOutOutlined,
   ClockCircleFilled,
   ClockCircleOutlined,
-  MailOutlined,
-  MoreOutlined,
+  MessageFilled,
+  MessageOutlined,
   StarFilled,
   StarOutlined,
+  MoreOutlined,
+  MailOutlined,
 } from "@ant-design/icons";
 import useFetchAllEmails from "../hooks/fetchAllEmails";
+import useFetchAllReplies from "../hooks/fetchAllReplies";
 import axios from "axios";
 import { useAuth } from "../contexts/AuthContext";
+import "../assets/css/emails.css";
+import { useNotification } from "../contexts/NotificationContext";
 
 const { Title, Text } = Typography;
 const { Search } = Input;
@@ -52,13 +57,24 @@ const miniBtns = [
     icon: StarFilled,
     icon2: StarOutlined,
   },
+  {
+    key: 4,
+    label: "Sent",
+    color: "purple",
+    icon: MessageFilled,
+    icon2: MessageOutlined,
+  },
 ];
 
 function Emails() {
   const { token } = useAuth();
   const { emails, emailsLoading, emailsRefresh } = useFetchAllEmails();
+  const { replies } = useFetchAllReplies();
+  const openNotification = useNotification();
   const emailData = useMemo(() => (emails ? emails : []), [emails]);
+  const replyData = useMemo(() => (replies ? replies : []), [replies]);
   const [openModal, setOpenModal] = useState(false);
+  const [openReplyModal, setOpenReplyModal] = useState(false);
   const [content, setContent] = useState(null);
   const [loading, setLoading] = useState(false);
   const [selectedTab, setSelectedTab] = useState(1);
@@ -66,23 +82,36 @@ function Emails() {
   const [searchValue, setSearchValue] = useState(null);
   const [mail, setMail] = useState([]);
 
-  const { readMessages, unreadMessages, starredMessages } = useMemo(() => {
-    return {
-      readMessages: emailData?.filter((m) => m.read),
-      unreadMessages: emailData?.filter((m) => !m.read),
-      starredMessages: emailData?.filter((m) => m.starred),
-    };
-  }, [emailData]);
+  const { readMessages, unreadMessages, starredMessages, repliedMessages } =
+    useMemo(() => {
+      return {
+        readMessages: emailData?.filter((m) => m.read),
+        unreadMessages: emailData?.filter((m) => !m.read),
+        starredMessages: emailData?.filter((m) => m.starred),
+        repliedMessages: replyData,
+      };
+    }, [emailData, replyData]);
 
-  const viewMessage = async (message, record) => {
+  const viewMessage = async (record) => {
     setLoading(true);
     await updateEmail(record._id, { read: true });
-    setContent(message);
+    setContent(record);
     setOpenModal(true);
     setTimeout(() => {
       setLoading(false);
     }, 0);
     emailsRefresh();
+  };
+
+  const viewReply = async (message) => {
+    console.log(message);
+    setLoading(true);
+    setContent(message);
+    setOpenReplyModal(true);
+    setTimeout(() => {
+      setLoading(false);
+    }, 0);
+    //repliesRefresh();
   };
 
   const updateEmail = async (id, updateData) => {
@@ -91,10 +120,15 @@ function Emails() {
         headers: { Authorization: `Bearer ${token}` },
       });
       if (res.data.success) {
-        console.log("success");
+        //console.log("success");
       }
     } catch (error) {
       console.error("Failed to update mail", error);
+      openNotification(
+        "error",
+        "Failed to update order. Try again",
+        "There was an error"
+      );
     }
   };
 
@@ -111,21 +145,14 @@ function Emails() {
     emailsRefresh(); // refresh the list
   };
 
-  const columns = [
+  const baseColumns = [
     {
       title: "",
       dataIndex: "full_name",
       key: "full_name",
       render: (text) => (
-        <div
-          style={{
-            gap: 8,
-            flexDirection: "row",
-            display: "flex",
-            alignItems: "center",
-          }}
-        >
-          <Avatar style={{ background: "brown" }}>{text.charAt(0)}</Avatar>{" "}
+        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+          <Avatar style={{ background: "brown" }}>{text.charAt(0)}</Avatar>
           <Text style={{ fontFamily: "Raleway" }}>{text}</Text>
         </div>
       ),
@@ -140,37 +167,42 @@ function Emails() {
     },
     {
       title: "",
-      dataIndex: "message",
       key: "message",
-      render: (text) => <Text style={{ fontFamily: "Raleway" }}>{text}</Text>,
-      //ellipsis: true,
+      render: (_, record) => {
+        const subject = record.subject || "(No Subject)";
+        const message = record.message || "";
+
+        return (
+          <div
+            style={{
+              fontFamily: "Raleway",
+              overflow: "hidden",
+              whiteSpace: "nowrap",
+              textOverflow: "ellipsis",
+            }}
+          >
+            <span style={{ fontWeight: 600, color: "#202124", marginRight: 4 }}>
+              {subject}
+            </span>
+            <span style={{ color: "#5f6368" }}> - {message}</span>
+          </div>
+        );
+      },
+      width: "50%",
     },
+
     {
       title: "",
       dataIndex: "createdAt",
       key: "createdAt",
-      render: (text) => {
-        return (
-          <Text style={{ fontFamily: "Roboto" }}>
-            {format(new Date(text), "LLL d")}
-          </Text>
-        );
-      },
+      render: (text) => (
+        <Text style={{ fontFamily: "Roboto" }}>
+          {format(new Date(text), "LLL d")}
+        </Text>
+      ),
       sorter: (a, b) => new Date(a.createdAt) - new Date(b.createdAt),
     },
-    {
-      title: "",
-      key: "action",
-      render: (item, record) => (
-        <Button
-          type="primary"
-          onClick={() => viewMessage(item, record)}
-          style={{ fontFamily: "Raleway" }}
-        >
-          Open
-        </Button>
-      ),
-    },
+
     {
       title: "",
       key: "item-action",
@@ -222,9 +254,70 @@ function Emails() {
     },
   ];
 
+  const replyColumns = [
+    {
+      title: "",
+      key: "sender",
+      render: (record) => {
+        const msg = record.original_message;
+        return (
+          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+            <Avatar style={{ background: "brown" }}>
+              {msg?.full_name?.charAt(0)}
+            </Avatar>
+            <Text style={{ fontFamily: "Raleway" }}>{msg.full_name}</Text>
+          </div>
+        );
+      },
+    },
+    {
+      title: "",
+      key: "email",
+      render: (record) => (
+        <Text style={{ fontFamily: "Raleway", color: "#1677ff" }}>
+          {record.original_message.email_address}
+        </Text>
+      ),
+    },
+    {
+      title: "",
+      key: "message",
+      render: (_, record) => {
+        const subject = record.original_message.subject || "(No Subject)";
+        const message = record.original_message.message || "";
+
+        return (
+          <div
+            style={{
+              fontFamily: "Raleway",
+              overflow: "hidden",
+              whiteSpace: "nowrap",
+              textOverflow: "ellipsis",
+            }}
+          >
+            <span style={{ fontWeight: 600, color: "#202124", marginRight: 4 }}>
+              {subject}
+            </span>
+            <span style={{ color: "#5f6368" }}> - {message}</span>
+          </div>
+        );
+      },
+      width: "50%",
+    },
+    {
+      title: "",
+      key: "createdAt",
+      render: (record) => (
+        <Text style={{ fontFamily: "Roboto" }}>
+          {format(new Date(record.createdAt), "LLL d")}
+        </Text>
+      ),
+    },
+  ];
+
   useEffect(() => {
     emailsRefresh();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedTab]);
 
   const getFilteredData = () => {
@@ -235,6 +328,8 @@ function Emails() {
         return readMessages;
       case 3:
         return starredMessages;
+      case 4:
+        return repliedMessages;
       default:
         return emailData;
     }
@@ -248,6 +343,8 @@ function Emails() {
         return readMessages;
       case 3:
         return starredMessages;
+      case 4:
+        return repliedMessages;
       default:
         return emailData;
     }
@@ -256,17 +353,23 @@ function Emails() {
   const handleSearch = (e) => {
     const value = e.target.value.toLowerCase().trim();
     setSearchValue(value);
-
     if (!value) {
       setMail([]);
       return;
     }
 
-    const filteredSearchData = emailData.filter((item) =>
-      Object.values(item).some(
+    const source = selectedTab === 4 ? repliedMessages : emailData;
+
+    const filteredSearchData = source.filter((item) => {
+      const values =
+        selectedTab === 4
+          ? Object.values(item.original_message)
+          : Object.values(item);
+      return values.some(
         (val) => typeof val === "string" && val.toLowerCase().includes(value)
-      )
-    );
+      );
+    });
+
     setMail(filteredSearchData);
   };
 
@@ -275,8 +378,6 @@ function Emails() {
 
   return (
     <>
-      <Title style={{ marginTop: 15, fontFamily: "Raleway" }}>Emails</Title>
-      <Divider />
       <div style={{ margin: 5, padding: 5 }}>
         <div style={{ margin: "10px 0" }}>
           <Search
@@ -304,11 +405,13 @@ function Emails() {
               onClick={() => setSelectedTab(btn.key)}
               style={{
                 fontSize: 14,
-                padding: "6px 10px",
+                padding: "10px 14px",
                 cursor: "pointer",
-                fontFamily: "Roboto",
+                fontFamily: "Raleway",
                 background: selectedTab === btn.key ? btn.color : "",
                 color: selectedTab === btn.key ? "white" : "",
+                borderRadius: 20,
+                transition: "all 0.2s ease-in-out",
               }}
             >
               {selectedTab === btn.key ? <btn.icon /> : <btn.icon2 />}
@@ -330,18 +433,37 @@ function Emails() {
         </div>
         <Table
           dataSource={searchValue ? mail : getFilteredData()}
-          columns={columns}
+          columns={selectedTab === 4 ? replyColumns : baseColumns}
           rowKey="_id"
           pagination={{ pageSize: 10 }}
-          showHeader
           size="small"
           loading={emailsLoading}
           style={{ fontFamily: "Raleway" }}
+          onRow={(record) => ({
+            onClick: () => {
+              if (selectedTab === 4) {
+                // For replies
+                viewReply(record);
+              } else {
+                viewMessage(record);
+              }
+            },
+          })}
+          rowClassName={(record) => {
+            if (record.replied_to) return "row-replied";
+            else return "row-unreplied";
+          }}
         />
       </div>
       <ViewMessage
         setOpenModal={setOpenModal}
         openModal={openModal}
+        loading={loading}
+        content={content}
+      />
+      <ViewReply
+        setOpenModal={setOpenReplyModal}
+        openModal={openReplyModal}
         loading={loading}
         content={content}
       />

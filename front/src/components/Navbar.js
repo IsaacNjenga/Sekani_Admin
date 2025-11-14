@@ -21,7 +21,6 @@ import {
   MenuUnfoldOutlined,
   PlusCircleOutlined,
   PoweroffOutlined,
-  SendOutlined,
 } from "@ant-design/icons";
 import { useAuth } from "../contexts/AuthContext";
 import Swal from "sweetalert2";
@@ -41,9 +40,8 @@ const items = [
     getItem("Create Property", "/create-property", 4, PlusCircleOutlined),
   ]),
   getItem("Emails", "/emails", 5, MailOutlined),
-  getItem("Sent Emails", "/sent-mails", 5, SendOutlined),
-  getItem("Reviews", "/reviews", 5, FormOutlined),
-  getItem("Schedules", "/schedules", 5, ClockCircleOutlined),
+  getItem("Reviews", "/reviews", 6, FormOutlined),
+  getItem("Schedules", "/schedules", 7, ClockCircleOutlined),
 ];
 
 function Navbar() {

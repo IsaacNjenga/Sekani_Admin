@@ -1,19 +1,10 @@
-import {
-  Card,
-  Col,
-  Divider,
-  Form,
-  Input,
-  Modal,
-  Row,
-  Typography,
-  Button,
-} from "antd";
+import { Card, Col, Divider, Form, Modal, Row, Typography, Button } from "antd";
 import axios from "axios";
 import { formatDistanceToNowStrict } from "date-fns";
 import { useState } from "react";
 import { useAuth } from "../contexts/AuthContext";
-import Swal from "sweetalert2";
+import { useNotification } from "../contexts/NotificationContext";
+import Editor from "./Editor";
 
 const { Title, Text, Paragraph } = Typography;
 
@@ -21,6 +12,7 @@ function ViewMessage({ setOpenModal, openModal, loading, content }) {
   const { token, user } = useAuth();
   const [form] = Form.useForm();
   const [sendLoading, setSendLoading] = useState(false);
+  const openNotification = useNotification();
 
   const handleSubmit = async () => {
     setSendLoading(true);
@@ -30,6 +22,7 @@ function ViewMessage({ setOpenModal, openModal, loading, content }) {
         to: content.email_address,
         message: values.reply,
         name: content.full_name,
+        subject: content?.subject,
       };
 
       const replyValues = {
@@ -38,7 +31,7 @@ function ViewMessage({ setOpenModal, openModal, loading, content }) {
         createdBy: user._id,
       };
 
-      //console.log(allValues);
+      //console.log(replyValues);
       const [res, res2, res3] = await Promise.all([
         axios.post("reply-to-email", mailValues, {
           headers: { Authorization: `Bearer ${token}` },
@@ -55,18 +48,15 @@ function ViewMessage({ setOpenModal, openModal, loading, content }) {
         ),
       ]);
       if (res.data.success && res2.data.success && res3.data.success) {
-        Swal.fire({
-          icon: "success",
-          title: "Reply sent",
-        });
+        openNotification("success", "Reply sent", "Success!");
       }
     } catch (error) {
       console.log(error);
-      Swal.fire({
-        icon: "warning",
-        title: "Error",
-        text: "An unexpected error occurred. Please try again or call for assistance.",
-      });
+      openNotification(
+        "warning",
+        "An unexpected error occurred. Please try again or call for assistance.",
+        "Error"
+      );
     } finally {
       form.resetFields();
       setSendLoading(false);
@@ -122,6 +112,9 @@ function ViewMessage({ setOpenModal, openModal, loading, content }) {
                 </a>
               </div>
             </div>
+            <div>
+              <Text strong>Subject: {content?.subject || "N/A"}</Text>
+            </div>
             <div style={{ marginBottom: 12 }}>
               {content?.createdAt && (
                 <Text type="secondary">
@@ -174,36 +167,39 @@ function ViewMessage({ setOpenModal, openModal, loading, content }) {
               requiredMark={false}
             >
               <Form.Item
-                label="Your Reply (Will go to their email address)"
+                label={
+                  content?.replied_to ? (
+                    <span style={{ color: "red" }}>
+                      This message has already been replied to.
+                    </span>
+                  ) : (
+                    <span style={{ color: "black" }}>
+                      Your reply (will go to their email address)
+                    </span>
+                  )
+                }
                 name="reply"
                 rules={[{ required: true, message: "Please write a reply" }]}
+                valuePropName="value"
+                getValueFromEvent={(content) => content}
               >
-                {content?.replied_to && (
-                  <span style={{ color: "red" }}>
-                    This message has already been replied to.
-                  </span>
+                {content?.replied_to === false && <Editor />}
+              </Form.Item>
+              <div>
+                {content?.replied_to ? null : (
+                  <Form.Item style={{ textAlign: "right", marginBottom: 0 }}>
+                    <Button
+                      type="primary"
+                      size="large"
+                      style={{ borderRadius: 8 }}
+                      loading={sendLoading}
+                      htmlType="submit"
+                    >
+                      {sendLoading ? "Sending Reply..." : "Send Reply"}
+                    </Button>
+                  </Form.Item>
                 )}
-                <Input.TextArea
-                  rows={10}
-                  placeholder="Type your reply here..."
-                  style={{
-                    borderRadius: 8,
-                    resize: "none",
-                  }}
-                />
-              </Form.Item>
-
-              <Form.Item style={{ textAlign: "right", marginBottom: 0 }}>
-                <Button
-                  type="primary"
-                  size="large"
-                  style={{ borderRadius: 8 }}
-                  loading={sendLoading}
-                  htmlType="submit"
-                >
-                  {sendLoading ? "Sending Reply..." : "Send Reply"}
-                </Button>
-              </Form.Item>
+              </div>
             </Form>
           </Card>
         </Col>

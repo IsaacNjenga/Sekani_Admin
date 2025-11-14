@@ -1,0 +1,12 @@
+.ant-table-row:hover {
+  cursor: pointer;
+  background-color: #f0f5ff !important;
+}
+
+.row-replied {
+  background-color: #f7eebe !important;
+}
+.row-unreplied {
+  background-color: #cff8e8 !important;
+}
+
