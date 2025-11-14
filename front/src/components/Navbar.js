@@ -13,11 +13,12 @@ import { Link, Outlet, useLocation } from "react-router-dom";
 import logo from "../assets/images/logo3.png";
 import {
   AppstoreOutlined,
+  ClockCircleOutlined,
+  FormOutlined,
   HomeOutlined,
   MailOutlined,
   MenuFoldOutlined,
   MenuUnfoldOutlined,
-  MessageOutlined,
   PlusCircleOutlined,
   PoweroffOutlined,
   SendOutlined,
@@ -41,6 +42,8 @@ const items = [
   ]),
   getItem("Emails", "/emails", 5, MailOutlined),
   getItem("Sent Emails", "/sent-mails", 5, SendOutlined),
+  getItem("Reviews", "/reviews", 5, FormOutlined),
+  getItem("Schedules", "/schedules", 5, ClockCircleOutlined),
 ];
 
 function Navbar() {
