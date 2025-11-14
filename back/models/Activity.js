@@ -21,7 +21,7 @@ const activitySchema = new mongoose.Schema(
     refModel: {
       type: String,
       required: true,
-      enum: ["mail", "user", "properties", "replies"],
+      enum: ["mail", "user", "properties", "replies", "reviews", "schedules"],
     },
   },
   { collection: "activity", timestamps: true }

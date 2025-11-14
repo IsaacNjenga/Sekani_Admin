@@ -16,6 +16,7 @@ import {
   DollarOutlined,
   CalendarOutlined,
   CheckCircleOutlined,
+  CloseOutlined,
 } from "@ant-design/icons";
 
 const { Title, Text, Paragraph } = Typography;
@@ -35,6 +36,17 @@ function ViewProperty({ openModal, setOpenModal, loading, content }) {
         top: 20,
         padding: 20,
       }}
+      closeIcon={
+        <CloseOutlined
+          style={{
+            color: "#fff",
+            fontSize: 20,
+            background: "rgba(0,0,0,0.5)",
+            borderRadius: "50%",
+            padding: 8,
+          }}
+        />
+      }
     >
       <Row gutter={[24, 24]}>
         {/* Left Column - Images */}

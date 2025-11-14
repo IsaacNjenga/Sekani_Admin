@@ -33,6 +33,19 @@ import {
 } from "../controllers/repliesController.js";
 import { replyToEmail } from "../controllers/emailReplyController.js";
 import { fetchActivities } from "../controllers/activityController.js";
+import {
+  deleteReview,
+  createReview,
+  fetchReviews,
+  updateReview,
+} from "../controllers/reviewsController.js";
+import {
+  createSchedule,
+  deleteSchedule,
+  fetchSchedule,
+  fetchSchedules,
+  updateSchedule,
+} from "../controllers/scheduleController.js";
 
 const router = express.Router();
 
@@ -64,6 +77,19 @@ router.post("/reply-to-email", protectRoute, replyToEmail);
 router.post("/reply-to-db", protectRoute, createReply);
 router.get("/fetch-replies", fetchReplies);
 router.get("/fetch-reply", fetchReply);
+
+//review routes
+router.post("/create-review", createReview);
+router.get("/fetch-reviews", fetchReviews);
+router.put("/update-review", updateReview);
+router.delete("/delete-review", deleteReview);
+
+//schedule routes
+router.post("/create-schedule", createSchedule);
+router.get("/fetch-all-schedules", protectRoute, fetchSchedules);
+router.get("/fetch-schedule", fetchSchedule);
+router.put("/update-schedule", updateSchedule);
+router.delete("/delete-schedule", deleteSchedule);
 
 //activities route
 router.get("/fetch-activities", protectRoute, fetchActivities);

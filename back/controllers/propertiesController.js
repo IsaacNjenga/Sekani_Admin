@@ -94,8 +94,7 @@ const updateProperty = async (req, res) => {
       updatedProperty._id,
       "updated",
       `A property was updated: ${updatedProperty.propertyType} at ${updatedProperty.city}, ${updatedProperty.county}`,
-      `Priced at ${updatedProperty.price}`,
-      
+      `Priced at ${updatedProperty.price}`,      
       "properties"
     );
 
