@@ -1,11 +1,13 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "../contexts/AuthContext";
-import Swal from "sweetalert2";
 import axios from "axios";
+import { useNotification } from "../contexts/NotificationContext";
+
 function useFetchAllReplies() {
   const { token } = useAuth();
   const [replies, setReplies] = useState([]);
   const [repliesLoading, setRepliesLoading] = useState(false);
+  const openNotfication = useNotification();
   const [refreshKey, setRefreshKey] = useState(0);
 
   const fetchReplies = async () => {
@@ -24,11 +26,7 @@ function useFetchAllReplies() {
           ? error.response.data.error
           : "An unexpected error occurred. Please try again later.";
 
-      Swal.fire({
-        icon: "warning",
-        title: "Error",
-        text: errorMessage,
-      });
+      openNotfication("warning", errorMessage, "Error");
     } finally {
       setRepliesLoading(false);
     }
@@ -36,6 +34,7 @@ function useFetchAllReplies() {
 
   useEffect(() => {
     fetchReplies();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [refreshKey]);
 
   return {

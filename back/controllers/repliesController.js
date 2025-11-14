@@ -26,7 +26,9 @@ const createReply = async (req, res) => {
 
 const fetchReplies = async (req, res) => {
   try {
-    const replies = await RepliesModel.find({}).populate("original_message");
+    const replies = await RepliesModel.find({})
+      .populate("original_message")
+      .sort({ createdAt: -1 });
     res.status(200).json({ success: true, replies });
   } catch (error) {
     console.error("Error in fetching replies:", error);

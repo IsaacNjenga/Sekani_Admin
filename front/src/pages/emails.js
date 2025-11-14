@@ -259,13 +259,13 @@ function Emails() {
       title: "",
       key: "sender",
       render: (record) => {
-        const msg = record.original_message;
+        const msg = record?.original_message;
         return (
           <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
             <Avatar style={{ background: "brown" }}>
               {msg?.full_name?.charAt(0)}
             </Avatar>
-            <Text style={{ fontFamily: "Raleway" }}>{msg.full_name}</Text>
+            <Text style={{ fontFamily: "Raleway" }}>{msg?.full_name}</Text>
           </div>
         );
       },
@@ -275,7 +275,7 @@ function Emails() {
       key: "email",
       render: (record) => (
         <Text style={{ fontFamily: "Raleway", color: "#1677ff" }}>
-          {record.original_message.email_address}
+          {record?.original_message?.email_address}
         </Text>
       ),
     },
@@ -283,8 +283,8 @@ function Emails() {
       title: "",
       key: "message",
       render: (_, record) => {
-        const subject = record.original_message.subject || "(No Subject)";
-        const message = record.original_message.message || "";
+        const subject = record.original_message?.subject || "(No Subject)";
+        const message = record.original_message?.message || "";
 
         return (
           <div
@@ -450,7 +450,8 @@ function Emails() {
             },
           })}
           rowClassName={(record) => {
-            if (record.replied_to) return "row-replied";
+            if (record.replied_to || record.original_message !== "")
+              return "row-replied";
             else return "row-unreplied";
           }}
         />
