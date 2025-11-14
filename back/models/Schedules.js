@@ -8,7 +8,7 @@ const scheduleSchema = new mongoose.Schema(
     email: { type: String, required: true },
     phone: { type: String, required: true },
     notes: { type: String, required: false },
-    numberOfPeople: { type: Number, required: true },
+    numberOfPeople: { type: String, required: true },
     propertyId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "properties",

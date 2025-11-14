@@ -26,9 +26,9 @@ const createSchedule = async (req, res) => {
 
 const fetchSchedules = async (req, res) => {
   try {
-    const allSchedules = (
-      await SchedulesModel.find({}).populate("propertyId")
-    ).sort({ createdAt: -1 });
+    const allSchedules = await SchedulesModel.find({})
+      .populate("propertyId")
+      .sort({ createdAt: -1 });
 
     res.status(200).json({ success: true, schedules: allSchedules });
   } catch (error) {
