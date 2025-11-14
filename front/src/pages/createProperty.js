@@ -9,8 +9,6 @@ import {
   Select,
   Switch,
   Image as AntImage,
-  Divider,
-  Typography,
 } from "antd";
 import { useState } from "react";
 import { useAuth } from "../contexts/AuthContext";
@@ -19,7 +17,6 @@ import axios from "axios";
 import { DeleteOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 
-const { Title } = Typography;
 const { TextArea } = Input;
 const { Option } = Select;
 
@@ -248,10 +245,6 @@ function CreateProperty() {
 
   return (
     <>
-      <Title level={2} style={{ fontFamily: "Raleway", marginBottom: 20 }}>
-        Add New Property
-      </Title>
-      <Divider style={{ borderColor: "#ccc" }} />
       <Card
         style={{
           borderRadius: 12,

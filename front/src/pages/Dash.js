@@ -77,14 +77,7 @@ function Dash() {
           alignItems: "center",
         }}
       >
-        <div>
-          <Title level={3} style={{ fontFamily: "Raleway" }}>
-            Hey there, 👋
-          </Title>
-          <Text type="secondary" style={{ fontFamily: "Roboto" }}>
-            Here’s an overview...
-          </Text>
-        </div>
+        <div></div>
         <div>
           <Title level={4} style={{ fontFamily: "Roboto" }}>
             {format(new Date(), "EEEE, do MMMM")}
@@ -163,8 +156,7 @@ function Dash() {
               <List
                 itemLayout="horizontal"
                 dataSource={activities.filter(
-                  (activity) =>
-                    activity.type === "mail" 
+                  (activity) => activity.type === "mail"
                 )}
                 renderItem={(item) => (
                   <List.Item>

@@ -4,8 +4,8 @@ import signUpImg from "../assets/images/sign-up2.png";
 import { Button, Card, Divider, Form, Input, Typography } from "antd";
 import { EyeInvisibleOutlined, EyeTwoTone } from "@ant-design/icons";
 import axios from "axios";
-import Swal from "sweetalert2";
 import { useAuth } from "../contexts/AuthContext";
+import { useNotification } from "../contexts/NotificationContext";
 
 const { Title, Text } = Typography;
 
@@ -83,6 +83,7 @@ const signInTextStyle = { cursor: "pointer" };
 function Auth() {
   const [form] = Form.useForm();
   const { login } = useAuth();
+  const openNotification = useNotification();
   const [isSignIn, setIsSignIn] = useState(true);
   const [values, setValues] = useState({
     username: "",
@@ -116,12 +117,13 @@ function Auth() {
       const { success, token, user } = res.data;
 
       if (success) {
-        Swal.fire({
-          icon: "success",
-          title: !isSignIn
+        openNotification(
+          "success",
+          !isSignIn
             ? "Your account has been created successfully!"
             : "Login successful!",
-        });
+          "Success!"
+        );
 
         if (!isSignIn) {
           setIsSignIn(true);
@@ -137,11 +139,7 @@ function Auth() {
           ? error.response.data.error
           : "An unexpected error occurred. Please try again later.";
 
-      Swal.fire({
-        icon: "warning",
-        title: "Error",
-        text: errorMessage,
-      });
+      openNotification("warning", errorMessage, "Error");
     } finally {
       setLoading(false);
       form.resetFields();

@@ -44,6 +44,20 @@ const items = [
   getItem("Schedules", "/schedules", 7, ClockCircleOutlined),
 ];
 
+const flattenItems = (arr) =>
+  arr.reduce((acc, item) => {
+    if (item.children) acc.push(...flattenItems(item.children));
+    else acc.push(item);
+    return acc;
+  }, []);
+
+// Find the matching menu item label
+const getTitleFromPath = (path) => {
+  const allItems = flattenItems(items);
+  const found = allItems.find((item) => item.path === path);
+  return found ? found.label : "Dashboard";
+};
+
 function Navbar() {
   const location = useLocation();
   const { logout, user } = useAuth();
@@ -53,12 +67,6 @@ function Navbar() {
   const handleClick = (e) => {
     setCurrent(e.key);
   };
-
-  // const navItems = [
-  //   { label: "Dashboard", path: "/", icon: AppstoreOutlined },
-  //   { label: "Properties", path: "/properties", icon: HomeOutlined },
-  //   { label: "Analytics", path: "/analytics", icon: CustomerServiceFilled },
-  // ];
 
   return (
     <>
@@ -249,15 +257,32 @@ function Navbar() {
               background:
                 "linear-gradient(to left, #ffffffd6 0%, #ffffffff 100%)",
               borderBottom: "1px solid #ccc",
+              height: 80,
             }}
           >
-            <>
-              <div style={{ float: "right", marginRight: 20 }}>
-                <Avatar
-                  src={user?.avatar}
-                  size="medium"
-                  style={{ marginRight: 15 }}
-                />
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignContent: "center",
+                alignItems: "center",
+                paddingBottom: 20,
+              }}
+            >
+              <div style={{ marginLeft: 10 }}>
+                <Title style={{ fontFamily: "Raleway" }}>
+                  {getTitleFromPath(current)}
+                </Title>
+              </div>
+
+              <div style={{ marginRight: 20 }}>
+                <Tooltip title={user?.username}>
+                  <Avatar
+                    src={user?.avatar}
+                    size="medium"
+                    style={{ marginRight: 15 }}
+                  />
+                </Tooltip>
                 <Tooltip title="Logout">
                   <Button
                     type="primary"
@@ -284,7 +309,7 @@ function Navbar() {
                   />
                 </Tooltip>
               </div>
-            </>
+            </div>
           </Header>
 
           <Content
