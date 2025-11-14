@@ -4,25 +4,36 @@ import { Row, Col, Button, Skeleton, Tooltip } from "antd";
 import { ReloadOutlined } from "@ant-design/icons";
 import ViewProperty from "../components/ViewProperty";
 import PropertyCard from "../components/PropertyCard";
+import ReviewModal from "../components/ReviewModal";
+import { useAuth } from "../contexts/AuthContext";
 
 function Properties() {
   const { properties, propertiesLoading, propertiesRefresh, handleLoadMore } =
     useFetchAllProperties();
-  const [openModal, setOpenModal] = useState(false);
+    const {token}=useAuth()
+  const [openPropertyModal, setOpenPropertyModal] = useState(false);
+  const [openReviewModal, setOpenReviewModal] = useState(false);
   const [loading, setLoading] = useState(false);
   const [content, setContent] = useState(null);
 
   const viewProperty = (property) => {
     setLoading(true);
     setContent(property);
-    setOpenModal(true);
+    setOpenPropertyModal(true);
+    setTimeout(() => setLoading(false), 100);
+  };
+
+  const viewReviews = (property) => {
+    setLoading(true);
+    setContent(property);
+    setOpenReviewModal(true);
     setTimeout(() => setLoading(false), 100);
   };
 
   if (propertiesLoading) {
     return (
       <Row gutter={[32, 32]}>
-        {Array.from({ length: 6 }).map((_, i) => (
+        {Array.from({ length: 12 }).map((_, i) => (
           <Col key={i} xs={24} sm={12} md={8}>
             <Skeleton active avatar paragraph={{ rows: 3 }} />
           </Col>
@@ -49,6 +60,7 @@ function Properties() {
               <PropertyCard
                 c={c}
                 viewProperty={viewProperty}
+                viewReviews={viewReviews}
                 propertiesRefresh={propertiesRefresh}
                 source={"properties"}
               />
@@ -68,8 +80,16 @@ function Properties() {
       </div>
 
       <ViewProperty
-        setOpenModal={setOpenModal}
-        openModal={openModal}
+        setOpenModal={setOpenPropertyModal}
+        openModal={openPropertyModal}
+        loading={loading}
+        content={content}
+        token={token}
+      />
+
+      <ReviewModal
+        setOpenModal={setOpenReviewModal}
+        openModal={openReviewModal}
         loading={loading}
         content={content}
       />

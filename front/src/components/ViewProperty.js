@@ -20,13 +20,17 @@ import {
   PhoneOutlined,
   UserOutlined,
   StarFilled,
+  DeleteOutlined,
   CloseOutlined,
+  EditOutlined,
 } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
+import Swal from "sweetalert2";
+import axios from "axios";
 
 const { Title, Text, Paragraph } = Typography;
 
-function PropertyModal({ openModal, setOpenModal, loading, content }) {
+function PropertyModal({ openModal, setOpenModal, loading, content, token }) {
   const navigate = useNavigate();
 
   const averageRating =
@@ -39,7 +43,62 @@ function PropertyModal({ openModal, setOpenModal, loading, content }) {
 
   return (
     <Modal
-      footer={null}
+      footer={
+        <div style={{ gap: 10, display: "flex", justifyContent:'flex-end' }}>
+          <Button
+            style={{
+              borderRadius: 18,
+              padding: "8px 16px",
+              border: "1px solid #00000000",
+              color: "#fff",
+            }}
+            type="primary"
+            icon={<EditOutlined />}
+            onClick={() => navigate(`/update-property/${content?._id}`)}
+          >
+            Edit Property
+          </Button>
+          <Button
+            style={{
+              borderRadius: 18,
+              padding: "8px 16px",
+              border: "1px solid #00000000",
+              color: "#fff",
+            }}
+            danger
+            type="primary"
+            icon={<DeleteOutlined />}
+            onClick={() => {
+              Swal.fire({
+                title: "Are you sure?",
+                text: "You won't be able to revert this!",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "lightgreen",
+                cancelButtonColor: "red",
+              }).then(async (result) => {
+                if (result.isConfirmed) {
+                  const res = await axios.delete(
+                    `delete-property?id=${content?._id}`,
+                    {
+                      headers: { Authorization: `Bearer ${token}` },
+                    }
+                  );
+                  if (res.data.success) {
+                    Swal.fire({
+                      icon: "success",
+                      title: "Property Deleted Successfully!",
+                    });
+                    setOpenModal(false);
+                  }
+                }
+              });
+            }}
+          >
+            Delete Property
+          </Button>
+        </div>
+      }
       open={openModal}
       onCancel={() => setOpenModal(false)}
       confirmLoading={loading}
@@ -64,7 +123,7 @@ function PropertyModal({ openModal, setOpenModal, loading, content }) {
       style={{ top: 20 }}
       styles={{
         body: {
-          maxHeight: "90vh",
+          maxHeight: "80vh",
           overflowY: "auto",
         },
       }}

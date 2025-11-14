@@ -13,7 +13,6 @@ import UpdateProperty from "./pages/updateProperty";
 import ProtectedRoutes from "./components/ProtectedRoute";
 import Emails from "./pages/emails";
 import Schedules from "./pages/Schedules";
-import Reviews from "./pages/Reviews";
 
 //axios.defaults.baseURL = "http://localhost:3001/Sekani";
 axios.defaults.baseURL = "https://sekani-admin-server.vercel.app/Sekani";
@@ -44,7 +43,6 @@ function App() {
             <Route path="/properties" element={<Properties />} />
             <Route path="/analytics" element={<Analytics />} />
             <Route path="/emails" element={<Emails />} />
-            <Route path="/reviews" element={<Reviews />} />
             <Route path="/schedules" element={<Schedules />} />
             <Route path="/create-property" element={<CreateProperty />} />
             <Route path="/update-property/:id" element={<UpdateProperty />} />

@@ -14,7 +14,6 @@ import logo from "../assets/images/logo3.png";
 import {
   AppstoreOutlined,
   ClockCircleOutlined,
-  FormOutlined,
   HomeOutlined,
   MailOutlined,
   MenuFoldOutlined,
@@ -40,8 +39,7 @@ const items = [
     getItem("Create Property", "/create-property", 4, PlusCircleOutlined),
   ]),
   getItem("Emails", "/emails", 5, MailOutlined),
-  getItem("Reviews", "/reviews", 6, FormOutlined),
-  getItem("Schedules", "/schedules", 7, ClockCircleOutlined),
+  getItem("Schedules", "/schedules", 6, ClockCircleOutlined),
 ];
 
 const flattenItems = (arr) =>
