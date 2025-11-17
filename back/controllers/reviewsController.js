@@ -2,7 +2,16 @@ import ReviewsModel from "../models/Reviews.js";
 import { logActivity } from "../utils/logActivity.js";
 
 const createReview = async (req, res) => {
+  const { email, propertyId } = req.body;
   try {
+    const existingReview = await ReviewsModel.findOne({ email, propertyId });
+
+    if (existingReview) {
+      return res.status(400).json({
+        message: "You have already submitted a review for this property.",
+      });
+    }
+
     const newReview = new ReviewsModel(req.body);
 
     await logActivity(
