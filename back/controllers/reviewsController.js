@@ -60,7 +60,7 @@ const updateReview = async (req, res) => {
       updatedReview._id,
       "updated",
       `A review was updated`,
-      `New rating at ${updatedProperty.rating}`,
+      `New rating at ${updatedReview.rating}`,
       "reviews"
     );
 
