@@ -1,18 +1,16 @@
-// src/components/ScheduleCalendar.jsx
-import React, { useMemo } from "react";
-import { Calendar, Badge,  } from "antd";
+import { useMemo } from "react";
+import { Calendar, Badge } from "antd";
 
-/**
- * Helpers
- */
 const toISODate = (item) => {
-  // Normalize date to YYYY-MM-DD (assumes item.date is YYYY-MM-DD)
-  // If your date format differs you can adapt parsing here.
   return item.date;
 };
 
-function ScheduleCalendar({ scheduleData = [], viewScheduleDetails }) {
-  // map date string => array of items
+function ScheduleCalendar({
+  scheduleData = [],
+  viewScheduleDetails,
+  schedulesLoading,
+  schedulesRefresh,
+}) {
   const eventsByDate = useMemo(() => {
     const map = {};
     (scheduleData || []).forEach((item) => {
@@ -23,18 +21,16 @@ function ScheduleCalendar({ scheduleData = [], viewScheduleDetails }) {
     return map;
   }, [scheduleData]);
 
-  // render small list of badges inside each date
   const dateCellRender = (value) => {
     // value is moment/dayjs/date object — convert to YYYY-MM-DD
     const y = value.year();
-    const m = String(value.month() + 1).padStart(2, "0"); // month() zero-based
+    const m = String(value.month() + 1).padStart(2, "0");
     const d = String(value.date()).padStart(2, "0");
     const key = `${y}-${m}-${d}`;
 
     const list = eventsByDate[key] || [];
     if (list.length === 0) return null;
 
-    // show up to 3 badges, then "+N"
     const visible = list.slice(0, 3);
 
     return (
@@ -50,14 +46,20 @@ function ScheduleCalendar({ scheduleData = [], viewScheduleDetails }) {
               cursor: "pointer",
             }}
             onClick={(e) => {
-              // prevent parent selection handler override
               e.stopPropagation();
               viewScheduleDetails({ date: key, items: [ev] });
             }}
             title={`${ev.time} — ${ev.name}`}
           >
             <Badge status="processing" />
-            <span style={{ fontSize: 12, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+            <span
+              style={{
+                fontSize: 12,
+                whiteSpace: "nowrap",
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+              }}
+            >
               {ev.time} • {ev.name}
             </span>
           </div>
@@ -75,7 +77,6 @@ function ScheduleCalendar({ scheduleData = [], viewScheduleDetails }) {
     );
   };
 
-  // clicking a date opens modal with that date's items
   const onSelect = (value) => {
     const y = value.year();
     const m = String(value.month() + 1).padStart(2, "0");

@@ -1,169 +1,471 @@
-// src/components/ScheduleDetails.jsx
-import React, { useState } from "react";
-import { Modal, List, Typography, Divider, Descriptions, Button, Empty } from "antd";
-import { CloseOutlined } from "@ant-design/icons";
+import React, { useState, useEffect } from "react";
+import {
+  Modal,
+  Typography,
+  Divider,
+  Button,
+  List,
+  Card,
+  Avatar,
+  Tag,
+  Carousel,
+  Empty,
+  Row,
+  Col,
+  Space,
+} from "antd";
+import {
+  CloseOutlined,
+  CalendarOutlined,
+  UserOutlined,
+  PhoneOutlined,
+  MailOutlined,
+  HomeOutlined,
+  TeamOutlined,
+  DollarOutlined,
+  CheckCircleFilled,
+} from "@ant-design/icons";
 
-const { Title, Paragraph, Text } = Typography;
+const { Title, Text, Paragraph } = Typography;
+
+// Mock property database (in real app, fetch by propertyId)
+const properties = {
+  1: {
+    _id: 1,
+    address: "15 Peponi Road, Westlands",
+    city: "Nairobi",
+    state: "Nairobi County",
+    zip: "00800",
+    price: 450000,
+    bedrooms: 4,
+    bathrooms: 3,
+    squareFeet: 2200,
+    yearBuilt: 2018,
+    propertyType: "Maisonette",
+    listingType: "For Sale",
+    furnished: false,
+    paymentOptions: ["Cash", "Mortgage"],
+    description:
+      "Luxurious four-bedroom maisonette with a private garden in the secure, leafy suburbs of Westlands. Features modern, high-end finishes and all bedrooms are en-suite.",
+    amenities: [
+      "Private Garden",
+      "Backup Generator",
+      "Borehole",
+      "Servant's Quarters (SQ)",
+    ],
+    nearby: ["Sarit Centre", "Westgate Mall", "Nairobi International School"],
+    status: "Available",
+    img: [
+      "https://images.unsplash.com/photo-1694457269860-b7926c29e008?w=900",
+      "https://images.unsplash.com/photo-1560185127-59e4420e2c93?w=900",
+      "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=900",
+      "https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?w=900",
+    ],
+    agent: { name: "Mary Wanjiku", phone: "+254712345678" },
+    reviews: [
+      { name: "Susan K", rating: 4.5, review: "Great place to live" },
+      {
+        name: "John N",
+        rating: 4.8,
+        review: "Excellent location and finishes!",
+      },
+    ],
+  },
+  // ... add more properties as needed
+};
 
 function prettyDate(iso) {
-  if (!iso) return "";
   const d = new Date(iso + "T00:00:00");
-  return d.toLocaleDateString(undefined, { weekday: "short", month: "short", day: "numeric", year: "numeric" });
+  return d.toLocaleDateString(undefined, {
+    weekday: "long",
+    month: "long",
+    day: "numeric",
+    year: "numeric",
+  });
 }
 
-function ScheduleDetails({ content, openScheduleModal, setOpenScheduleModal, loading }) {
+const ScheduleDetails = ({
+  content,
+  openScheduleModal,
+  setOpenScheduleModal,
+  loading = false,
+}) => {
   const [selectedItem, setSelectedItem] = useState(null);
 
-  // when content changes (new modal open), if content is single item set selectedItem accordingly
-  React.useEffect(() => {
+  useEffect(() => {
     if (!content) {
       setSelectedItem(null);
       return;
     }
-    // content could be single record (has name) or { date, items }
+
     if (content.name) {
-      setSelectedItem(content);
-    } else if (content.items && content.items.length === 1) {
-      setSelectedItem(content.items[0]);
+      // Single booking
+      const property = properties[content.propertyId] || null;
+      setSelectedItem({ ...content, property });
+    } else if (content.items?.length === 1) {
+      const property = properties[content.items[0].propertyId] || null;
+      setSelectedItem({ ...content.items[0], property });
     } else {
       setSelectedItem(null);
     }
   }, [content]);
 
-  const isDateGroup = content && content.items;
+  const isDateGroup = content && content.items && content.items.length > 0;
+
+  // For grouped view — enrich all items with property data
+  const enrichedItems = isDateGroup
+    ? content.items.map((item) => ({
+        ...item,
+        property: properties[item.propertyId] || null,
+      }))
+    : [];
+
+  const currentBooking = selectedItem || (isDateGroup ? null : content);
+  const property = currentBooking?.property;
 
   return (
     <Modal
-      footer={null}
       open={openScheduleModal}
       onCancel={() => setOpenScheduleModal(false)}
-      confirmLoading={loading}
-      width="80%"
+      footer={null}
+      width="95%"
+      style={{ top: 20, maxWidth: 1450 }}
       closeIcon={
         <CloseOutlined
           style={{
-            fontSize: 18,
+            fontSize: 22,
             color: "#fff",
-            background: "rgba(0,0,0,0.45)",
-            padding: 6,
+            background: "rgba(0,0,0,0.65)",
+            padding: 10,
             borderRadius: "50%",
           }}
         />
       }
       bodyStyle={{
-        padding: 20,
-        borderRadius: 12,
-        background: "white",
+        padding: 0,
+        background: "linear-gradient(135deg, #f5f7fa 0%, #e4edf5 100%)",
+        borderRadius: 16,
+        maxHeight: "88vh",
+        overflow: "hidden",
       }}
-      centered
+      maskStyle={{ backgroundColor: "rgba(0, 0, 0, 0.7)" }}
     >
-      {!content && <Empty description="No schedule selected" />}
-
-      {content && isDateGroup && (
-        <>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 16 }}>
+      {!content ? (
+        <div style={{ padding: 80, textAlign: "center" }}>
+          <Empty description="No schedule selected" />
+        </div>
+      ) : isDateGroup ? (
+        // === MULTIPLE BOOKINGS ON SAME DATE ===
+        <div
+          style={{ padding: "24px 32px", height: "88vh", overflowY: "auto" }}
+        >
+          <Row
+            justify="space-between"
+            align="middle"
+            style={{ marginBottom: 8 }}
+          >
             <div>
-              <Title level={4} style={{ margin: 0 }}>
-                Schedules for {prettyDate(content.date)}
+              <Title level={3} style={{ margin: 0 }}>
+                <CalendarOutlined /> Bookings for {prettyDate(content.date)}
               </Title>
-              <Text type="secondary">{content.items.length} booking(s)</Text>
+              <Text type="secondary">
+                {content.items.length} appointment(s)
+              </Text>
             </div>
-            <div>
-              <Button onClick={() => setOpenScheduleModal(false)}>Close</Button>
-            </div>
-          </div>
+            <Button onClick={() => setOpenScheduleModal(false)}>Close</Button>
+          </Row>
 
-          <Divider />
+          <Divider style={{ margin: "16px 0" }} />
 
-          <div style={{ display: "flex", gap: 20, alignItems: "flex-start" }}>
-            <div style={{ flex: 1 }}>
+          <Row gutter={32}>
+            {/* Left: List of bookings */}
+            <Col span={10}>
               <List
-                itemLayout="horizontal"
-                dataSource={content.items}
+                dataSource={enrichedItems}
                 renderItem={(item) => (
                   <List.Item
-                    actions={[
-                      <Button size="small" onClick={() => setSelectedItem(item)}>
-                        View
-                      </Button>,
-                    ]}
-                    style={{ padding: 12, borderRadius: 8, marginBottom: 8, background: "#fafafa" }}
-                    key={item._id || `${item.email}-${item.time}`}
+                    style={{
+                      padding: 16,
+                      marginBottom: 12,
+                      background: "#fff",
+                      borderRadius: 12,
+                      boxShadow: "0 2px 8px rgba(0,0,0,0.06)",
+                      cursor: "pointer",
+                      border:
+                        selectedItem?._id === item._id ||
+                        selectedItem?.email === item.email
+                          ? "2px solid #1890ff"
+                          : "2px solid transparent",
+                    }}
+                    onClick={() => setSelectedItem(item)}
                   >
                     <List.Item.Meta
+                      avatar={<Avatar icon={<UserOutlined />} size={48} />}
                       title={
-                        <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+                        <Space>
                           <Text strong>{item.name}</Text>
-                          <Text type="secondary" style={{ fontSize: 12 }}>{item.time}</Text>
-                        </div>
+                          <Text type="secondary">{item.time}</Text>
+                        </Space>
                       }
                       description={
                         <>
-                          <div style={{ fontSize: 13 }}>{item.email} • {item.phone}</div>
-                          <div style={{ marginTop: 6, color: "#666" }}>{item.notes}</div>
+                          <div>
+                            <PhoneOutlined /> {item.phone}
+                          </div>
+                          <div style={{ marginTop: 4 }}>
+                            <HomeOutlined />{" "}
+                            {item.property?.address ||
+                              "Property ID: " + item.propertyId}
+                          </div>
                         </>
                       }
                     />
                   </List.Item>
                 )}
               />
-            </div>
+            </Col>
 
-            <div style={{ width: 380, minWidth: 280 }}>
+            {/* Right: Selected booking + property details */}
+            <Col span={14}>
               {selectedItem ? (
-                <>
-                  <Title level={5} style={{ marginTop: 0 }}>{selectedItem.name}</Title>
-                  <Descriptions column={1} bordered size="small">
-                    <Descriptions.Item label="Date & Time">{selectedItem.date} • {selectedItem.time}</Descriptions.Item>
-                    <Descriptions.Item label="Attendees">{selectedItem.numberOfPeople}</Descriptions.Item>
-                    <Descriptions.Item label="Phone">{selectedItem.phone}</Descriptions.Item>
-                    <Descriptions.Item label="Email">{selectedItem.email}</Descriptions.Item>
-                    <Descriptions.Item label="Notes">{selectedItem.notes || "—"}</Descriptions.Item>
-                    <Descriptions.Item label="Property ID">{selectedItem.propertyId}</Descriptions.Item>
-                  </Descriptions>
-                  <div style={{ marginTop: 12, display: "flex", gap: 8 }}>
-                    <Button type="primary">Confirm</Button>
-                    <Button danger>Cancel</Button>
-                  </div>
-                </>
-              ) : (
-                <div style={{ padding: 12 }}>
-                  <Title level={5} style={{ marginTop: 0 }}>Select a booking</Title>
-                  <Paragraph type="secondary">Click any booking on the left to see details and quick actions</Paragraph>
+                <div>
+                  <Title level={4}>{selectedItem.name}'s Appointment</Title>
+                  <Text type="secondary">
+                    <CalendarOutlined /> {selectedItem.date} at{" "}
+                    {selectedItem.time} • <TeamOutlined />{" "}
+                    {selectedItem.numberOfPeople} people
+                  </Text>
+
+                  {property && (
+                    <Card
+                      style={{ marginTop: 16 }}
+                      cover={
+                        <Carousel autoplay arrows>
+                          {property.img.map((src, i) => (
+                            <div key={i}>
+                              <img
+                                alt={`Property ${i + 1}`}
+                                src={src}
+                                style={{
+                                  width: "100%",
+                                  height: 300,
+                                  objectFit: "cover",
+                                  borderRadius: "12px 12px 0 0",
+                                }}
+                              />
+                            </div>
+                          ))}
+                        </Carousel>
+                      }
+                    >
+                      <Card.Meta
+                        title={
+                          <Space align="center">
+                            <Text strong style={{ fontSize: 18 }}>
+                              {property.address}
+                            </Text>
+                            <Tag color="green">For Sale</Tag>
+                          </Space>
+                        }
+                        description={
+                          <>
+                            <Space size={16} wrap>
+                              <span>
+                                <strong>{property.bedrooms}</strong> bd
+                              </span>
+                              <span>
+                                <strong>{property.bathrooms}</strong> ba
+                              </span>
+                              <span>
+                                <strong>{property.squareFeet}</strong> sqft
+                              </span>
+                              <span>
+                                <DollarOutlined /> KSh{" "}
+                                {property.price.toLocaleString()}
+                              </span>
+                            </Space>
+                          </>
+                        }
+                      />
+
+                      <Divider />
+
+                      <Paragraph>{property.description}</Paragraph>
+
+                      <div style={{ margin: "16px 0" }}>
+                        <Text strong>Amenities:</Text>
+                        <Space wrap style={{ marginTop: 8 }}>
+                          {property.amenities.map((a) => (
+                            <Tag
+                              icon={<CheckCircleFilled />}
+                              color="success"
+                              key={a}
+                            >
+                              {a}
+                            </Tag>
+                          ))}
+                        </Space>
+                      </div>
+
+                      <Space style={{ marginTop: 24 }}>
+                        <Button type="primary" size="large">
+                          Confirm Booking
+                        </Button>
+                        <Button danger size="large">
+                          Cancel Booking
+                        </Button>
+                        <Button
+                          size="large"
+                          onClick={() => setSelectedItem(null)}
+                        >
+                          Back to List
+                        </Button>
+                      </Space>
+                    </Card>
+                  )}
                 </div>
+              ) : (
+                <Card style={{ textAlign: "center", padding: 40 }}>
+                  <Title level={5}>👈 Select a booking</Title>
+                  <Paragraph type="secondary">
+                    Click on any appointment from the list to view full details
+                    and property photos.
+                  </Paragraph>
+                </Card>
               )}
-            </div>
-          </div>
-        </>
-      )}
+            </Col>
+          </Row>
+        </div>
+      ) : (
+        // === SINGLE BOOKING VIEW ===
+        <div style={{ padding: "32px", maxWidth: 1200, margin: "0 auto" }}>
+          <Row justify="space-between" align="middle" gutter={[16, 16]}>
+            <Col>
+              <Title level={3} style={{ margin: 0 }}>
+                Viewing Appointment
+              </Title>
+              <Text type="secondary">
+                {content.date} at {content.time} • {content.numberOfPeople}{" "}
+                attendee(s)
+              </Text>
+            </Col>
+            <Col>
+              <Space>
+                <Button type="primary" size="large">
+                  Confirm
+                </Button>
+                <Button danger size="large">
+                  Cancel
+                </Button>
+                <Button onClick={() => setOpenScheduleModal(false)}>
+                  Close
+                </Button>
+              </Space>
+            </Col>
+          </Row>
 
-      {/* When modal opened for a single booking (from table "View" or direct click) */}
-      {content && !isDateGroup && content.name && (
-        <>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-            <Title level={4} style={{ margin: 0 }}>{content.name}</Title>
-            <Text type="secondary">{content.date} • {content.time}</Text>
-          </div>
           <Divider />
-          <Descriptions column={1} bordered size="small">
-            <Descriptions.Item label="Name">{content.name}</Descriptions.Item>
-            <Descriptions.Item label="Date & Time">{content.date} • {content.time}</Descriptions.Item>
-            <Descriptions.Item label="Attendees">{content.numberOfPeople}</Descriptions.Item>
-            <Descriptions.Item label="Phone">{content.phone}</Descriptions.Item>
-            <Descriptions.Item label="Email">{content.email}</Descriptions.Item>
-            <Descriptions.Item label="Notes">{content.notes || "—"}</Descriptions.Item>
-            <Descriptions.Item label="Property ID">{content.propertyId}</Descriptions.Item>
-          </Descriptions>
 
-          <div style={{ marginTop: 12, display: "flex", gap: 8 }}>
-            <Button type="primary">Confirm</Button>
-            <Button danger>Cancel</Button>
-            <Button onClick={() => setOpenScheduleModal(false)}>Close</Button>
-          </div>
-        </>
+          <Row gutter={32}>
+            <Col span={10}>
+              <Card title="Client Information" bordered={false}>
+                <Space direction="vertical" size={16} style={{ width: "100%" }}>
+                  <div>
+                    <Text type="secondary">Name</Text>
+                    <br />
+                    <Text strong style={{ fontSize: 18 }}>
+                      {content.name}
+                    </Text>
+                  </div>
+                  <div>
+                    <Text type="secondary">Contact</Text>
+                    <br />
+                    <Space>
+                      <PhoneOutlined />
+                      <Text>{content.phone}</Text>
+                    </Space>
+                    <br />
+                    <Space style={{ marginTop: 4 }}>
+                      <MailOutlined />
+                      <Text>{content.email}</Text>
+                    </Space>
+                  </div>
+                  {content.notes && (
+                    <div>
+                      <Text type="secondary">Notes</Text>
+                      <br />
+                      <Text italic>{content.notes}</Text>
+                    </div>
+                  )}
+                </Space>
+              </Card>
+            </Col>
+
+            <Col span={14}>
+              {property && (
+                <Card
+                  title={
+                    <Space>
+                      <HomeOutlined />
+                      Property: {property.address}
+                    </Space>
+                  }
+                  cover={
+                    <Carousel autoplay>
+                      {property.img.map((src, i) => (
+                        <img
+                          key={i}
+                          alt="property"
+                          src={src}
+                          style={{
+                            width: "100%",
+                            height: 320,
+                            objectFit: "cover",
+                          }}
+                        />
+                      ))}
+                    </Carousel>
+                  }
+                >
+                  <Paragraph>{property.description}</Paragraph>
+
+                  <Row gutter={16}>
+                    <Col span={8}>
+                      <Text strong>{property.bedrooms} Bedrooms</Text>
+                    </Col>
+                    <Col span={8}>
+                      <Text strong>{property.bathrooms} Bathrooms</Text>
+                    </Col>
+                    <Col span={8}>
+                      <Text strong>{property.squareFeet} sqft</Text>
+                    </Col>
+                  </Row>
+
+                  <Divider style={{ margin: "12px 0" }} />
+
+                  <Text strong>Price: </Text>
+                  <Text style={{ fontSize: 24, color: "#52c41a" }}>
+                    KSh {property.price.toLocaleString()}
+                  </Text>
+
+                  <div style={{ marginTop: 16 }}>
+                    <Text strong>Amenities: </Text>
+                    <Space wrap>
+                      {property.amenities.map((a) => (
+                        <Tag key={a} color="blue">
+                          {a}
+                        </Tag>
+                      ))}
+                    </Space>
+                  </div>
+                </Card>
+              )}
+            </Col>
+          </Row>
+        </div>
       )}
     </Modal>
   );
-}
+};
 
 export default ScheduleDetails;

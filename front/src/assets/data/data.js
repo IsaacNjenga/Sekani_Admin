@@ -194,7 +194,7 @@ export const scheduleData = [
     phone: "555-123-4567",
     notes: "Interested in morning viewing.",
     numberOfPeople: "2",
-    propertyId: "123456789012345678901234",
+    propertyId: "1",
   },
   {
     date: "2025-12-01",

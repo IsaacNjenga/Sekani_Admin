@@ -1,10 +1,10 @@
-// src/pages/Schedules.jsx
-import React, { useState } from "react";
+import { useState } from "react";
 import { Card } from "antd";
 import ScheduleTable from "../components/ScheduleTable";
 import ScheduleCalendar from "../components/ScheduleCalendar";
 import ScheduleDetails from "../components/ScheduleDetails";
-import { scheduleData } from "../assets/data/data"; // your data
+//import { scheduleData } from "../assets/data/data";
+import useFetchAllSchedules from "../hooks/fetchAllSchedules";
 
 const tabList = [
   { key: "tab1", tab: "Table View" },
@@ -16,9 +16,10 @@ function Schedules() {
   const [openScheduleModal, setOpenScheduleModal] = useState(false);
   const [content, setContent] = useState(null);
   const [loading, setLoading] = useState(false);
+  const { allSchedules, schedulesLoading, schedulesRefresh } =
+    useFetchAllSchedules();
 
   const viewScheduleDetails = (payload) => {
-    // payload can be a single item or { date: 'YYYY-MM-DD', items: [...] }
     setLoading(true);
     setContent(payload);
     setOpenScheduleModal(true);
@@ -30,14 +31,18 @@ function Schedules() {
   const contentList = {
     tab1: (
       <ScheduleTable
-        scheduleData={scheduleData}
+        scheduleData={allSchedules}
         viewScheduleDetails={(item) => viewScheduleDetails(item)}
+        schedulesLoading={schedulesLoading}
+        schedulesRefresh={schedulesRefresh}
       />
     ),
     tab2: (
       <ScheduleCalendar
-        scheduleData={scheduleData}
+        scheduleData={allSchedules}
         viewScheduleDetails={(payload) => viewScheduleDetails(payload)}
+        schedulesLoading={schedulesLoading}
+        schedulesRefresh={schedulesRefresh}
       />
     ),
   };
