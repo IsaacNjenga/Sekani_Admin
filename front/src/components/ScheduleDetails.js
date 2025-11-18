@@ -1,134 +1,41 @@
-import React, { useState, useEffect } from "react";
 import {
   Modal,
   Typography,
   Divider,
   Button,
-  List,
   Card,
-  Avatar,
   Tag,
-  Carousel,
   Empty,
   Row,
   Col,
   Space,
+  Image,
 } from "antd";
 import {
   CloseOutlined,
-  CalendarOutlined,
-  UserOutlined,
   PhoneOutlined,
   MailOutlined,
   HomeOutlined,
-  TeamOutlined,
-  DollarOutlined,
-  CheckCircleFilled,
+  UserOutlined,
+  EnvironmentOutlined,
 } from "@ant-design/icons";
+import { format } from "date-fns";
 
 const { Title, Text, Paragraph } = Typography;
-
-// Mock property database (in real app, fetch by propertyId)
-const properties = {
-  1: {
-    _id: 1,
-    address: "15 Peponi Road, Westlands",
-    city: "Nairobi",
-    state: "Nairobi County",
-    zip: "00800",
-    price: 450000,
-    bedrooms: 4,
-    bathrooms: 3,
-    squareFeet: 2200,
-    yearBuilt: 2018,
-    propertyType: "Maisonette",
-    listingType: "For Sale",
-    furnished: false,
-    paymentOptions: ["Cash", "Mortgage"],
-    description:
-      "Luxurious four-bedroom maisonette with a private garden in the secure, leafy suburbs of Westlands. Features modern, high-end finishes and all bedrooms are en-suite.",
-    amenities: [
-      "Private Garden",
-      "Backup Generator",
-      "Borehole",
-      "Servant's Quarters (SQ)",
-    ],
-    nearby: ["Sarit Centre", "Westgate Mall", "Nairobi International School"],
-    status: "Available",
-    img: [
-      "https://images.unsplash.com/photo-1694457269860-b7926c29e008?w=900",
-      "https://images.unsplash.com/photo-1560185127-59e4420e2c93?w=900",
-      "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=900",
-      "https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?w=900",
-    ],
-    agent: { name: "Mary Wanjiku", phone: "+254712345678" },
-    reviews: [
-      { name: "Susan K", rating: 4.5, review: "Great place to live" },
-      {
-        name: "John N",
-        rating: 4.8,
-        review: "Excellent location and finishes!",
-      },
-    ],
-  },
-  // ... add more properties as needed
-};
-
-function prettyDate(iso) {
-  const d = new Date(iso + "T00:00:00");
-  return d.toLocaleDateString(undefined, {
-    weekday: "long",
-    month: "long",
-    day: "numeric",
-    year: "numeric",
-  });
-}
 
 const ScheduleDetails = ({
   content,
   openScheduleModal,
   setOpenScheduleModal,
-  loading = false,
 }) => {
-  const [selectedItem, setSelectedItem] = useState(null);
-
-  useEffect(() => {
-    if (!content) {
-      setSelectedItem(null);
-      return;
-    }
-
-    if (content.name) {
-      // Single booking
-      const property = properties[content.propertyId] || null;
-      setSelectedItem({ ...content, property });
-    } else if (content.items?.length === 1) {
-      const property = properties[content.items[0].propertyId] || null;
-      setSelectedItem({ ...content.items[0], property });
-    } else {
-      setSelectedItem(null);
-    }
-  }, [content]);
-
-  const isDateGroup = content && content.items && content.items.length > 0;
-
-  // For grouped view — enrich all items with property data
-  const enrichedItems = isDateGroup
-    ? content.items.map((item) => ({
-        ...item,
-        property: properties[item.propertyId] || null,
-      }))
-    : [];
-
-  const currentBooking = selectedItem || (isDateGroup ? null : content);
-  const property = currentBooking?.property;
+  const property = content?.propertyId;
 
   return (
     <Modal
       open={openScheduleModal}
       onCancel={() => setOpenScheduleModal(false)}
       footer={null}
-      width="95%"
+      width="85%"
       style={{ top: 20, maxWidth: 1450 }}
       closeIcon={
         <CloseOutlined
@@ -146,207 +53,23 @@ const ScheduleDetails = ({
         background: "linear-gradient(135deg, #f5f7fa 0%, #e4edf5 100%)",
         borderRadius: 16,
         maxHeight: "88vh",
-        overflow: "hidden",
+        overflow: "auto",
       }}
-      maskStyle={{ backgroundColor: "rgba(0, 0, 0, 0.7)" }}
     >
       {!content ? (
         <div style={{ padding: 80, textAlign: "center" }}>
           <Empty description="No schedule selected" />
         </div>
-      ) : isDateGroup ? (
-        // === MULTIPLE BOOKINGS ON SAME DATE ===
-        <div
-          style={{ padding: "24px 32px", height: "88vh", overflowY: "auto" }}
-        >
-          <Row
-            justify="space-between"
-            align="middle"
-            style={{ marginBottom: 8 }}
-          >
-            <div>
-              <Title level={3} style={{ margin: 0 }}>
-                <CalendarOutlined /> Bookings for {prettyDate(content.date)}
-              </Title>
-              <Text type="secondary">
-                {content.items.length} appointment(s)
-              </Text>
-            </div>
-            <Button onClick={() => setOpenScheduleModal(false)}>Close</Button>
-          </Row>
-
-          <Divider style={{ margin: "16px 0" }} />
-
-          <Row gutter={32}>
-            {/* Left: List of bookings */}
-            <Col span={10}>
-              <List
-                dataSource={enrichedItems}
-                renderItem={(item) => (
-                  <List.Item
-                    style={{
-                      padding: 16,
-                      marginBottom: 12,
-                      background: "#fff",
-                      borderRadius: 12,
-                      boxShadow: "0 2px 8px rgba(0,0,0,0.06)",
-                      cursor: "pointer",
-                      border:
-                        selectedItem?._id === item._id ||
-                        selectedItem?.email === item.email
-                          ? "2px solid #1890ff"
-                          : "2px solid transparent",
-                    }}
-                    onClick={() => setSelectedItem(item)}
-                  >
-                    <List.Item.Meta
-                      avatar={<Avatar icon={<UserOutlined />} size={48} />}
-                      title={
-                        <Space>
-                          <Text strong>{item.name}</Text>
-                          <Text type="secondary">{item.time}</Text>
-                        </Space>
-                      }
-                      description={
-                        <>
-                          <div>
-                            <PhoneOutlined /> {item.phone}
-                          </div>
-                          <div style={{ marginTop: 4 }}>
-                            <HomeOutlined />{" "}
-                            {item.property?.address ||
-                              "Property ID: " + item.propertyId}
-                          </div>
-                        </>
-                      }
-                    />
-                  </List.Item>
-                )}
-              />
-            </Col>
-
-            {/* Right: Selected booking + property details */}
-            <Col span={14}>
-              {selectedItem ? (
-                <div>
-                  <Title level={4}>{selectedItem.name}'s Appointment</Title>
-                  <Text type="secondary">
-                    <CalendarOutlined /> {selectedItem.date} at{" "}
-                    {selectedItem.time} • <TeamOutlined />{" "}
-                    {selectedItem.numberOfPeople} people
-                  </Text>
-
-                  {property && (
-                    <Card
-                      style={{ marginTop: 16 }}
-                      cover={
-                        <Carousel autoplay arrows>
-                          {property.img.map((src, i) => (
-                            <div key={i}>
-                              <img
-                                alt={`Property ${i + 1}`}
-                                src={src}
-                                style={{
-                                  width: "100%",
-                                  height: 300,
-                                  objectFit: "cover",
-                                  borderRadius: "12px 12px 0 0",
-                                }}
-                              />
-                            </div>
-                          ))}
-                        </Carousel>
-                      }
-                    >
-                      <Card.Meta
-                        title={
-                          <Space align="center">
-                            <Text strong style={{ fontSize: 18 }}>
-                              {property.address}
-                            </Text>
-                            <Tag color="green">For Sale</Tag>
-                          </Space>
-                        }
-                        description={
-                          <>
-                            <Space size={16} wrap>
-                              <span>
-                                <strong>{property.bedrooms}</strong> bd
-                              </span>
-                              <span>
-                                <strong>{property.bathrooms}</strong> ba
-                              </span>
-                              <span>
-                                <strong>{property.squareFeet}</strong> sqft
-                              </span>
-                              <span>
-                                <DollarOutlined /> KSh{" "}
-                                {property.price.toLocaleString()}
-                              </span>
-                            </Space>
-                          </>
-                        }
-                      />
-
-                      <Divider />
-
-                      <Paragraph>{property.description}</Paragraph>
-
-                      <div style={{ margin: "16px 0" }}>
-                        <Text strong>Amenities:</Text>
-                        <Space wrap style={{ marginTop: 8 }}>
-                          {property.amenities.map((a) => (
-                            <Tag
-                              icon={<CheckCircleFilled />}
-                              color="success"
-                              key={a}
-                            >
-                              {a}
-                            </Tag>
-                          ))}
-                        </Space>
-                      </div>
-
-                      <Space style={{ marginTop: 24 }}>
-                        <Button type="primary" size="large">
-                          Confirm Booking
-                        </Button>
-                        <Button danger size="large">
-                          Cancel Booking
-                        </Button>
-                        <Button
-                          size="large"
-                          onClick={() => setSelectedItem(null)}
-                        >
-                          Back to List
-                        </Button>
-                      </Space>
-                    </Card>
-                  )}
-                </div>
-              ) : (
-                <Card style={{ textAlign: "center", padding: 40 }}>
-                  <Title level={5}>👈 Select a booking</Title>
-                  <Paragraph type="secondary">
-                    Click on any appointment from the list to view full details
-                    and property photos.
-                  </Paragraph>
-                </Card>
-              )}
-            </Col>
-          </Row>
-        </div>
       ) : (
-        // === SINGLE BOOKING VIEW ===
         <div style={{ padding: "32px", maxWidth: 1200, margin: "0 auto" }}>
           <Row justify="space-between" align="middle" gutter={[16, 16]}>
             <Col>
               <Title level={3} style={{ margin: 0 }}>
                 Viewing Appointment
               </Title>
-              <Text type="secondary">
-                {content.date} at {content.time} • {content.numberOfPeople}{" "}
-                attendee(s)
+              <Text type="secondary" strong>
+                {format(new Date(content.date), "EEEE, do, MMM yyyy")} at{" "}
+                {content.time} • {content.numberOfPeople} attendee(s)
               </Text>
             </Col>
             <Col>
@@ -357,18 +80,15 @@ const ScheduleDetails = ({
                 <Button danger size="large">
                   Cancel
                 </Button>
-                <Button onClick={() => setOpenScheduleModal(false)}>
-                  Close
-                </Button>
               </Space>
             </Col>
           </Row>
 
           <Divider />
 
-          <Row gutter={32}>
-            <Col span={10}>
-              <Card title="Client Information" bordered={false}>
+          <Row gutter={[32, 32]}>
+            <Col xs={24} lg={10}>
+              <Card title="Client Information">
                 <Space direction="vertical" size={16} style={{ width: "100%" }}>
                   <div>
                     <Text type="secondary">Name</Text>
@@ -401,65 +121,257 @@ const ScheduleDetails = ({
               </Card>
             </Col>
 
-            <Col span={14}>
-              {property && (
+            <Col xs={24} lg={14}>
+              <div style={{ position: "sticky", top: 20 }}>
+                {/* Property Card */}
                 <Card
-                  title={
-                    <Space>
-                      <HomeOutlined />
-                      Property: {property.address}
-                    </Space>
-                  }
-                  cover={
-                    <Carousel autoplay>
-                      {property.img.map((src, i) => (
-                        <img
-                          key={i}
-                          alt="property"
-                          src={src}
-                          style={{
-                            width: "100%",
-                            height: 320,
-                            objectFit: "cover",
-                          }}
-                        />
-                      ))}
-                    </Carousel>
-                  }
+                  style={{
+                    borderRadius: 20,
+                    overflow: "hidden",
+                    boxShadow: "0 4px 24px rgba(0,0,0,0.08)",
+                    border: "none",
+                  }}
+                  title={"Property Information"}
+                  bodyStyle={{ padding: 0 }}
                 >
-                  <Paragraph>{property.description}</Paragraph>
+                  {/* Property Images */}
+                  <div
+                    style={{
+                      display: "grid",
+                      gridTemplateColumns: "repeat(2, 1fr)",
+                      gap: 8,
+                      padding: 16,
+                      background: "#f8fafc",
+                    }}
+                  >
+                    {(Array.isArray(property?.img)
+                      ? property.img
+                      : [property?.img]
+                    ).map((img, i) => (
+                      <Image
+                        key={i}
+                        src={img}
+                        alt={`Property ${i + 1}`}
+                        style={{
+                          width: "100%",
+                          height: 200,
+                          objectFit: "cover",
+                          borderRadius: 12,
+                        }}
+                      />
+                    ))}
+                  </div>
 
-                  <Row gutter={16}>
-                    <Col span={8}>
-                      <Text strong>{property.bedrooms} Bedrooms</Text>
-                    </Col>
-                    <Col span={8}>
-                      <Text strong>{property.bathrooms} Bathrooms</Text>
-                    </Col>
-                    <Col span={8}>
-                      <Text strong>{property.squareFeet} sqft</Text>
-                    </Col>
-                  </Row>
+                  <div style={{ padding: 24 }}>
+                    {/* Status Tag */}
+                    <Tag
+                      icon={<HomeOutlined />}
+                      style={{
+                        background: "linear-gradient(135deg, #10b981, #059669)",
+                        color: "#fff",
+                        border: "none",
+                        borderRadius: 20,
+                        padding: "6px 16px",
+                        fontSize: 14,
+                        fontFamily: "Raleway",
+                        fontWeight: 600,
+                        marginBottom: 16,
+                      }}
+                    >
+                      {property?.status}
+                    </Tag>
 
-                  <Divider style={{ margin: "12px 0" }} />
+                    {/* Property Title */}
+                    <Title
+                      level={4}
+                      style={{
+                        fontFamily: "Raleway",
+                        marginBottom: 8,
+                        color: "#1e293b",
+                      }}
+                    >
+                      {property?.propertyType}
+                    </Title>
 
-                  <Text strong>Price: </Text>
-                  <Text style={{ fontSize: 24, color: "#52c41a" }}>
-                    KSh {property.price.toLocaleString()}
-                  </Text>
+                    {/* Location */}
+                    <div
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 8,
+                        marginBottom: 16,
+                      }}
+                    >
+                      <EnvironmentOutlined
+                        style={{ color: "#bdb890", fontSize: 16 }}
+                      />
+                      <Text
+                        style={{
+                          fontFamily: "Raleway",
+                          color: "#64748b",
+                        }}
+                      >
+                        {property?.address}, {property?.city}
+                      </Text>
+                    </div>
 
-                  <div style={{ marginTop: 16 }}>
-                    <Text strong>Amenities: </Text>
-                    <Space wrap>
-                      {property.amenities.map((a) => (
-                        <Tag key={a} color="blue">
-                          {a}
-                        </Tag>
-                      ))}
-                    </Space>
+                    {/* Property Details */}
+                    <div
+                      style={{
+                        display: "flex",
+                        gap: 16,
+                        padding: "16px 0",
+                        borderTop: "1px solid #e2e8f0",
+                        borderBottom: "1px solid #e2e8f0",
+                        marginBottom: 16,
+                      }}
+                    >
+                      <div>
+                        <Text
+                          strong
+                          style={{
+                            fontFamily: "Raleway",
+                            fontSize: 18,
+                            color: "#1e293b",
+                            display: "block",
+                          }}
+                        >
+                          {property?.bedrooms}
+                        </Text>
+                        <Text
+                          style={{
+                            fontFamily: "Raleway",
+                            fontSize: 12,
+                            color: "#94a3b8",
+                          }}
+                        >
+                          Bedrooms
+                        </Text>
+                      </div>
+                      <Divider
+                        type="vertical"
+                        style={{ height: "auto", margin: 0 }}
+                      />
+                      <div>
+                        <Text
+                          strong
+                          style={{
+                            fontFamily: "Raleway",
+                            fontSize: 18,
+                            color: "#1e293b",
+                            display: "block",
+                          }}
+                        >
+                          {property?.bathrooms}
+                        </Text>
+                        <Text
+                          style={{
+                            fontFamily: "Raleway",
+                            fontSize: 12,
+                            color: "#94a3b8",
+                          }}
+                        >
+                          Bathrooms
+                        </Text>
+                      </div>
+                      <Divider
+                        type="vertical"
+                        style={{ height: "auto", margin: 0 }}
+                      />
+                      <div>
+                        <Text
+                          strong
+                          style={{
+                            fontFamily: "Raleway",
+                            fontSize: 18,
+                            color: "#1e293b",
+                            display: "block",
+                          }}
+                        >
+                          {property?.squareFeet}
+                        </Text>
+                        <Text
+                          style={{
+                            fontFamily: "Raleway",
+                            fontSize: 12,
+                            color: "#94a3b8",
+                          }}
+                        >
+                          Sq. Ft
+                        </Text>
+                      </div>
+                    </div>
+
+                    {/* Description */}
+                    <Paragraph
+                      style={{
+                        fontFamily: "Raleway",
+                        color: "#64748b",
+                        fontSize: 14,
+                        marginBottom: 20,
+                      }}
+                    >
+                      {property?.description}
+                    </Paragraph>
+
+                    {/* Agent Info */}
+                    <div
+                      style={{
+                        background: "linear-gradient(135deg, #f8fafc, #f1f5f9)",
+                        padding: 20,
+                        borderRadius: 12,
+                        marginBottom: 16,
+                      }}
+                    >
+                      <Text
+                        strong
+                        style={{
+                          fontFamily: "Raleway",
+                          fontSize: 14,
+                          color: "#475569",
+                          display: "block",
+                          marginBottom: 12,
+                        }}
+                      >
+                        Property Agent
+                      </Text>
+                      <div
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          gap: 12,
+                          marginBottom: 8,
+                        }}
+                      >
+                        <UserOutlined
+                          style={{ color: "#bdb890", fontSize: 16 }}
+                        />
+                        <Text
+                          style={{ fontFamily: "Raleway", color: "#1e293b" }}
+                        >
+                          {property?.agent.name}
+                        </Text>
+                      </div>
+                      <div
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          gap: 12,
+                        }}
+                      >
+                        <PhoneOutlined
+                          style={{ color: "#bdb890", fontSize: 16 }}
+                        />
+                        <Text
+                          style={{ fontFamily: "Raleway", color: "#1e293b" }}
+                        >
+                          {property?.agent.phone}
+                        </Text>
+                      </div>
+                    </div>
                   </div>
                 </Card>
-              )}
+              </div>
             </Col>
           </Row>
         </div>
