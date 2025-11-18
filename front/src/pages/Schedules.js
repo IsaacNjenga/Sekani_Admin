@@ -31,10 +31,7 @@ function Schedules() {
   const contentList = {
     tab1: (
       <ScheduleTable
-        scheduleData={allSchedules}
         viewScheduleDetails={(item) => viewScheduleDetails(item)}
-        schedulesLoading={schedulesLoading}
-        schedulesRefresh={schedulesRefresh}
       />
     ),
     tab2: (

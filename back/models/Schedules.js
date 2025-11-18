@@ -9,6 +9,11 @@ const scheduleSchema = new mongoose.Schema(
     phone: { type: String, required: true },
     notes: { type: String, required: false },
     numberOfPeople: { type: String, required: true },
+    status: {
+      type: String,
+      default: "pending",
+      enum: ["pending", "confirmed", "cancelled"],
+    },
     propertyId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "properties",
