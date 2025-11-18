@@ -10,16 +10,22 @@ import {
   Col,
   Space,
   Image,
+  Descriptions,
+  Avatar,
 } from "antd";
 import {
   CloseOutlined,
   PhoneOutlined,
-  MailOutlined,
   HomeOutlined,
   UserOutlined,
   EnvironmentOutlined,
+  ExclamationCircleFilled,
+  CheckCircleFilled,
+  CloseCircleFilled,
 } from "@ant-design/icons";
 import { format } from "date-fns";
+import { useNotification } from "../contexts/NotificationContext";
+import axios from "axios";
 
 const { Title, Text, Paragraph } = Typography;
 
@@ -29,6 +35,23 @@ const ScheduleDetails = ({
   setOpenScheduleModal,
 }) => {
   const property = content?.propertyId;
+  const openNotification = useNotification();
+
+  const updateSchedule = async (id, updateData) => {
+    try {
+      const res = await axios.put(`schedule-update?id=${id}`, updateData);
+      if (res.data.success) {
+        //console.log("success");
+      }
+    } catch (error) {
+      console.error("Failed to update schedule", error);
+      openNotification(
+        "error",
+        "Failed to update order. Try again",
+        "There was an error"
+      );
+    }
+  };
 
   return (
     <Modal
@@ -36,112 +59,251 @@ const ScheduleDetails = ({
       onCancel={() => setOpenScheduleModal(false)}
       footer={null}
       width="85%"
-      style={{ top: 20, maxWidth: 1450 }}
+      style={{
+        top: 20,
+        maxWidth: 1450,
+      }}
       closeIcon={
         <CloseOutlined
           style={{
-            fontSize: 22,
-            color: "#fff",
-            background: "rgba(0,0,0,0.65)",
-            padding: 10,
+            fontSize: 20,
+            color: "#334155",
+            background: "rgba(255,255,255,0.9)",
+            padding: 8,
             borderRadius: "50%",
+            boxShadow: "0 2px 8px rgba(0,0,0,0.15)",
           }}
         />
       }
       bodyStyle={{
         padding: 0,
-        background: "linear-gradient(135deg, #f5f7fa 0%, #e4edf5 100%)",
-        borderRadius: 16,
+        background: "#f6f8fa",
+        borderRadius: 18,
         maxHeight: "88vh",
         overflow: "auto",
       }}
     >
       {!content ? (
-        <div style={{ padding: 80, textAlign: "center" }}>
+        <div style={{ padding: 90, textAlign: "center" }}>
           <Empty description="No schedule selected" />
         </div>
       ) : (
-        <div style={{ padding: "32px", maxWidth: 1200, margin: "0 auto" }}>
+        <div
+          style={{
+            padding: "38px",
+            maxWidth: 1250,
+            margin: "0 auto",
+          }}
+        >
+          {/* Header */}
           <Row justify="space-between" align="middle" gutter={[16, 16]}>
             <Col>
-              <Title level={3} style={{ margin: 0 }}>
+              <Title level={3} style={{ margin: 0, color: "#0f172a" }}>
                 Viewing Appointment
               </Title>
-              <Text type="secondary" strong>
-                {format(new Date(content.date), "EEEE, do, MMM yyyy")} at{" "}
+              <Text type="secondary" strong style={{ fontSize: 15 }}>
+                {format(new Date(content.date), "EEEE, do MMM yyyy")} at{" "}
                 {content.time} • {content.numberOfPeople} attendee(s)
               </Text>
             </Col>
             <Col>
               <Space>
-                <Button type="primary" size="large">
+                <Button
+                  type="primary"
+                  size="large"
+                  style={{
+                    borderRadius: 50,
+                    paddingInline: 28,
+                    height: 45,
+                  }}
+                  onClick={async () => {
+                    await updateSchedule(content._id, { status: "confirmed" });
+                  }}
+                >
                   Confirm
                 </Button>
-                <Button danger size="large">
+
+                <Button
+                  danger
+                  size="large"
+                  style={{
+                    borderRadius: 50,
+                    paddingInline: 28,
+                    height: 45,
+                  }}
+                  onClick={async () => {
+                    await updateSchedule(content._id, { status: "cancelled" });
+                  }}
+                >
                   Cancel
                 </Button>
               </Space>
             </Col>
           </Row>
 
-          <Divider />
+          <Divider style={{ margin: "22px 0" }} />
 
           <Row gutter={[32, 32]}>
             <Col xs={24} lg={10}>
-              <Card title="Client Information">
-                <Space direction="vertical" size={16} style={{ width: "100%" }}>
-                  <div>
-                    <Text type="secondary">Name</Text>
-                    <br />
-                    <Text strong style={{ fontSize: 18 }}>
-                      {content.name}
-                    </Text>
+              <Card
+                title="Client Information"
+                headStyle={{
+                  background: "#f8fafc",
+                  // Removed bottom border radius for sharper separation
+                  borderRadius: "12px 12px 0 0",
+                  fontWeight: 600,
+                  borderBottom: "1px solid #e2e8f0", // Slightly stronger divider
+                }}
+                style={{
+                  borderRadius: 12,
+                  boxShadow: "0 8px 30px rgba(0,0,0,0.08)", // Softer, deeper shadow
+                  border: "1px solid #f1f5f9",
+                }}
+                bodyStyle={{ padding: "0 24px 24px 24px" }} // Adjust padding for inner content
+              >
+                <Space
+                  direction="vertical"
+                  size={0}
+                  style={{ width: "100%", padding: "20px 0" }}
+                >
+                  {/* Section 1: Name and Avatar - High Prominence */}
+                  <div
+                    style={{ display: "flex", alignItems: "center", gap: 16 }}
+                  >
+                    <Avatar
+                      size={64} // Larger avatar
+                      icon={<UserOutlined />}
+                      style={{
+                        backgroundColor: "#bdb890", // Consistent with your color theme
+                        fontSize: 32,
+                      }}
+                    >
+                      {content.name?.charAt(0).toUpperCase()}
+                    </Avatar>
+                    <div style={{ lineHeight: 1 }}>
+                      <Text type="secondary" style={{ fontSize: 13 }}>
+                        Client
+                      </Text>
+                      <Text
+                        strong
+                        style={{
+                          fontSize: 22, // Larger name
+                          display: "block",
+                          marginTop: 4,
+                        }}
+                      >
+                        {content.name}
+                      </Text>
+                    </div>
                   </div>
-                  <div>
-                    <Text type="secondary">Contact</Text>
-                    <br />
-                    <Space>
-                      <PhoneOutlined />
+                </Space>
+
+                <Divider style={{ margin: "16px 0" }} />
+
+                {/* Section 2: Contact Details and Status using Descriptions */}
+                <Descriptions
+                  column={1} // Stack items vertically
+                  size="middle"
+                  colon={false}
+                  labelStyle={{
+                    color: "#64748b", // Subtle secondary text
+                    fontWeight: 500,
+                    paddingBottom: 4,
+                  }}
+                  contentStyle={{
+                    paddingBottom: 12,
+                    fontWeight: 600,
+                    fontSize: 16,
+                  }}
+                >
+                  <Descriptions.Item label="Status">
+                    <Tag
+                      color={
+                        content.status === "confirmed"
+                          ? "green"
+                          : content.status === "pending"
+                          ? "gold"
+                          : "red"
+                      }
+                      style={{
+                        fontSize: 14,
+                        padding: "5px 12px",
+                        borderRadius: 10,
+                      }}
+                    >
+                      {content.status === "confirmed" ? (
+                        <CheckCircleFilled style={{ color: "green" }} />
+                      ) : content.status === "pending" ? (
+                        <ExclamationCircleFilled style={{ color: "gold" }} />
+                      ) : (
+                        <CloseCircleFilled style={{ color: "red" }} />
+                      )}{" "}
+                      {content.status.charAt(0).toUpperCase() +
+                        content.status.slice(1)}
+                    </Tag>
+                  </Descriptions.Item>
+                  <Descriptions.Item label="Phone">
+                    <Space size={3}>
                       <Text>{content.phone}</Text>
                     </Space>
-                    <br />
-                    <Space style={{ marginTop: 4 }}>
-                      <MailOutlined />
+                  </Descriptions.Item>
+                  <Descriptions.Item label="Email">
+                    <Space size={8}>
                       <Text>{content.email}</Text>
                     </Space>
+                  </Descriptions.Item>
+                </Descriptions>
+
+                {/* Section 3: Notes - Highlighted Block */}
+                {content.notes && (
+                  <div
+                    style={{
+                      background: "#f8fafc",
+                      borderRadius: 10,
+                      padding: 16, // Increased padding
+                      marginTop: 16,
+                      borderLeft: "4px solid #bdb890", // Accent line for notes
+                    }}
+                  >
+                    <Text
+                      type="secondary"
+                      style={{ display: "block", marginBottom: 4 }}
+                    >
+                      Notes
+                    </Text>
+                    <Text>{content.notes}</Text>
                   </div>
-                  {content.notes && (
-                    <div>
-                      <Text type="secondary">Notes</Text>
-                      <br />
-                      <Text italic>{content.notes}</Text>
-                    </div>
-                  )}
-                </Space>
+                )}
               </Card>
             </Col>
 
+            {/* PROPERTY INFO */}
             <Col xs={24} lg={14}>
               <div style={{ position: "sticky", top: 20 }}>
-                {/* Property Card */}
                 <Card
-                  style={{
-                    borderRadius: 20,
-                    overflow: "hidden",
-                    boxShadow: "0 4px 24px rgba(0,0,0,0.08)",
-                    border: "none",
+                  title="Property Information"
+                  headStyle={{
+                    background: "#f8fafc",
+                    // Removed bottom border radius for sharper separation
+                    borderRadius: "12px 12px 0 0",
+                    fontWeight: 600,
+                    borderBottom: "1px solid #e2e8f0", // Slightly stronger divider
                   }}
-                  title={"Property Information"}
-                  bodyStyle={{ padding: 0 }}
+                  style={{
+                    borderRadius: 12,
+                    boxShadow: "0 8px 30px rgba(0,0,0,0.08)", // Softer, deeper shadow
+                    border: "1px solid #f1f5f9",
+                  }}
+                  bodyStyle={{ padding: "10px 24px 24px 24px" }} // Adjust padding for inner content
                 >
                   {/* Property Images */}
                   <div
                     style={{
                       display: "grid",
                       gridTemplateColumns: "repeat(2, 1fr)",
-                      gap: 8,
-                      padding: 16,
-                      background: "#f8fafc",
+                      gap: 12,
+                      padding: 18,
+                      background: "#fafbfc",
                     }}
                   >
                     {(Array.isArray(property?.img)
@@ -151,223 +313,122 @@ const ScheduleDetails = ({
                       <Image
                         key={i}
                         src={img}
-                        alt={`Property ${i + 1}`}
+                        loading="lazy"
                         style={{
                           width: "100%",
-                          height: 200,
+                          height: 220,
                           objectFit: "cover",
-                          borderRadius: 12,
+                          borderRadius: 14,
                         }}
                       />
                     ))}
                   </div>
 
-                  <div style={{ padding: 24 }}>
-                    {/* Status Tag */}
+                  {/* Property Text */}
+                  <div style={{ padding: 28 }}>
                     <Tag
                       icon={<HomeOutlined />}
                       style={{
-                        background: "linear-gradient(135deg, #10b981, #059669)",
+                        background: "#10b981",
                         color: "#fff",
-                        border: "none",
                         borderRadius: 20,
-                        padding: "6px 16px",
-                        fontSize: 14,
-                        fontFamily: "Raleway",
-                        fontWeight: 600,
-                        marginBottom: 16,
+                        padding: "6px 18px",
+                        marginBottom: 18,
                       }}
                     >
                       {property?.status}
                     </Tag>
 
-                    {/* Property Title */}
-                    <Title
-                      level={4}
-                      style={{
-                        fontFamily: "Raleway",
-                        marginBottom: 8,
-                        color: "#1e293b",
-                      }}
-                    >
+                    <Title level={4} style={{ margin: 0, color: "#1e293b" }}>
                       {property?.propertyType}
                     </Title>
 
                     {/* Location */}
-                    <div
+                    <Space
                       style={{
-                        display: "flex",
-                        alignItems: "center",
-                        gap: 8,
-                        marginBottom: 16,
+                        marginTop: 8,
+                        marginBottom: 20,
+                        color: "#64748b",
                       }}
                     >
-                      <EnvironmentOutlined
-                        style={{ color: "#bdb890", fontSize: 16 }}
-                      />
-                      <Text
-                        style={{
-                          fontFamily: "Raleway",
-                          color: "#64748b",
-                        }}
-                      >
+                      <EnvironmentOutlined />
+                      <Text>
                         {property?.address}, {property?.city}
                       </Text>
-                    </div>
+                    </Space>
 
-                    {/* Property Details */}
+                    {/* Summary Stats */}
                     <div
                       style={{
                         display: "flex",
-                        gap: 16,
-                        padding: "16px 0",
+                        gap: 20,
+                        padding: "18px 0",
                         borderTop: "1px solid #e2e8f0",
                         borderBottom: "1px solid #e2e8f0",
-                        marginBottom: 16,
+                        marginBottom: 20,
                       }}
                     >
                       <div>
-                        <Text
-                          strong
-                          style={{
-                            fontFamily: "Raleway",
-                            fontSize: 18,
-                            color: "#1e293b",
-                            display: "block",
-                          }}
-                        >
+                        <Text strong style={{ fontSize: 18 }}>
                           {property?.bedrooms}
                         </Text>
-                        <Text
-                          style={{
-                            fontFamily: "Raleway",
-                            fontSize: 12,
-                            color: "#94a3b8",
-                          }}
-                        >
+                        <Text type="secondary" style={{ display: "block" }}>
                           Bedrooms
                         </Text>
                       </div>
-                      <Divider
-                        type="vertical"
-                        style={{ height: "auto", margin: 0 }}
-                      />
+
+                      <Divider type="vertical" />
+
                       <div>
-                        <Text
-                          strong
-                          style={{
-                            fontFamily: "Raleway",
-                            fontSize: 18,
-                            color: "#1e293b",
-                            display: "block",
-                          }}
-                        >
+                        <Text strong style={{ fontSize: 18 }}>
                           {property?.bathrooms}
                         </Text>
-                        <Text
-                          style={{
-                            fontFamily: "Raleway",
-                            fontSize: 12,
-                            color: "#94a3b8",
-                          }}
-                        >
+                        <Text type="secondary" style={{ display: "block" }}>
                           Bathrooms
                         </Text>
                       </div>
-                      <Divider
-                        type="vertical"
-                        style={{ height: "auto", margin: 0 }}
-                      />
+
+                      <Divider type="vertical" />
+
                       <div>
-                        <Text
-                          strong
-                          style={{
-                            fontFamily: "Raleway",
-                            fontSize: 18,
-                            color: "#1e293b",
-                            display: "block",
-                          }}
-                        >
+                        <Text strong style={{ fontSize: 18 }}>
                           {property?.squareFeet}
                         </Text>
-                        <Text
-                          style={{
-                            fontFamily: "Raleway",
-                            fontSize: 12,
-                            color: "#94a3b8",
-                          }}
-                        >
+                        <Text type="secondary" style={{ display: "block" }}>
                           Sq. Ft
                         </Text>
                       </div>
                     </div>
 
-                    {/* Description */}
-                    <Paragraph
-                      style={{
-                        fontFamily: "Raleway",
-                        color: "#64748b",
-                        fontSize: 14,
-                        marginBottom: 20,
-                      }}
-                    >
+                    <Paragraph style={{ color: "#64748b" }}>
                       {property?.description}
                     </Paragraph>
 
-                    {/* Agent Info */}
+                    {/* Agent */}
                     <div
                       style={{
-                        background: "linear-gradient(135deg, #f8fafc, #f1f5f9)",
+                        background: "#f8fafc",
                         padding: 20,
-                        borderRadius: 12,
-                        marginBottom: 16,
+                        borderRadius: 14,
                       }}
                     >
                       <Text
                         strong
-                        style={{
-                          fontFamily: "Raleway",
-                          fontSize: 14,
-                          color: "#475569",
-                          display: "block",
-                          marginBottom: 12,
-                        }}
+                        style={{ display: "block", marginBottom: 12 }}
                       >
                         Property Agent
                       </Text>
-                      <div
-                        style={{
-                          display: "flex",
-                          alignItems: "center",
-                          gap: 12,
-                          marginBottom: 8,
-                        }}
-                      >
-                        <UserOutlined
-                          style={{ color: "#bdb890", fontSize: 16 }}
-                        />
-                        <Text
-                          style={{ fontFamily: "Raleway", color: "#1e293b" }}
-                        >
-                          {property?.agent.name}
-                        </Text>
-                      </div>
-                      <div
-                        style={{
-                          display: "flex",
-                          alignItems: "center",
-                          gap: 12,
-                        }}
-                      >
-                        <PhoneOutlined
-                          style={{ color: "#bdb890", fontSize: 16 }}
-                        />
-                        <Text
-                          style={{ fontFamily: "Raleway", color: "#1e293b" }}
-                        >
-                          {property?.agent.phone}
-                        </Text>
-                      </div>
+
+                      <Space direction="vertical" size={6}>
+                        <Space>
+                          <UserOutlined />
+                          <Text>{property?.agent.name}</Text>
+                        </Space>
+                        <Space>
+                          <PhoneOutlined />
+                          <Text>{property?.agent.phone}</Text>
+                        </Space>
+                      </Space>
                     </div>
                   </div>
                 </Card>
