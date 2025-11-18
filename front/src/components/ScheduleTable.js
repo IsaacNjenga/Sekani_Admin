@@ -89,7 +89,6 @@ const columns = [
       </div>
     ),
   },
-
   {
     title: "Status",
     dataIndex: "status",
@@ -98,6 +97,7 @@ const columns = [
     align: "center",
     render: (text) => (
       <Text
+        strong
         style={{
           fontFamily: "Raleway",
         }}
@@ -140,7 +140,7 @@ const columns = [
 
 const tabs = [
   {
-    key: "all",
+    key: 1,
     label: "All",
     color: "purple",
     color2: "#cbcbfdff",
@@ -148,7 +148,7 @@ const tabs = [
     icon2: SwitcherOutlined,
   },
   {
-    key: "confirmed",
+    key: 2,
     label: "Confirmed",
     color: "green",
     color2: "#cff8e8",
@@ -156,7 +156,7 @@ const tabs = [
     icon2: CheckCircleOutlined,
   },
   {
-    key: "pending",
+    key: 3,
     label: "Pending",
     color: "orange",
     color2: "#f7eebe",
@@ -164,7 +164,7 @@ const tabs = [
     icon2: ExclamationCircleOutlined,
   },
   {
-    key: "cancelled",
+    key: 4,
     label: "Cancelled",
     color: "red",
     color2: "#fad2cf",
@@ -173,12 +173,12 @@ const tabs = [
   },
 ];
 
-const TableView = ({ datasource, schedulesLoading, viewScheduleDetails }) => {
+const TableView = ({ data, schedulesLoading, viewScheduleDetails }) => {
   return (
     <>
       <Table
         columns={columns}
-        dataSource={datasource}
+        dataSource={data}
         loading={schedulesLoading}
         rowKey={(r) =>
           r._id || `${r.propertyId}-${r.date}-${r.time}-${r.email}`
@@ -226,7 +226,7 @@ function ScheduleTable({ viewScheduleDetails }) {
       case 1:
         return (
           <TableView
-            datasource={searchValue ? schedule : allSchedules}
+            data={searchValue ? schedule : allSchedules}
             schedulesLoading={schedulesLoading}
             viewScheduleDetails={viewScheduleDetails}
           />
@@ -234,7 +234,7 @@ function ScheduleTable({ viewScheduleDetails }) {
       case 2:
         return (
           <TableView
-            datasource={
+            data={
               searchValue
                 ? schedule.filter((item) => item.status === "confirmed")
                 : allSchedules.filter((item) => item.status === "confirmed")
@@ -246,7 +246,7 @@ function ScheduleTable({ viewScheduleDetails }) {
       case 3:
         return (
           <TableView
-            datasource={
+            data={
               searchValue
                 ? schedule.filter((item) => item.status === "pending")
                 : allSchedules.filter((item) => item.status === "pending")
@@ -258,7 +258,7 @@ function ScheduleTable({ viewScheduleDetails }) {
       case 4:
         return (
           <TableView
-            datasource={
+            data={
               searchValue
                 ? schedule.filter((item) => item.status === "cancelled")
                 : allSchedules.filter((item) => item.status === "cancelled")
