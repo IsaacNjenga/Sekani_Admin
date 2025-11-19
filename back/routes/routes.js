@@ -31,7 +31,10 @@ import {
   fetchReplies,
   fetchReply,
 } from "../controllers/repliesController.js";
-import { replyToEmail } from "../controllers/emailReplyController.js";
+import {
+  replyToEmail,
+  scheduleEmail,
+} from "../controllers/emailReplyController.js";
 import { fetchActivities } from "../controllers/activityController.js";
 import {
   deleteReview,
@@ -71,6 +74,8 @@ router.post("/create-mail", createMail);
 router.get("/fetch-mails", protectRoute, readMails);
 router.get("/fetch-mail", protectRoute, readMail);
 router.put("/mail-update", protectRoute, emailUpdate);
+
+router.post("/email-schedule-reply", protectRoute, scheduleEmail);
 
 //reply routes
 router.post("/reply-to-email", protectRoute, replyToEmail);

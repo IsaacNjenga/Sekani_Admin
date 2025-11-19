@@ -3,16 +3,30 @@ import { Card } from "antd";
 import ScheduleTable from "../components/ScheduleTable";
 import ScheduleCalendar from "../components/ScheduleCalendar";
 import ScheduleDetails from "../components/ScheduleDetails";
-//import { scheduleData } from "../assets/data/data";
 import useFetchAllSchedules from "../hooks/fetchAllSchedules";
+import { CalendarOutlined, TableOutlined } from "@ant-design/icons";
 
 const tabList = [
-  { key: "tab1", tab: "Table View" },
-  { key: "tab2", tab: "Calendar View" },
+  {
+    key: "tab1",
+    tab: (
+      <span style={{ fontFamily: "Raleway", fontSize: 18 }}>
+        <TableOutlined /> Table View
+      </span>
+    ),
+  },
+  {
+    key: "tab2",
+    tab: (
+      <span style={{ fontFamily: "Raleway", fontSize: 18 }}>
+        <CalendarOutlined /> Calendar View
+      </span>
+    ),
+  },
 ];
 
 function Schedules() {
-  const [activeTabKey1, setActiveTabKey1] = useState("tab1");
+  const [activeTabKey1, setActiveTabKey1] = useState("tab2");
   const [openScheduleModal, setOpenScheduleModal] = useState(false);
   const [content, setContent] = useState(null);
   const [loading, setLoading] = useState(false);

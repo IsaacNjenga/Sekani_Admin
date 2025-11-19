@@ -70,6 +70,57 @@ const replyToEmail = async (req, res) => {
   }
 };
 
+const scheduleEmail = async (req, res) => {
+  const { to, message, name, subject } = req.body;
+  try {
+    const mailOptions = {
+      from: user,
+      //to:to,
+      to: "njengaisaac789@gmail.com", //testing
+      subject,
+      html: `<div style="
+      font-family: 'Segoe UI', Roboto, Arial, sans-serif;
+      background-color: #f9fafb;
+      padding: 30px 0;
+      color: #333;
+      text-align: center;
+    ">
+      <div style="
+        background-color: #ffffff;
+        width: 90%;
+        max-width: 600px;
+        margin: 0 auto;
+        border-radius: 10px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        padding: 30px;
+      ">
+        <h2 style="color: #1d4ed8; margin-bottom: 10px; text-align: left;"">Hello ${name},</h2>
+        <p style="font-size: 16px; line-height: 1.7; text-align: left;">
+          ${message}
+        </p>
+        <p style="margin-top: 30px; font-size: 14px; color: #555; text-align: left;">
+          Best regards,<br/>
+          <strong>Sekani Properties Team.</strong><br/><br/>
+          <a href="https://sekani-properties.vercel.app" 
+             style="color: #1d4ed8; text-decoration: none;">
+            Visit our website
+          </a>
+        </p>
+      </div>
+      <footer style="margin-top: 20px; font-size: 12px; color: #999;">
+        © ${new Date().getFullYear()} Sekani Properties. All rights reserved.
+      </footer>
+    </div>`,
+    };
+
+    await transporter.sendMail(mailOptions);
+    res.status(200).json({ success: true, message: "Email sent successfully" });
+  } catch (error) {
+    console.error("Error in sending email reply:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
 const otpRequest = async (req, res) => {
   const { to } = req.body;
   const otp = otpGenerator.generate(6, {
@@ -155,4 +206,4 @@ const verifyOtp = async (req, res) => {
   res.status(200).json({ success: true, message: "OTP verified" });
 };
 
-export { replyToEmail, verifyOtp, otpRequest };
+export { replyToEmail, verifyOtp, otpRequest, scheduleEmail };

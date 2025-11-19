@@ -26,6 +26,7 @@ import {
 import { format } from "date-fns";
 import { useNotification } from "../contexts/NotificationContext";
 import axios from "axios";
+import { useAuth } from "../contexts/AuthContext";
 
 const { Title, Text, Paragraph } = Typography;
 
@@ -37,12 +38,41 @@ const ScheduleDetails = ({
 }) => {
   const property = content?.propertyId;
   const openNotification = useNotification();
+  const { token } = useAuth();
 
   const updateSchedule = async (id, updateData) => {
     try {
-      const res = await axios.put(`update-schedule?id=${id}`, updateData);
-      if (res.data.success) {
-        openNotification("success", "Schedule has been updated!", "Success");
+      const mailValues = {
+        to: content?.email,
+        name: content?.name,
+        message: `This is to notify you that your scheduled appointment for ${
+          property.address
+        } has been ${updateData.status}! ${
+          updateData.status === "confirmed"
+            ? "We look forward to meeting with you."
+            : "Reach out to us if you have any questions."
+        }
+        `,
+        subject: `${
+          updateData.status === "confirmed"
+            ? "Confirmation of"
+            : "Cancellation of"
+        } Appointment`,
+      };
+
+      const [res, res2] = await Promise.all([
+        axios.put(`update-schedule?id=${id}`, updateData),
+        axios.post("email-schedule-reply", mailValues, {
+          headers: { Authorization: `Bearer ${token}` },
+        }),
+      ]);
+
+      if (res.data.success && res2.data.success) {
+        openNotification(
+          "success",
+          "Schedule has been updated. The client has been notified.",
+          "Done!"
+        );
 
         setTimeout(async () => {
           setOpenScheduleModal(false);
@@ -108,8 +138,8 @@ const ScheduleDetails = ({
                 Viewing Appointment
               </Title>
               <Text type="secondary" strong style={{ fontSize: 15 }}>
-                {format(new Date(content.date), "EEEE, do MMM yyyy")} at{" "}
-                {content.time} • {content.numberOfPeople} attendee(s)
+                {format(new Date(content?.date), "EEEE, do MMM yyyy")} at{" "}
+                {content?.time} • {content.numberOfPeople} attendee(s)
               </Text>
             </Col>
             <Col>
@@ -128,7 +158,9 @@ const ScheduleDetails = ({
                     await updateSchedule(content._id, { status: "confirmed" });
                   }}
                 >
-                  {content.status === "confirmed" ? "Confirmed" : "Confirm Schedule"}
+                  {content.status === "confirmed"
+                    ? "Confirmed"
+                    : "Confirm Schedule"}
                 </Button>
 
                 {content.status === "confirmed" && (
@@ -161,7 +193,9 @@ const ScheduleDetails = ({
                     await updateSchedule(content._id, { status: "cancelled" });
                   }}
                 >
-                  {content.status === "cancelled" ? "Cancelled" : "Cancel Schedule"}
+                  {content.status === "cancelled"
+                    ? "Cancelled"
+                    : "Cancel Schedule"}
                 </Button>
               </Space>
             </Col>
