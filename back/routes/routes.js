@@ -47,6 +47,7 @@ import {
   deleteSchedule,
   fetchSchedule,
   fetchSchedules,
+  scheduleBookings,
   updateSchedule,
 } from "../controllers/scheduleController.js";
 
@@ -95,6 +96,7 @@ router.get("/fetch-all-schedules", protectRoute, fetchSchedules);
 router.get("/fetch-schedule", fetchSchedule);
 router.put("/update-schedule", updateSchedule);
 router.delete("/delete-schedule", deleteSchedule);
+router.get("/schedule-bookings", scheduleBookings);
 
 //activities route
 router.get("/fetch-activities", protectRoute, fetchActivities);

@@ -111,10 +111,35 @@ const deleteSchedule = async (req, res) => {
   }
 };
 
+const scheduleBookings = async (req, res) => {
+  try {
+    const { date } = req.query;
+    const allocatedTime = await SchedulesModel.find({
+      date,
+      status: { $ne: "cancelled" },
+    });
+    const bookedSlots = allocatedTime.map((entry) => entry.time);
+
+    res.status(200).json({
+      success: true,
+      bookedSchedules: {
+        date,
+        bookedSlots,
+      },
+    });
+  } catch (error) {
+    console.error("Error when fetching schedule bookings:", error);
+    return res
+      .status(500)
+      .json({ success: false, message: "Internal server error" });
+  }
+};
+
 export {
   createSchedule,
   fetchSchedule,
   fetchSchedules,
   updateSchedule,
   deleteSchedule,
+  scheduleBookings,
 };
