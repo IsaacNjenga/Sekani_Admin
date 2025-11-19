@@ -11,21 +11,29 @@ const { Text } = Typography;
 
 const toISODate = (item) => {
   const raw = item.date;
-
   if (!raw) return "";
 
-  // If already correct format
+  // Already in YYYY-MM-DD
   if (/^\d{4}-\d{2}-\d{2}$/.test(raw)) return raw;
 
-  // If ISO string
-  if (typeof raw === "string" && raw.includes("T")) return raw.split("T")[0];
-
-  // If date object
-  try {
-    return new Date(raw).toISOString().split("T")[0];
-  } catch {
-    return "";
+  // ISO string -> return date part WITHOUT timezone conversion
+  if (typeof raw === "string" && raw.includes("T")) {
+    return raw.substring(0, 10); // safer than split("T")
   }
+
+  // Do NOT convert Date objects using toISOString
+  // Instead extract date in local context
+  if (raw instanceof Date) {
+    return (
+      raw.getFullYear() +
+      "-" +
+      String(raw.getMonth() + 1).padStart(2, "0") +
+      "-" +
+      String(raw.getDate()).padStart(2, "0")
+    );
+  }
+
+  return "";
 };
 
 function ScheduleCalendar({ scheduleData, viewScheduleDetails }) {
@@ -64,79 +72,97 @@ function ScheduleCalendar({ scheduleData, viewScheduleDetails }) {
 
     return (
       <div style={{ padding: "4px 6px" }}>
-        {visible.map((ev, idx) => (
-          <div key={idx}>
-            <Tooltip
-              title={`${ev.time} — ${ev.name} (${ev.numberOfPeople} people)`}
-            >
-              <div
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 6,
-                  marginBottom: 6,
-                  cursor: "pointer",
-                  padding: "6px 8px",
-                  background: "linear-gradient(135deg, #bdb890, #a8a378)",
-                  borderRadius: 8,
-                  transition: "all 0.2s ease",
-                  position: "relative",
-                  overflow: "hidden",
-                }}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  viewScheduleDetails(ev);
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.transform = "translateY(-1px)";
-                  e.currentTarget.style.boxShadow =
-                    "0 4px 8px rgba(189, 184, 144, 0.3)";
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.transform = "translateY(0)";
-                  e.currentTarget.style.boxShadow = "none";
-                }}
+        {visible.map((ev, idx) => {
+          const isDatePast = (dateString) => {
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+
+            const eventDate = new Date(dateString);
+            eventDate.setHours(0, 0, 0, 0);
+
+            return eventDate < today;
+          };
+
+          const bgColor = isDatePast(ev.date)
+            ? "grey"
+            : ev.status === "confirmed"
+            ? "linear-gradient(135deg, #bdb890, green)"
+            : ev.status === "pending"
+            ? "linear-gradient(135deg, #bdb890, orange)"
+            : "linear-gradient(135deg, #bdb890, red)";
+
+          return (
+            <div key={idx}>
+              <Tooltip
+                title={`${ev.time} — ${ev.name} (${ev.numberOfPeople} people)`}
               >
-                <ClockCircleOutlined
+                <div
                   style={{
-                    fontSize: 11,
-                    color: "#fff",
-                    opacity: 0.9,
-                  }}
-                />
-                <span
-                  style={{
-                    fontSize: 11,
-                    fontFamily: "Raleway",
-                    fontWeight: 600,
-                    color: "#fff",
-                    whiteSpace: "nowrap",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 6,
+                    marginBottom: 6,
+                    cursor: "pointer",
+                    padding: "6px 8px",
+                    background: bgColor,
+                    borderRadius: 8,
+                    transition: "all 0.2s ease",
+                    position: "relative",
                     overflow: "hidden",
-                    textOverflow: "ellipsis",
-                    flex: 1,
+                  }}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    viewScheduleDetails(ev);
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.transform = "translateY(-1px)";
+                    e.currentTarget.style.boxShadow =
+                      "0 4px 8px rgba(189, 184, 144, 0.3)";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.transform = "translateY(0)";
+                    e.currentTarget.style.boxShadow = "none";
                   }}
                 >
-                  {ev.time}
-                </span>
-                <UserOutlined
-                  style={{
-                    fontSize: 10,
-                    color: "#fff",
-                    opacity: 0.8,
-                  }}
-                />
-              </div>
-            </Tooltip>
-          </div>
-        ))}
+                  <ClockCircleOutlined
+                    style={{
+                      fontSize: 11,
+                      color: "#fff",
+                      opacity: 0.9,
+                    }}
+                  />
+                  <span
+                    style={{
+                      fontSize: 11,
+                      fontFamily: "Raleway",
+                      fontWeight: 600,
+                      color: "#fff",
+                      whiteSpace: "nowrap",
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                      flex: 1,
+                    }}
+                  >
+                    {ev.time}
+                  </span>
+                  <UserOutlined
+                    style={{
+                      fontSize: 10,
+                      color: "#fff",
+                      opacity: 0.8,
+                    }}
+                  />
+                </div>
+              </Tooltip>
+            </div>
+          );
+        })}
 
         {list.length > 2 && (
           <div
             onClick={(e) => {
               e.stopPropagation();
-              //viewScheduleDetails({ date: key, items: list });
               viewEvents(list);
-              console.log("more clicked", list);
             }}
             style={{
               fontSize: 11,
@@ -172,9 +198,7 @@ function ScheduleCalendar({ scheduleData, viewScheduleDetails }) {
     const list = eventsByDate[key] || [];
 
     if (list.length > 0) {
-      //viewScheduleDetails({ date: key, items: list });
       viewEvents(list);
-      console.log("onSelect clicked", list);
     }
   };
 
@@ -336,36 +360,67 @@ function ScheduleCalendar({ scheduleData, viewScheduleDetails }) {
           >
             Legend:
           </Text>
-          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-            <div
-              style={{
-                width: 12,
-                height: 12,
-                borderRadius: 3,
-                background: "linear-gradient(135deg, #bdb890, #a8a378)",
-              }}
-            />
-            <Text
-              style={{ fontFamily: "Raleway", fontSize: 13, color: "#475569" }}
-            >
-              Scheduled viewing
-            </Text>
-          </div>
-          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-            <ClockCircleOutlined style={{ color: "#bdb890", fontSize: 14 }} />
-            <Text
-              style={{ fontFamily: "Raleway", fontSize: 13, color: "#475569" }}
-            >
-              Time indicator
-            </Text>
-          </div>
-          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-            <UserOutlined style={{ color: "#bdb890", fontSize: 14 }} />
-            <Text
-              style={{ fontFamily: "Raleway", fontSize: 13, color: "#475569" }}
-            >
-              Client indicator
-            </Text>
+          <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+              <div
+                style={{
+                  width: 12,
+                  height: 12,
+                  borderRadius: 3,
+                  background: "linear-gradient(135deg, #bdb890, green)",
+                }}
+              />
+              <Text
+                style={{
+                  fontFamily: "Raleway",
+                  fontSize: 13,
+                  color: "#475569",
+                }}
+              >
+                Confirmed viewing
+              </Text>
+            </div>
+
+            <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+              {" "}
+              <div
+                style={{
+                  width: 12,
+                  height: 12,
+                  borderRadius: 3,
+                  background: "linear-gradient(135deg, #bdb890, orange)",
+                }}
+              />
+              <Text
+                style={{
+                  fontFamily: "Raleway",
+                  fontSize: 13,
+                  color: "#475569",
+                }}
+              >
+                Pending viewing
+              </Text>
+            </div>
+
+            <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+              <div
+                style={{
+                  width: 12,
+                  height: 12,
+                  borderRadius: 3,
+                  background: "linear-gradient(135deg, #bdb890, red)",
+                }}
+              />
+              <Text
+                style={{
+                  fontFamily: "Raleway",
+                  fontSize: 13,
+                  color: "#475569",
+                }}
+              >
+                Cancelled viewing
+              </Text>
+            </div>
           </div>
         </div>
 
