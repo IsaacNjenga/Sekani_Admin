@@ -60,6 +60,7 @@ function Schedules() {
         openScheduleModal={openScheduleModal}
         setOpenScheduleModal={setOpenScheduleModal}
         loading={loading}
+        schedulesRefresh={schedulesRefresh}
       />
     </div>
   );

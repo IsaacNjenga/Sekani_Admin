@@ -33,21 +33,27 @@ const ScheduleDetails = ({
   content,
   openScheduleModal,
   setOpenScheduleModal,
+  schedulesRefresh,
 }) => {
   const property = content?.propertyId;
   const openNotification = useNotification();
 
   const updateSchedule = async (id, updateData) => {
     try {
-      const res = await axios.put(`schedule-update?id=${id}`, updateData);
+      const res = await axios.put(`update-schedule?id=${id}`, updateData);
       if (res.data.success) {
-        //console.log("success");
+        openNotification("success", "Schedule has been updated!", "Success");
+
+        setTimeout(async () => {
+          setOpenScheduleModal(false);
+          await schedulesRefresh();
+        }, 1200);
       }
     } catch (error) {
       console.error("Failed to update schedule", error);
       openNotification(
         "error",
-        "Failed to update order. Try again",
+        "Failed to update schedule. Try again",
         "There was an error"
       );
     }
@@ -115,13 +121,33 @@ const ScheduleDetails = ({
                     borderRadius: 50,
                     paddingInline: 28,
                     height: 45,
+                    background:
+                      content.status === "confirmed" ? "#22c55e" : "#3b82f6",
                   }}
                   onClick={async () => {
                     await updateSchedule(content._id, { status: "confirmed" });
                   }}
                 >
-                  Confirm
+                  {content.status === "confirmed" ? "Confirmed" : "Confirm Schedule"}
                 </Button>
+
+                {content.status === "confirmed" && (
+                  <Button
+                    type="primary"
+                    size="large"
+                    style={{
+                      borderRadius: 50,
+                      paddingInline: 28,
+                      height: 45,
+                      background: "orange",
+                    }}
+                    onClick={async () => {
+                      await updateSchedule(content._id, { status: "pending" });
+                    }}
+                  >
+                    Mark as Pending
+                  </Button>
+                )}
 
                 <Button
                   danger
@@ -135,7 +161,7 @@ const ScheduleDetails = ({
                     await updateSchedule(content._id, { status: "cancelled" });
                   }}
                 >
-                  Cancel
+                  {content.status === "cancelled" ? "Cancelled" : "Cancel Schedule"}
                 </Button>
               </Space>
             </Col>

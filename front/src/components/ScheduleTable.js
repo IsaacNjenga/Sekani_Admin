@@ -1,4 +1,4 @@
-import { Avatar, Table, Typography, Tag, Input } from "antd";
+import { Avatar, Table, Typography, Tag, Input, Button, Tooltip } from "antd";
 import { format } from "date-fns";
 import {
   CalendarOutlined,
@@ -13,6 +13,7 @@ import {
   SwitcherOutlined,
   UserOutlined,
   PhoneFilled,
+  ReloadOutlined,
 } from "@ant-design/icons";
 import { useState } from "react";
 import "../assets/css/scheduleTable.css";
@@ -219,7 +220,8 @@ function ScheduleTable({ viewScheduleDetails }) {
   const [schedule, setSchedule] = useState([]);
   const [loading, setLoading] = useState(false);
   const [searchValue, setSearchValue] = useState(null);
-  const { allSchedules, schedulesLoading } = useFetchAllSchedules();
+  const { allSchedules, schedulesLoading, schedulesRefresh } =
+    useFetchAllSchedules();
 
   const renderContent = () => {
     switch (activeTabKey) {
@@ -286,14 +288,12 @@ function ScheduleTable({ viewScheduleDetails }) {
         // Combine searchable text
         const textToSearch = [
           item._id,
-          item.total?.toString(),
           item.name,
           item.email,
           item.date,
           item.time,
           item.attendees,
           item.note,
-          //...(item.order?.map((p) => `${p.name} ${p.email}`) || []),
         ]
           .filter(Boolean)
           .join(" ") // combine all fields
@@ -333,33 +333,50 @@ function ScheduleTable({ viewScheduleDetails }) {
       <div
         style={{
           display: "flex",
-          margin: "10px 0",
-          marginTop: 20,
-          gap: 8,
+          justifyContent: "space-between",
           alignItems: "center",
-          flexWrap: "wrap",
         }}
       >
-        {tabs.map((btn) => (
-          <Tag
-            color={activeTabKey === btn.key ? btn.color : ""}
-            key={btn.key}
-            onClick={() => setActiveTabKey(btn.key)}
-            style={{
-              fontSize: 14,
-              padding: "10px 14px",
-              cursor: "pointer",
-              fontFamily: "Raleway",
-              borderRadius: 20,
-              transition: "0.2s",
-              background: activeTabKey === btn.key ? btn.color : btn.color2,
-              color: activeTabKey === btn.key ? "white" : "#333",
-            }}
-          >
-            {activeTabKey === btn.key ? <btn.icon /> : <btn.icon2 />}{" "}
-            <span style={{ marginLeft: 6 }}>{btn.label}</span>
-          </Tag>
-        ))}
+        <div
+          style={{
+            display: "flex",
+            margin: "10px 0",
+            marginTop: 20,
+            gap: 8,
+            alignItems: "center",
+            flexWrap: "wrap",
+          }}
+        >
+          {tabs.map((btn) => (
+            <Tag
+              color={activeTabKey === btn.key ? btn.color : ""}
+              key={btn.key}
+              onClick={() => setActiveTabKey(btn.key)}
+              style={{
+                fontSize: 14,
+                padding: "10px 14px",
+                cursor: "pointer",
+                fontFamily: "Raleway",
+                borderRadius: 20,
+                transition: "0.2s",
+                background: activeTabKey === btn.key ? btn.color : btn.color2,
+                color: activeTabKey === btn.key ? "white" : "#333",
+              }}
+            >
+              {activeTabKey === btn.key ? <btn.icon /> : <btn.icon2 />}{" "}
+              <span style={{ marginLeft: 6 }}>{btn.label}</span>
+            </Tag>
+          ))}
+        </div>
+        <div>
+          <Tooltip title="Refresh">
+            <Button
+              type="primary"
+              icon={<ReloadOutlined />}
+              onClick={() => schedulesRefresh()}
+            />
+          </Tooltip>
+        </div>
       </div>
 
       <div
