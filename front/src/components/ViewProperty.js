@@ -272,7 +272,7 @@ function PropertyModal({ openModal, setOpenModal, loading, content, token }) {
       </div>
 
       {/* Content Section */}
-      <div style={{ padding: 40 }}>
+      <div style={{ padding: 40,marginTop:20 }}>
         <Row gutter={[32, 32]}>
           {/* Left Column - Main Info */}
           <Col xs={24} lg={16}>
