@@ -1,20 +1,22 @@
 import { useState } from "react";
 import useFetchAllProperties from "../hooks/fetchAllProperties";
 import { Row, Col, Button, Skeleton, Tooltip } from "antd";
-import { ReloadOutlined } from "@ant-design/icons";
+import { PlusCircleOutlined, ReloadOutlined } from "@ant-design/icons";
 import ViewProperty from "../components/ViewProperty";
 import PropertyCard from "../components/PropertyCard";
 import ReviewModal from "../components/ReviewModal";
 import { useAuth } from "../contexts/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 function Properties() {
   const { properties, propertiesLoading, propertiesRefresh, handleLoadMore } =
     useFetchAllProperties();
-    const {token}=useAuth()
+  const { token } = useAuth();
   const [openPropertyModal, setOpenPropertyModal] = useState(false);
   const [openReviewModal, setOpenReviewModal] = useState(false);
   const [loading, setLoading] = useState(false);
   const [content, setContent] = useState(null);
+  const navigate = useNavigate();
 
   const viewProperty = (property) => {
     setLoading(true);
@@ -44,7 +46,15 @@ function Properties() {
 
   return (
     <>
-      <div style={{ display: "flex", justifyContent: "flex-end" }}>
+      <div style={{ display: "flex", justifyContent: "flex-end", gap: 15 }}>
+        <Tooltip title="Add Property">
+          <Button
+            onClick={()=>navigate("/create-property")}
+            type="primary"
+            style={{ background: "green" }}
+            icon={<PlusCircleOutlined />}
+          />
+        </Tooltip>
         <Tooltip title="Refresh">
           <Button
             onClick={propertiesRefresh}

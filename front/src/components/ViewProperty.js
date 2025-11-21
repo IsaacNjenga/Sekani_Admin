@@ -31,11 +31,12 @@ import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import axios from "axios";
 import VideoCarousel from "./VideoCarousel";
-
+import { useNotification } from "../contexts/NotificationContext";
 const { Title, Text, Paragraph } = Typography;
 
 function PropertyModal({ openModal, setOpenModal, loading, content, token }) {
   const navigate = useNavigate();
+  const openNotification = useNotification();
 
   const averageRating =
     content?.reviews?.length > 0
@@ -89,10 +90,11 @@ function PropertyModal({ openModal, setOpenModal, loading, content, token }) {
                     }
                   );
                   if (res.data.success) {
-                    Swal.fire({
-                      icon: "success",
-                      title: "Property Deleted Successfully!",
-                    });
+                    openNotification(
+                      "success",
+                      "Property has been deleted successfully",
+                      "Done!"
+                    );
                     setOpenModal(false);
                   }
                 }

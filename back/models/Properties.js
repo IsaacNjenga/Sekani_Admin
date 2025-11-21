@@ -20,6 +20,7 @@ const propertySchema = new mongoose.Schema(
     nearby: { type: [String] },
     status: { type: String },
     img: { type: [String] },
+    vid: { type: [String] },
     agent: {
       name: { type: String },
       phone: { type: String },
