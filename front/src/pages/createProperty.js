@@ -30,18 +30,6 @@ const { TextArea } = Input;
 const { Option } = Select;
 const { Title } = Typography;
 
-// const inputStyle = {
-//   borderRadius: 8,
-//   height: 40,
-//   fontFamily: "Raleway",
-// };
-
-// const labelStyle = {
-//   fontFamily: "Raleway",
-//   fontWeight: "bold",
-//   fontSize: 15,
-// };
-
 const labelStyle = {
   fontWeight: 600,
   fontSize: "14px",
@@ -381,12 +369,18 @@ function CreateProperty() {
   const { user, token } = useAuth();
   const navigate = useNavigate();
   const [form] = Form.useForm();
+  const openNotification = useNotification();
   const [loading, setLoading] = useState(false);
   const [selectedImages, setSelectedImages] = useState([]);
   const [selectedVideos, setSelectedVideos] = useState([]);
-  const openNotification = useNotification();
 
   const handleSubmit = async () => {
+    if (selectedImages.length === 0)
+      return openNotification(
+        "warning",
+        "Please upload at least one image for your property",
+        "No images uploaded"
+      );
     setLoading(true);
     try {
       const allValues = await form.validateFields();
@@ -408,7 +402,7 @@ function CreateProperty() {
           "A property has been added successfully",
           "Success!"
         );
-        navigate("/properties");
+        setTimeout(() => navigate("/properties"), 1200);
       }
     } catch (error) {
       console.error(error);

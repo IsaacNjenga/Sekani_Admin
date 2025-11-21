@@ -1,10 +1,11 @@
 import axios from "axios";
 import { useState } from "react";
 import { useAuth } from "../contexts/AuthContext";
-import Swal from "sweetalert2";
+import { useNotification } from "../contexts/NotificationContext";
 
 function useFetchProperty() {
   const { token } = useAuth();
+  const openNotification = useNotification();
   const [propertyData, setPropertyData] = useState([]);
   const [propertyDataLoading, setPropertyDataLoading] = useState(false);
 
@@ -17,6 +18,7 @@ function useFetchProperty() {
       });
       if (res.data.success) {
         setPropertyData(res.data.property);
+        //console.log(res.data.property);
       }
     } catch (error) {
       console.error("Error in fetching property:", error);
@@ -24,11 +26,7 @@ function useFetchProperty() {
         error.response && error.response.data && error.response.data.error
           ? error.response.data.error
           : "An unexpected error occurred. Please try again later.";
-      Swal.fire({
-        icon: "warning",
-        title: "Error",
-        text: errorMessage,
-      });
+      openNotification("warning", errorMessage, "Error");
     } finally {
       setPropertyDataLoading(false);
     }
