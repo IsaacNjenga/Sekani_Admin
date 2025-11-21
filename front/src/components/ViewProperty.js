@@ -11,6 +11,7 @@ import {
   Card,
   Avatar,
   Button,
+  Tabs,
 } from "antd";
 import {
   HomeOutlined,
@@ -23,10 +24,13 @@ import {
   DeleteOutlined,
   CloseOutlined,
   EditOutlined,
+  PictureOutlined,
+  PlayCircleOutlined,
 } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import axios from "axios";
+import VideoCarousel from "./VideoCarousel";
 
 const { Title, Text, Paragraph } = Typography;
 
@@ -44,7 +48,7 @@ function PropertyModal({ openModal, setOpenModal, loading, content, token }) {
   return (
     <Modal
       footer={
-        <div style={{ gap: 10, display: "flex", justifyContent:'flex-end' }}>
+        <div style={{ gap: 10, display: "flex", justifyContent: "flex-end" }}>
           <Button
             style={{
               borderRadius: 18,
@@ -128,64 +132,141 @@ function PropertyModal({ openModal, setOpenModal, loading, content, token }) {
         },
       }}
     >
-      {/* Hero Image Section */}
       <div
         style={{
           position: "relative",
-          width: "50%",
-          maxWidth: "100vh",
+          background: "#000",
           height: "100vh",
-          background: "transparent",
-          margin: "auto",
-          padding: 0,
+          width: "auto",
         }}
       >
-        <Carousel autoplay autoplaySpeed={4200} arrows dotPosition="bottom">
-          {Array.isArray(content?.img) && content?.img.length > 0 ? (
-            content.img.map((img, index) => (
-              <div
-                key={index}
-                style={{
-                  position: "relative",
-                }}
-              >
-                <Image
-                  src={img}
-                  alt={content?.listingId}
-                  loading="lazy"
-                  height={"100vh"}
-                  width={"100vh"}
-                  preview={{
-                    mask: "View Full Size",
-                  }}
-                  style={{
-                    width: "100vh",
-                    maxHeight: "100vh",
-                    objectFit: "contain",
-                  }}
-                />
-              </div>
-            ))
-          ) : (
-            <div style={{ position: "relative" }}>
-              <Image
-                src={content?.img}
-                alt={content?.listingId}
-                loading="lazy"
-                height={800}
-                width={800}
-                preview={{
-                  mask: "View Full Size",
-                }}
-                style={{
-                  width: "auto",
-                  maxHeight: "100%",
-                  objectFit: "contain",
-                }}
-              />
-            </div>
-          )}
-        </Carousel>
+        <div style={{ width: "100%" }}>
+          <Tabs
+            defaultActiveKey="images"
+            centered
+            style={{
+              background: "rgba(0,0,0,0.8)",
+            }}
+            tabBarStyle={{
+              marginBottom: 0,
+              background: "rgba(0,0,0,0.8)",
+            }}
+            items={[
+              {
+                key: "images",
+                label: (
+                  <span style={{ color: "#fff", fontFamily: "Raleway" }}>
+                    <PictureOutlined /> Photos
+                  </span>
+                ),
+                children: (
+                  <div
+                    style={{
+                      height: "50vh",
+                      minHeight: 300,
+                      maxHeight: 400,
+                      margin: "auto",
+                      width: "50%",
+                    }}
+                  >
+                    <Carousel
+                      autoplay
+                      autoplaySpeed={4000}
+                      arrows
+                      dots
+                      dotPosition="top"
+                      style={{
+                        height: "auto",
+                        margin: "auto",
+                        width: "50%",
+                      }}
+                    >
+                      {(Array.isArray(content?.img)
+                        ? content.img
+                        : [content?.img]
+                      ).map((img, index) => (
+                        <div
+                          key={index}
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            background: "#000",
+                            height: "90vh",
+                            overflow: "hidden",
+                            margin: "auto",
+                            width: "50%",
+                            alignContent: "center",
+                            alignSelf: "center",
+                          }}
+                        >
+                          <Image
+                            src={img}
+                            alt={`Property ${index + 1}`}
+                            preview={{
+                              mask: "⛶ Click to view",
+                            }}
+                            style={{
+                              width: "100%",
+                              height: "90vh",
+                              objectFit: "contain",
+                              objectPosition: "center",
+                              marginTop: 0,
+                            }}
+                          />
+                        </div>
+                      ))}
+                    </Carousel>
+                  </div>
+                ),
+              },
+              {
+                key: "videos",
+                label: (
+                  <span style={{ color: "#fff", fontFamily: "Raleway" }}>
+                    <PlayCircleOutlined /> Videos
+                  </span>
+                ),
+                children: (
+                  <div
+                    style={{
+                      height: "50vh",
+                      minHeight: 300,
+                    }}
+                  >
+                    {content?.vid?.length === 0 ||
+                    content?.vid === undefined ? (
+                      <div
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          margin: "auto",
+                          height: "auto",
+                          width: "50%",
+                        }}
+                      >
+                        <Text
+                          style={{
+                            color: "#fff",
+                            textAlign: "center",
+                            fontFamily: "Raleway",
+                            fontSize: "1.6rem",
+                          }}
+                        >
+                          You have not added any videos. Click the edit button
+                          to add some.
+                        </Text>
+                      </div>
+                    ) : (
+                      <VideoCarousel content={content?.vid} />
+                    )}
+                  </div>
+                ),
+              },
+            ]}
+          />
+        </div>
       </div>
 
       {/* Content Section */}
