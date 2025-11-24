@@ -64,7 +64,7 @@ router.put("/delete-avatar", deleteAvatar);
 
 //property routes
 router.post("/create-property", protectRoute, createProperty);
-router.get("/fetch-property", protectRoute, fetchProperty);
+router.get("/fetch-property", fetchProperty);
 router.get("/fetch-all-properties", fetchProperties);
 router.get("/fetch-available-properties", fetchAvailableProperties);
 router.put("/update-property", protectRoute, updateProperty);
