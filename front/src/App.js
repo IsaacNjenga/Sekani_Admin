@@ -13,8 +13,8 @@ import ProtectedRoutes from "./components/ProtectedRoute";
 import Emails from "./pages/emails";
 import Schedules from "./pages/Schedules";
 
-axios.defaults.baseURL = "http://localhost:3001/Sekani";
-//axios.defaults.baseURL = "https://sekani-admin-server.vercel.app/Sekani";
+//axios.defaults.baseURL = "http://localhost:3001/Sekani";
+axios.defaults.baseURL = "https://sekani-admin-server.vercel.app/Sekani";
 axios.defaults.withCredentials = true;
 
 function App() {

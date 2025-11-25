@@ -50,6 +50,14 @@ import {
   scheduleBookings,
   updateSchedule,
 } from "../controllers/scheduleController.js";
+import {
+  createAnalytics,
+  fetchAnalytic,
+  fetchAnalytics,
+  incrementClicks,
+  incrementViews,
+  updateAnalytics,
+} from "../controllers/analyticsController.js";
 
 const router = express.Router();
 
@@ -97,6 +105,14 @@ router.get("/fetch-schedule", fetchSchedule);
 router.put("/update-schedule", updateSchedule);
 router.delete("/delete-schedule", deleteSchedule);
 router.get("/schedule-bookings", scheduleBookings);
+
+// analytics route
+router.post("/create-analytics", createAnalytics);
+router.post("/analytics/clicks/:propertyId", incrementClicks);
+router.post("/analytics/views/:propertyId", incrementViews);
+router.get("/fetch-analytics", fetchAnalytics);
+router.get("/fetch-analytic", fetchAnalytic);
+router.put("/update-analytic", updateAnalytics);
 
 //activities route
 router.get("/fetch-activities", protectRoute, fetchActivities);
