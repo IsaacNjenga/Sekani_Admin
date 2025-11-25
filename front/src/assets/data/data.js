@@ -1,3 +1,12 @@
+import {
+  CalendarOutlined,
+  CheckCircleOutlined,
+  DollarOutlined,
+  EyeOutlined,
+  HomeOutlined,
+  MailOutlined,
+} from "@ant-design/icons";
+
 export const emailData = [
   {
     email_address: "alice.johnson@example.com",
@@ -336,4 +345,133 @@ export const counties = [
   { value: "Vihiga", label: "Vihiga" },
   { value: "Wajir", label: "Wajir" },
   { value: "West Pokot", label: "West Pokot" },
+];
+
+export const mockData = {
+  revenue: {
+    current: 245000,
+    previous: 198000,
+    trend: 23.7,
+    chartData: [
+      { month: "Jan", value: 32 },
+      { month: "Feb", value: 28 },
+      { month: "Mar", value: 35 },
+      { month: "Apr", value: 42 },
+      { month: "May", value: 38 },
+      { month: "Jun", value: 45 },
+    ],
+  },
+  topProperties: [
+    {
+      id: 1,
+      title: "3BR Apartment in Westlands",
+      price: "KSh 85,000/mo",
+      views: 342,
+      inquiries: 28,
+      status: "hot",
+      image: "🏢",
+    },
+    {
+      id: 2,
+      title: "4BR Villa in Karen",
+      price: "KSh 12.5M",
+      views: 289,
+      inquiries: 15,
+      status: "active",
+      image: "🏡",
+    },
+    {
+      id: 3,
+      title: "2BR Studio in Kilimani",
+      price: "KSh 55,000/mo",
+      views: 234,
+      inquiries: 19,
+      status: "active",
+      image: "🏠",
+    },
+  ],
+  upcomingViewings: [
+    {
+      id: 1,
+      property: "Luxury Penthouse, Lavington",
+      client: "Sarah Mwangi",
+      time: "2:00 PM Today",
+      status: "confirmed",
+    },
+    {
+      id: 2,
+      property: "3BR Townhouse, Runda",
+      client: "John Kimani",
+      time: "10:00 AM Tomorrow",
+      status: "pending",
+    },
+    {
+      id: 3,
+      property: "Commercial Space, Upperhill",
+      client: "ABC Corp",
+      time: "3:30 PM Tomorrow",
+      status: "confirmed",
+    },
+  ],
+  recentActivities: [
+    {
+      type: "inquiry",
+      message: "New inquiry for Westlands Apartment",
+      time: "5 minutes ago",
+      icon: <MailOutlined />,
+    },
+    {
+      type: "viewing",
+      message: "Viewing scheduled for Karen Villa",
+      time: "23 minutes ago",
+      icon: <CalendarOutlined />,
+    },
+    {
+      type: "property",
+      message: "New property listed in Kilimani",
+      time: "1 hour ago",
+      icon: <HomeOutlined />,
+    },
+    {
+      type: "sale",
+      message: "Property sold in Lavington",
+      time: "2 hours ago",
+      icon: <CheckCircleOutlined />,
+    },
+  ],
+};
+
+export const stats = [
+  {
+    title: "Total Revenue",
+    value: "KSh 245K",
+    change: 23.7,
+    icon: <DollarOutlined />,
+    color: "#52c41a",
+    trend: "up",
+  },
+  {
+    title: "Active Listings",
+    value: 24,
+    change: 12.5,
+    icon: <HomeOutlined />,
+    color: "#1890ff",
+    trend: "up",
+  },
+  {
+    title: "Total Views",
+    value: "3.2K",
+    change: -5.2,
+    icon: <EyeOutlined />,
+    color: "#722ed1",
+    trend: "down",
+  },
+  {
+    title: "New Inquiries",
+    value: 18,
+    change: 8.3,
+    icon: <MailOutlined />,
+    color: "#faad14",
+    trend: "up",
+  },
 ];
