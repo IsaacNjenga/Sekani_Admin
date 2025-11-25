@@ -25,6 +25,8 @@ import {
 } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 import { useNotification } from "../contexts/NotificationContext";
+import useSavedOptions from "../hooks/savedOptions";
+import { counties } from "../assets/data/data";
 
 const { TextArea } = Input;
 const { Option } = Select;
@@ -373,6 +375,10 @@ function CreateProperty() {
   const [loading, setLoading] = useState(false);
   const [selectedImages, setSelectedImages] = useState([]);
   const [selectedVideos, setSelectedVideos] = useState([]);
+  const { savedOptions: amenities, addOptions: addAmenity } =
+    useSavedOptions("amenities_list");
+  const { savedOptions: paymentOptions, addOptions: addPaymentOptions } =
+    useSavedOptions("payment_options_list");
 
   const handleSubmit = async () => {
     if (selectedImages.length === 0)
@@ -613,11 +619,17 @@ function CreateProperty() {
                       name="county"
                       label={<span style={labelStyle}>County</span>}
                     >
-                      <Input
+                      <Select
                         style={inputStyle}
-                        placeholder="e.g., Nairobi County"
+                        placeholder="e.g., Nairobi"
                         size="large"
-                      />
+                      >
+                        {counties.map((county) => (
+                          <Option key={county.value} value={county.value}>
+                            {county.label}
+                          </Option>
+                        ))}
+                      </Select>
                     </Form.Item>
                   </Col>
 
@@ -768,6 +780,8 @@ function CreateProperty() {
                         placeholder="E.g., Swimming Pool, Gym, Parking"
                         style={{ ...inputStyle, width: "100%" }}
                         size="large"
+                        options={amenities.map((v) => ({ label: v, value: v }))}
+                        onChange={addAmenity}
                       />
                     </Form.Item>
                   </Col>
@@ -787,6 +801,11 @@ function CreateProperty() {
                         placeholder="E.g., Cash, M-Pesa, Bank Transfer"
                         style={{ ...inputStyle, width: "100%" }}
                         size="large"
+                        options={paymentOptions.map((v) => ({
+                          label: v,
+                          value: v,
+                        }))}
+                        onChange={addPaymentOptions}
                       />
                     </Form.Item>
                   </Col>
