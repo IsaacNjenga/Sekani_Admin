@@ -24,29 +24,29 @@ const analyticsSchema = new mongoose.Schema(
     },
 
     // Track unique visitors (optional but powerful)
-    uniqueVisitors: {
-      type: [String],    // store IP or userId
-      default: [],
-      select: false,     // Do not return huge arrays by default
-    },
+    // uniqueVisitors: {
+    //   type: [String],    // store IP or userId
+    //   default: [],
+    //   select: false,     // Do not return huge arrays by default
+    // },
 
     // Daily breakdown for charts
-    dailyStats: [
-      {
-        date: { type: String },    // "2025-11-26"
-        views: { type: Number, default: 0 },
-        clicks: { type: Number, default: 0 },
-      },
-    ],
+    // dailyStats: [
+    //   {
+    //     date: { type: String },    // "2025-11-26"
+    //     views: { type: Number, default: 0 },
+    //     clicks: { type: Number, default: 0 },
+    //   },
+    // ],
 
     // Geo-level analytics (optional)
-    countryStats: [
-      {
-        country: String,
-        views: { type: Number, default: 0 },
-        clicks: { type: Number, default: 0 },
-      },
-    ],
+    // countryStats: [
+    //   {
+    //     country: String,
+    //     views: { type: Number, default: 0 },
+    //     clicks: { type: Number, default: 0 },
+    //   },
+    // ],
   },
   { collection: "analytics", timestamps: true }
 );
