@@ -38,6 +38,14 @@ const fetchProperty = async (req, res) => {
           as: "reviews",
         },
       },
+      {
+        $lookup: {
+          from: "analytics",
+          localField: "_id",
+          foreignField: "propertyId",
+          as: "analytics",
+        },
+      },
     ]);
 
     if (!property) {
@@ -68,6 +76,15 @@ const fetchProperties = async (req, res) => {
           localField: "_id",
           foreignField: "propertyId",
           as: "reviews",
+        },
+      },
+
+      {
+        $lookup: {
+          from: "analytics",
+          localField: "_id",
+          foreignField: "propertyId",
+          as: "analytics",
         },
       },
 
