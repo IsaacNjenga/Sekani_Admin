@@ -28,7 +28,6 @@
 // const { Title, Text } = Typography;
 
 // function Dash() {
-//   // static placeholders for now
 //   const navigate = useNavigate();
 //   const { properties, propertiesLoading } = useFetchAvailableProperties();
 //   const { emails, emailsLoading } = useFetchAllEmails();
@@ -278,6 +277,7 @@ import {
 } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 import { mockData, stats } from "../assets/data/data";
+import useFetchAvailableProperties from "../hooks/fetchAvailableProperty";
 
 const { Title, Text } = Typography;
 
@@ -708,6 +708,7 @@ const RecentActivity = () => {
 
 function Dash() {
   const loading = false;
+  const { properties, propertiesLoading } = useFetchAvailableProperties();
 
   const propertyTypes = [
     { type: "Houses", value: 45 },

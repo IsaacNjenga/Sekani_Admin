@@ -52,12 +52,15 @@ import {
 } from "../controllers/scheduleController.js";
 import {
   createAnalytics,
+  decrementLikes,
   fetchAnalytic,
   fetchAnalytics,
   incrementClicks,
+  incrementLikes,
   incrementViews,
   updateAnalytics,
 } from "../controllers/analyticsController.js";
+import { fetchClient, fetchClients } from "../controllers/clientController.js";
 
 const router = express.Router();
 
@@ -69,6 +72,10 @@ router.post("/change-password", ChangePassword);
 //user routes
 router.put("/change-avatar", updateAvatar);
 router.put("/delete-avatar", deleteAvatar);
+
+//client routes
+router.get("/fetch-clients", protectRoute, fetchClients);
+router.get("/fetch-client", protectRoute, fetchClient);
 
 //property routes
 router.post("/create-property", protectRoute, createProperty);
@@ -110,6 +117,8 @@ router.get("/schedule-bookings", scheduleBookings);
 router.post("/create-analytics", createAnalytics);
 router.post("/analytics/clicks/:propertyId", incrementClicks);
 router.post("/analytics/views/:propertyId", incrementViews);
+router.post("/analytics/like/:propertyId", incrementLikes);
+router.post("/analytics/unlike/:propertyId", decrementLikes);
 router.get("/fetch-analytics", fetchAnalytics);
 router.get("/fetch-analytic", fetchAnalytic);
 router.put("/update-analytic", updateAnalytics);

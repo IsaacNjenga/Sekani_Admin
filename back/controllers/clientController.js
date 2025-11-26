@@ -1,0 +1,27 @@
+import ClientModel from "../models/Client.js";
+
+const fetchClient = async (req, res) => {
+  const { id } = req.query;
+  try {
+    const client = await ClientModel.findById(id);
+    if (!client) {
+      return res.status(400).json({ message: "Client not found" });
+    }
+    res.status(200).json({ success: true, client: client });
+  } catch (error) {
+    console.error("Error in fetching client:", error);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+const fetchClients = async (req, res) => {
+  try {
+    const clients = await ClientModel.find({});
+    res.status(200).json({ success: true, clients: clients });
+  } catch (error) {
+    console.error("Error in fetching clients:", error);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+export { fetchClient, fetchClients };

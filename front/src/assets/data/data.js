@@ -1,10 +1,10 @@
 import {
   CalendarOutlined,
   CheckCircleOutlined,
-  DollarOutlined,
   EyeOutlined,
   HomeOutlined,
   MailOutlined,
+  UserOutlined,
 } from "@ant-design/icons";
 
 export const emailData = [
@@ -443,10 +443,10 @@ export const mockData = {
 
 export const stats = [
   {
-    title: "Total Revenue",
-    value: "KSh 245K",
-    change: 23.7,
-    icon: <DollarOutlined />,
+    title: "Total Users",
+    value: "20",
+    change: 2,
+    icon: <UserOutlined />,
     color: "#52c41a",
     trend: "up",
   },

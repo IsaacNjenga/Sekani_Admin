@@ -23,6 +23,13 @@ const analyticsSchema = new mongoose.Schema(
       min: 0,
     },
 
+    // Count like actions (e.g. contact agent, view map, etc)
+    likes: {
+      type: Number,
+      default: 0,
+      min: 0,
+    },
+
     // Track unique visitors (optional but powerful)
     // uniqueVisitors: {
     //   type: [String],    // store IP or userId

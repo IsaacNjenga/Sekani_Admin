@@ -43,6 +43,38 @@ const incrementClicks = async (req, res) => {
   }
 };
 
+const incrementLikes = async (req, res) => {
+  const { propertyId } = req.params;
+  try {
+    await AnalyticsModel.findOneAndUpdate(
+      { propertyId },
+      { $inc: { likes: 1 } },
+      { upsert: true }
+    );
+
+    res.sendStatus(204);
+  } catch (error) {
+    console.error("Error in likes incrementing:", error);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+const decrementLikes = async (req, res) => {
+  const { propertyId } = req.params;
+  try {
+    await AnalyticsModel.findOneAndUpdate(
+      { propertyId },
+      { $inc: { likes: -1 } },
+      { upsert: true }
+    );
+
+    res.sendStatus(204);
+  } catch (error) {
+    console.error("Error in likes incrementing:", error);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+};
+
 const fetchAnalytics = async (req, res) => {
   try {
     const allAnalytics = await AnalyticsModel.find({}).populate("propertyId");
@@ -95,4 +127,6 @@ export {
   updateAnalytics,
   incrementClicks,
   incrementViews,
+  incrementLikes,
+  decrementLikes,
 };
