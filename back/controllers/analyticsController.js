@@ -1,4 +1,5 @@
 import AnalyticsModel from "../models/Analytics.js";
+import ClientModel from "../models/Client.js";
 
 const createAnalytics = async (req, res) => {
   try {
@@ -45,7 +46,17 @@ const incrementClicks = async (req, res) => {
 
 const incrementLikes = async (req, res) => {
   const { propertyId } = req.params;
+  const { clientId } = req.query;
   try {
+    await ClientModel.findByIdAndUpdate(
+      clientId,
+      {
+        $addToSet: { favourites: propertyId },
+        $inc: { "stats.favourites": 1 },
+      },
+      { new: true }
+    );
+
     await AnalyticsModel.findOneAndUpdate(
       { propertyId },
       { $inc: { likes: 1 } },
@@ -61,7 +72,17 @@ const incrementLikes = async (req, res) => {
 
 const decrementLikes = async (req, res) => {
   const { propertyId } = req.params;
+  const { clientId } = req.query;
   try {
+    await ClientModel.findByIdAndUpdate(
+      clientId,
+      {
+        $pull: { favourites: propertyId },
+        $inc: { "stats.favourites": -1 },
+      },
+      { new: true }
+    );
+
     await AnalyticsModel.findOneAndUpdate(
       { propertyId },
       { $inc: { likes: -1 } },

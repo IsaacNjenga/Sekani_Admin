@@ -16,7 +16,7 @@ const reviewSchema = new mongoose.Schema(
   { collection: "reviews", timestamps: true }
 );
 
-// Enforce unique review per property
+// Ensure each user can only leave one review per property
 reviewSchema.index({ email: 1, propertyId: 1 }, { unique: true });
 
 const ReviewsModel = mongoose.model("reviews", reviewSchema);

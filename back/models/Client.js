@@ -7,6 +7,14 @@ const clientSchema = mongoose.Schema(
     email: { type: String, required: true, unique: true },
     avatar: { type: String },
     password: { type: String, minLength: 8 },
+    stats: {
+      favourites: { type: Number, default: 0 },
+      reviews: { type: Number, default: 0 },
+      viewings: { type: Number, default: 0 },
+    },
+    favourites: { type: Array, default: [] },
+    reviews: { type: Array, default: [] },
+    viewings: { type: Array, default: [] },
   },
   { collection: "web_users", timestamps: true }
 );

@@ -1,8 +1,10 @@
+import ClientModel from "../models/Client.js";
 import ReviewsModel from "../models/Reviews.js";
 import { logActivity } from "../utils/logActivity.js";
 
 const createReview = async (req, res) => {
   const { email, propertyId } = req.body;
+
   try {
     const existingReview = await ReviewsModel.findOne({ email, propertyId });
 
@@ -24,6 +26,16 @@ const createReview = async (req, res) => {
     );
 
     await newReview.save();
+
+    await ClientModel.findOneAndUpdate(
+      { email },
+      {
+        $addToSet: { reviews: newReview._id },
+        $inc: { "stats.reviews": 1 },
+      },
+      { new: true }
+    );
+
     res.status(201).json({ success: true, review: newReview });
   } catch (error) {
     console.error("Error in creating review:", error);
@@ -75,7 +87,7 @@ const updateReview = async (req, res) => {
 
 const deleteReview = async (req, res) => {
   try {
-    const { id } = req.query;
+    const { id, clientId } = req.query;
     const deletedReview = await ReviewsModel.findByIdAndDelete(id);
     if (!deletedReview) {
       return res.status(404).json({ message: "Review not found" });
@@ -88,6 +100,15 @@ const deleteReview = async (req, res) => {
       `A review was deleted`,
       "",
       "reviews"
+    );
+
+    await ClientModel.findByIdAndUpdate(
+      clientId,
+      {
+        $pull: { reviews: deletedReview._id },
+        $inc: { "stats.reviews": -1 },
+      },
+      { new: true }
     );
 
     res.status(200).json({ success: true, message: "Deleted Successfully" });

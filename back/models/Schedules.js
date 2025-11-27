@@ -19,6 +19,11 @@ const scheduleSchema = new mongoose.Schema(
       ref: "properties",
       required: true,
     },
+    createdBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "web_users",
+      required: true,
+    },
   },
   { collection: "schedules", timestamps: true }
 );

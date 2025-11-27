@@ -1,7 +1,9 @@
+import ClientModel from "../models/Client.js";
 import SchedulesModel from "../models/Schedules.js";
 import { logActivity } from "../utils/logActivity.js";
 
 const createSchedule = async (req, res) => {
+  const { createdBy } = req.body;
   try {
     const newSchedule = new SchedulesModel(req.body);
 
@@ -15,6 +17,16 @@ const createSchedule = async (req, res) => {
     );
 
     await newSchedule.save();
+
+    await ClientModel.findOneAndUpdate(
+      { _id: createdBy },
+      {
+        $addToSet: { viewings: newSchedule._id },
+        $inc: { "stats.viewings": -1 },
+      },
+      { new: true }
+    );
+
     res.status(201).json({ success: true, schedule: newSchedule });
   } catch (error) {
     console.error("Error when creating schedule:", error);
@@ -87,7 +99,7 @@ const updateSchedule = async (req, res) => {
 
 const deleteSchedule = async (req, res) => {
   try {
-    const { id } = req.query;
+    const { id, clientId } = req.query;
     const deletedSchedule = await SchedulesModel.findByIdAndDelete(id);
     if (!deletedSchedule) {
       return res.status(404).json({ message: "Schedule not found" });
@@ -100,6 +112,15 @@ const deleteSchedule = async (req, res) => {
       `A schedule was deleted`,
       "",
       "schedules"
+    );
+
+    await ClientModel.findByIdAndUpdate(
+      clientId,
+      {
+        $pull: { viewings: deletedSchedule._id },
+        $inc: { "stats.viewings": -1 },
+      },
+      { new: true }
     );
 
     res.status(200).json({ success: true, message: "Deleted Successfully" });
