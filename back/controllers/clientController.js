@@ -44,6 +44,24 @@ const fetchClientDetails = async (req, res) => {
           localField: "favourites",
           foreignField: "_id",
           as: "favourites",
+          pipeline: [
+            // Now inside favourites pipeline, lookup analytics
+            {
+              $lookup: {
+                from: "analytics",
+                localField: "_id",
+                foreignField: "propertyId",
+                as: "analytics",
+              },
+            },
+            // optional: add calculated totals
+            {
+              $addFields: {
+                totalClicks: { $sum: "$analytics.clicks" },
+                totalViews: { $sum: "$analytics.views" },
+              },
+            },
+          ],
         },
       },
       {
