@@ -3,7 +3,7 @@ import SchedulesModel from "../models/Schedules.js";
 import { logActivity } from "../utils/logActivity.js";
 
 const createSchedule = async (req, res) => {
-  const { email } = req.body;
+  const { createdBy } = req.query;
   try {
     const newSchedule = new SchedulesModel(req.body);
 
@@ -18,8 +18,8 @@ const createSchedule = async (req, res) => {
 
     await newSchedule.save();
 
-    await ClientModel.findOneAndUpdate(
-      { email },
+    await ClientModel.findByIdAndUpdate(
+      createdBy,
       {
         $addToSet: { viewings: newSchedule._id },
         $inc: { "stats.viewings": -1 },
