@@ -46,10 +46,10 @@ const incrementClicks = async (req, res) => {
 
 const incrementLikes = async (req, res) => {
   const { propertyId } = req.params;
-  const { clientId } = req.query;
+  const { email } = req.query;
   try {
-    await ClientModel.findByIdAndUpdate(
-      clientId,
+    await ClientModel.findOneAndUpdate(
+      { email },
       {
         $addToSet: { favourites: propertyId },
         $inc: { "stats.favourites": 1 },
@@ -72,10 +72,10 @@ const incrementLikes = async (req, res) => {
 
 const decrementLikes = async (req, res) => {
   const { propertyId } = req.params;
-  const { clientId } = req.query;
+  const { email } = req.query;
   try {
-    await ClientModel.findByIdAndUpdate(
-      clientId,
+    await ClientModel.findOneAndUpdate(
+      { email },
       {
         $pull: { favourites: propertyId },
         $inc: { "stats.favourites": -1 },

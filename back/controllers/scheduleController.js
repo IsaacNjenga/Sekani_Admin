@@ -3,7 +3,7 @@ import SchedulesModel from "../models/Schedules.js";
 import { logActivity } from "../utils/logActivity.js";
 
 const createSchedule = async (req, res) => {
-  const { createdBy } = req.body;
+  const { email } = req.body;
   try {
     const newSchedule = new SchedulesModel(req.body);
 
@@ -19,7 +19,7 @@ const createSchedule = async (req, res) => {
     await newSchedule.save();
 
     await ClientModel.findOneAndUpdate(
-      { _id: createdBy },
+      { email: email },
       {
         $addToSet: { viewings: newSchedule._id },
         $inc: { "stats.viewings": -1 },
@@ -99,7 +99,7 @@ const updateSchedule = async (req, res) => {
 
 const deleteSchedule = async (req, res) => {
   try {
-    const { id, clientId } = req.query;
+    const { id, email } = req.query;
     const deletedSchedule = await SchedulesModel.findByIdAndDelete(id);
     if (!deletedSchedule) {
       return res.status(404).json({ message: "Schedule not found" });
@@ -114,8 +114,8 @@ const deleteSchedule = async (req, res) => {
       "schedules"
     );
 
-    await ClientModel.findByIdAndUpdate(
-      clientId,
+    await ClientModel.findOneAndUpdate(
+      { email },
       {
         $pull: { viewings: deletedSchedule._id },
         $inc: { "stats.viewings": -1 },

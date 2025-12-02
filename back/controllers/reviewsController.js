@@ -87,7 +87,7 @@ const updateReview = async (req, res) => {
 
 const deleteReview = async (req, res) => {
   try {
-    const { id, clientId } = req.query;
+    const { id, email } = req.query;
     const deletedReview = await ReviewsModel.findByIdAndDelete(id);
     if (!deletedReview) {
       return res.status(404).json({ message: "Review not found" });
@@ -102,8 +102,8 @@ const deleteReview = async (req, res) => {
       "reviews"
     );
 
-    await ClientModel.findByIdAndUpdate(
-      clientId,
+    await ClientModel.findOneAndUpdate(
+      { email },
       {
         $pull: { reviews: deletedReview._id },
         $inc: { "stats.reviews": -1 },

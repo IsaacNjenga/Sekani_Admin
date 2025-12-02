@@ -1,5 +1,7 @@
 import ClientModel from "../models/Client.js";
 
+
+
 const fetchClient = async (req, res) => {
   const { id } = req.query;
   try {
