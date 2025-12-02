@@ -26,10 +26,10 @@ const fetchClients = async (req, res) => {
 };
 
 const fetchClientDetails = async (req, res) => {
-  const { id } = req.query;
+  const { email } = req.query;
   try {
     const clientDetails = await ClientModel.aggregate([
-      { $match: { _id: new mongoose.Types.ObjectId(id) } },
+      { $match: {email} },
       {
         $lookup: {
           from: "schedules",
