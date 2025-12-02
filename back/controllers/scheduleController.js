@@ -19,7 +19,7 @@ const createSchedule = async (req, res) => {
     await newSchedule.save();
 
     await ClientModel.findOneAndUpdate(
-      { email: email },
+      { email },
       {
         $addToSet: { viewings: newSchedule._id },
         $inc: { "stats.viewings": -1 },
