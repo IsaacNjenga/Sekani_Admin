@@ -60,7 +60,11 @@ import {
   incrementViews,
   updateAnalytics,
 } from "../controllers/analyticsController.js";
-import { fetchClient, fetchClients } from "../controllers/clientController.js";
+import {
+  fetchClient,
+  fetchClientDetails,
+  fetchClients,
+} from "../controllers/clientController.js";
 
 const router = express.Router();
 
@@ -76,6 +80,7 @@ router.put("/delete-avatar", deleteAvatar);
 //client routes
 router.get("/fetch-clients", protectRoute, fetchClients);
 router.get("/fetch-client", protectRoute, fetchClient);
+router.get("/fetch-client-details", fetchClientDetails);
 
 //property routes
 router.post("/create-property", protectRoute, createProperty);

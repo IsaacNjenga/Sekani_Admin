@@ -29,7 +29,6 @@ const fetchProperty = async (req, res) => {
   try {
     const property = await PropertiesModel.aggregate([
       { $match: { _id: new mongoose.Types.ObjectId(id) } },
-
       {
         $lookup: {
           from: "reviews",
