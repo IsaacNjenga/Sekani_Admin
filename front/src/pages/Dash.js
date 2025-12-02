@@ -1,252 +1,3 @@
-// import React from "react";
-// import {
-//   Card,
-//   Col,
-//   Row,
-//   Typography,
-//   List,
-//   Timeline,
-//   Button,
-//   Divider,
-//   Spin,
-// } from "antd";
-// import {
-//   MailOutlined,
-//   StarOutlined,
-//   SendOutlined,
-//   HomeOutlined,
-//   BarChartOutlined,
-//   PlusOutlined,
-// } from "@ant-design/icons";
-// import { format, formatDistanceToNow } from "date-fns";
-// import { Link, useNavigate } from "react-router-dom";
-// import useFetchAvailableProperties from "../hooks/fetchAvailableProperty";
-// import useFetchAllEmails from "../hooks/fetchAllEmails";
-// import useFetchAllReplies from "../hooks/fetchAllReplies";
-// import useFetchActivity from "../hooks/fetchActivity";
-
-// const { Title, Text } = Typography;
-
-// function Dash() {
-//   const navigate = useNavigate();
-//   const { properties, propertiesLoading } = useFetchAvailableProperties();
-//   const { emails, emailsLoading } = useFetchAllEmails();
-//   const { replies, repliesLoading } = useFetchAllReplies();
-//   const { activities, activitiesLoading } = useFetchActivity();
-
-//   const unreadMessages = emails?.filter((email) => email.read === false);
-//   const starredMessages = emails?.filter((email) => email.starred === true);
-
-//   const stats = [
-//     {
-//       title: "Unread Messages",
-//       value: emailsLoading ? <Spin /> : unreadMessages.length,
-//       icon: <MailOutlined />,
-//       color: "#1890ff",
-//     },
-//     {
-//       title: "Starred",
-//       value: emailsLoading ? <Spin /> : starredMessages.length,
-//       icon: <StarOutlined />,
-//       color: "#faad14",
-//     },
-//     {
-//       title: "Replies Sent",
-//       value: repliesLoading ? <Spin /> : replies?.length,
-//       icon: <SendOutlined />,
-//       color: "#52c41a",
-//     },
-//     {
-//       title: "Active Properties",
-//       value: propertiesLoading ? <Spin /> : properties?.length,
-//       icon: <HomeOutlined />,
-//       color: "#722ed1",
-//     },
-//   ];
-
-//   const activitiesDescriptions = activities.map((activity) => activity.title);
-
-//   return (
-//     <div style={{ padding: 0 }}>
-//       <div
-//         style={{
-//           display: "flex",
-//           justifyContent: "space-between",
-//           alignContent: "center",
-//           alignItems: "center",
-//         }}
-//       >
-//         <div></div>
-//         <div>
-//           <Title level={4} style={{ fontFamily: "Roboto" }}>
-//             {format(new Date(), "EEEE, do MMMM")}
-//           </Title>
-//         </div>
-//       </div>
-
-//       <Divider />
-
-//       {/* Stats Cards */}
-//       <Row gutter={[16, 16]}>
-//         {stats.map((item, i) => (
-//           <Col xs={24} sm={12} md={6} key={i}>
-//             <Card
-//               style={{
-//                 background: "#fff",
-//                 borderRadius: 12,
-//                 boxShadow: "0 2px 8px rgba(0,0,0,0.05)",
-//               }}
-//             >
-//               <div
-//                 style={{
-//                   display: "flex",
-//                   alignItems: "center",
-//                   justifyContent: "space-between",
-//                 }}
-//               >
-//                 <div>
-//                   <Text strong style={{ fontSize: 15, color: "#595959" }}>
-//                     {item.title}
-//                   </Text>
-//                   <Title level={3} style={{ margin: 0 }}>
-//                     {item.value}
-//                   </Title>
-//                 </div>
-//                 <div
-//                   style={{
-//                     background: item.color,
-//                     color: "#fff",
-//                     borderRadius: "50%",
-//                     padding: 10,
-//                     display: "flex",
-//                     alignItems: "center",
-//                     justifyContent: "center",
-//                   }}
-//                 >
-//                   {item.icon}
-//                 </div>
-//               </div>
-//             </Card>
-//           </Col>
-//         ))}
-//       </Row>
-
-//       <Divider />
-
-//       {/* Recent Messages & Quick Actions */}
-//       <Row gutter={[16, 16]}>
-//         <Col xs={24} md={16}>
-//           <Card
-//             title="Recent Messages"
-//             extra={<Link to="/emails">View All</Link>}
-//             style={{ borderRadius: 12 }}
-//           >
-//             {activitiesLoading ? (
-//               <div
-//                 style={{
-//                   display: "flex",
-//                   justifyContent: "center",
-//                   alignItems: "center",
-//                 }}
-//               >
-//                 <Spin size="large" />
-//               </div>
-//             ) : (
-//               <List
-//                 itemLayout="horizontal"
-//                 dataSource={activities.filter(
-//                   (activity) => activity.type === "mail"
-//                 )}
-//                 renderItem={(item) => (
-//                   <List.Item>
-//                     <List.Item.Meta
-//                       title={<Text strong>{item.title}</Text>}
-//                       description={item.description}
-//                     />
-//                     <Text type="secondary">
-//                       {formatDistanceToNow(new Date(item.createdAt))} ago
-//                     </Text>
-//                   </List.Item>
-//                 )}
-//               />
-//             )}
-//           </Card>
-//         </Col>
-
-//         {/* Quick actions */}
-//         <Col xs={24} md={8}>
-//           <Card title="Quick Actions" style={{ borderRadius: 12 }}>
-//             <div
-//               style={{
-//                 display: "grid",
-//                 gap: 12,
-//                 gridTemplateColumns: "1fr 1fr",
-//               }}
-//             >
-//               <Button
-//                 icon={<PlusOutlined />}
-//                 type="primary"
-//                 onClick={() => navigate("/create-property")}
-//               >
-//                 Add Property
-//               </Button>
-//               <Button
-//                 icon={<MailOutlined />}
-//                 onClick={() => navigate("/emails")}
-//               >
-//                 View Messages
-//               </Button>
-//               {/* <Button
-//                 icon={<UserOutlined />}
-//                 onClick={() => navigate("/create-property")}
-//               >
-//                 Manage Users
-//               </Button>
-//               <Button
-//                 icon={<SettingOutlined />}
-//                 onClick={() => navigate("/create-property")}
-//               >
-//                 Settings
-//               </Button> */}
-//             </div>
-//           </Card>
-//         </Col>
-//       </Row>
-
-//       <Divider />
-
-//       {/* Activity Timeline */}
-//       <Card
-//         title={
-//           <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-//             <BarChartOutlined /> <span>Recent Activity</span>
-//           </div>
-//         }
-//         style={{ borderRadius: 12 }}
-//       >
-//         {activitiesLoading ? (
-//           <div
-//             style={{
-//               display: "flex",
-//               justifyContent: "center",
-//               alignItems: "center",
-//             }}
-//           >
-//             <Spin size="large" />
-//           </div>
-//         ) : (
-//           <Timeline
-//             items={activitiesDescriptions.map((a) => ({ children: a }))}
-//             size="large"
-//           />
-//         )}
-//       </Card>
-//     </div>
-//   );
-// }
-
-// export default Dash;
-
 import React from "react";
 import {
   Card,
@@ -263,56 +14,56 @@ import {
   Spin,
 } from "antd";
 import {
-  MailOutlined,
   PlusOutlined,
   ClockCircleOutlined,
   EyeOutlined,
   UserOutlined,
   CalendarOutlined,
-  FireOutlined,
   BarChartOutlined,
-  LineChartOutlined,
+  FireFilled,
+  CheckCircleOutlined,
+  ClockCircleFilled,
 } from "@ant-design/icons";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { mockData } from "../assets/data/data";
 import DashUtils from "../utils/dashboardUtils";
 
 const { Title, Text } = Typography;
 
 // Simple Chart Components
-const MiniLineChart = ({ data }) => {
-  const max = Math.max(...data.map((d) => d.value));
-  const points = data
-    .map((d, i) => {
-      const x = (i / (data.length - 1)) * 100;
-      const y = 100 - (d.value / max) * 80;
-      return `${x},${y}`;
-    })
-    .join(" ");
+// const MiniLineChart = ({ data }) => {
+//   const max = Math.max(...data.map((d) => d.value));
+//   const points = data
+//     .map((d, i) => {
+//       const x = (i / (data.length - 1)) * 100;
+//       const y = 100 - (d.value / max) * 80;
+//       return `${x},${y}`;
+//     })
+//     .join(" ");
 
-  return (
-    <svg width="100%" height="100" style={{ display: "block" }}>
-      <defs>
-        <linearGradient id="gradient" x1="0%" y1="0%" x2="0%" y2="100%">
-          <stop
-            offset="0%"
-            style={{ stopColor: "#52c41a", stopOpacity: 0.3 }}
-          />
-          <stop
-            offset="100%"
-            style={{ stopColor: "#52c41a", stopOpacity: 0.05 }}
-          />
-        </linearGradient>
-      </defs>
-      <polyline
-        points={`0,100 ${points} 100,100`}
-        fill="url(#gradient)"
-        stroke="none"
-      />
-      <polyline points={points} fill="none" stroke="#52c41a" strokeWidth="3" />
-    </svg>
-  );
-};
+//   return (
+//     <svg width="100%" height="100" style={{ display: "block" }}>
+//       <defs>
+//         <linearGradient id="gradient" x1="0%" y1="0%" x2="0%" y2="100%">
+//           <stop
+//             offset="0%"
+//             style={{ stopColor: "#52c41a", stopOpacity: 0.3 }}
+//           />
+//           <stop
+//             offset="100%"
+//             style={{ stopColor: "#52c41a", stopOpacity: 0.05 }}
+//           />
+//         </linearGradient>
+//       </defs>
+//       <polyline
+//         points={`0,100 ${points} 100,100`}
+//         fill="url(#gradient)"
+//         stroke="none"
+//       />
+//       <polyline points={points} fill="none" stroke="#52c41a" strokeWidth="3" />
+//     </svg>
+//   );
+// };
 
 const MiniBarChart = ({ data }) => {
   const max = Math.max(...data.map((d) => d.value));
@@ -373,7 +124,12 @@ const Header = () => {
         <div>
           <Title
             level={3}
-            style={{ color: "white", margin: 0, marginBottom: "8px" }}
+            style={{
+              color: "white",
+              margin: 0,
+              marginBottom: "8px",
+              fontFamily: "Raleway",
+            }}
           >
             {dateString}
           </Title>
@@ -429,11 +185,15 @@ const QuickStats = () => {
                     color: "#8c8c8c",
                     display: "block",
                     marginBottom: 8,
+                    fontFamily: "Raleway",
                   }}
                 >
                   {item.title}
                 </Text>
-                <Title level={2} style={{ margin: 0, marginBottom: 8 }}>
+                <Title
+                  level={2}
+                  style={{ margin: 0, marginBottom: 8, fontFamily: "Raleway" }}
+                >
                   {item.loading ? <Spin size="large" /> : item.value}
                 </Title>
                 {/* <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
@@ -465,7 +225,7 @@ const QuickStats = () => {
                   background: `${item.color}15`,
                   color: item.color,
                   borderRadius: 12,
-                  padding: 16,
+                  padding: 14,
                   fontSize: 24,
                 }}
               >
@@ -484,13 +244,19 @@ const TopProperties = () => {
     <Card
       title={
         <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-          <FireOutlined style={{ color: "#ff4d4f" }} />
-          <span style={{ fontSize: 16, fontWeight: 600 }}>
+          <FireFilled style={{ color: "#ff4d4f" }} />
+          <span
+            style={{ fontSize: 16, fontWeight: 600, fontFamily: "Raleway" }}
+          >
             Top Performing Properties
           </span>
         </div>
       }
-      extra={<Button type="link">View All</Button>}
+      extra={
+        <Button type="link" style={{ fontFamily: "Raleway" }}>
+          <Link to="/properties">View All</Link>
+        </Button>
+      }
       style={{
         borderRadius: 16,
         border: "none",
@@ -506,11 +272,11 @@ const TopProperties = () => {
               padding: "16px 0",
               borderBottom: "1px solid #f0f0f0",
             }}
-            actions={[
-              <Tag color={item.status === "hot" ? "red" : "blue"}>
-                {item.status === "hot" ? "🔥 Hot" : "Active"}
-              </Tag>,
-            ]}
+            // actions={[
+            //   <Tag color={item.status === "hot" ? "red" : "blue"}>
+            //     {item.status === "hot" ? "🔥 Hot" : "Active"}
+            //   </Tag>,
+            // ]}
           >
             <List.Item.Meta
               avatar={
@@ -530,13 +296,20 @@ const TopProperties = () => {
                 </div>
               }
               title={
-                <Text strong style={{ fontSize: 15 }}>
+                <Text strong style={{ fontSize: 16, fontFamily: "Raleway" }}>
                   {item.title}
                 </Text>
               }
               description={
                 <Space direction="vertical" size={4}>
-                  <Text style={{ color: "#52c41a", fontWeight: 600 }}>
+                  <Text
+                    style={{
+                      color: "#52c41a",
+                      fontWeight: 600,
+                      fontSize: 14,
+                      fontFamily: "Raleway",
+                    }}
+                  >
                     {item.price}
                   </Text>
                   <Space size={16}>
@@ -544,18 +317,24 @@ const TopProperties = () => {
                       <EyeOutlined
                         style={{ color: "#8c8c8c", marginRight: 4 }}
                       />
-                      <Text style={{ fontSize: 13, color: "#8c8c8c" }}>
+                      <Text
+                        style={{
+                          fontSize: 13,
+                          color: "#8c8c8c",
+                          fontFamily: "Raleway",
+                        }}
+                      >
                         {item.views}
                       </Text>
                     </span>
-                    <span>
+                    {/* <span>
                       <MailOutlined
                         style={{ color: "#8c8c8c", marginRight: 4 }}
                       />
                       <Text style={{ fontSize: 13, color: "#8c8c8c" }}>
                         {item.inquiries}
                       </Text>
-                    </span>
+                    </span> */}
                   </Space>
                 </Space>
               }
@@ -573,13 +352,19 @@ const UpcomingViewings = () => {
       title={
         <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
           <CalendarOutlined style={{ color: "#1890ff" }} />
-          <span style={{ fontSize: 16, fontWeight: 600 }}>
+          <span
+            style={{ fontSize: 16, fontWeight: 600, fontFamily: "Raleway" }}
+          >
             Upcoming Viewings
           </span>
           <Badge count={3} style={{ marginLeft: 8 }} />
         </div>
       }
-      extra={<Button type="link">View All</Button>}
+      extra={
+        <Button type="link" style={{ fontFamily: "Raleway" }}>
+          <Link to="/schedules">View All</Link>
+        </Button>
+      }
       style={{
         borderRadius: 16,
         border: "none",
@@ -596,8 +381,26 @@ const UpcomingViewings = () => {
               borderBottom: "1px solid #f0f0f0",
             }}
             actions={[
-              <Tag color={item.status === "confirmed" ? "green" : "orange"}>
-                {item.status === "confirmed" ? "✓ Confirmed" : "⏳ Pending"}
+              <Tag
+                color="white"
+                style={{
+                  fontFamily: "Raleway",
+                  backgroundColor:
+                    item.status === "confirmed" ? "green" : "orange",
+                  padding: "6px 12px",
+                  borderRadius: 8,
+                  color: "white",
+                }}
+              >
+                {" "}
+                <span>
+                  {item.status === "confirmed" ? "Confirmed" : "Pending"}
+                </span>
+                {item.status === "confirmed" ? (
+                  <CheckCircleOutlined />
+                ) : (
+                  <ClockCircleOutlined />
+                )}{" "}
               </Tag>,
             ]}
           >
@@ -613,19 +416,25 @@ const UpcomingViewings = () => {
                 </Avatar>
               }
               title={
-                <Text strong style={{ fontSize: 15 }}>
+                <Text strong style={{ fontSize: 15, fontFamily: "Raleway" }}>
                   {item.property}
                 </Text>
               }
               description={
                 <Space direction="vertical" size={2}>
-                  <Text style={{ fontSize: 14 }}>
+                  <Text style={{ fontSize: 14, fontFamily: "Raleway" }}>
                     <UserOutlined
                       style={{ marginRight: 4, color: "#8c8c8c" }}
                     />
                     {item.client}
                   </Text>
-                  <Text style={{ fontSize: 13, color: "#1890ff" }}>
+                  <Text
+                    style={{
+                      fontSize: 13,
+                      color: "#1890ff",
+                      fontFamily: "Raleway",
+                    }}
+                  >
                     <ClockCircleOutlined style={{ marginRight: 4 }} />
                     {item.time}
                   </Text>
@@ -646,8 +455,10 @@ const RecentActivity = () => {
         <Card
           title={
             <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-              <ClockCircleOutlined style={{ color: "#722ed1" }} />
-              <span style={{ fontSize: 16, fontWeight: 600 }}>
+              <ClockCircleFilled style={{ color: "#2ea0d1ff" }} />
+              <span
+                style={{ fontSize: 16, fontWeight: 600, fontFamily: "Raleway" }}
+              >
                 Recent Activity
               </span>
             </div>
@@ -688,11 +499,18 @@ const RecentActivity = () => {
                       display: "block",
                       fontSize: 15,
                       marginBottom: 4,
+                      fontFamily: "Raleway",
                     }}
                   >
                     {activity.message}
                   </Text>
-                  <Text style={{ fontSize: 13, color: "#8c8c8c" }}>
+                  <Text
+                    style={{
+                      fontSize: 13,
+                      color: "#8c8c8c",
+                      fontFamily: "Roboto",
+                    }}
+                  >
                     {activity.time}
                   </Text>
                 </div>
@@ -801,7 +619,13 @@ function Dash() {
             title={
               <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
                 <BarChartOutlined style={{ color: "#1890ff" }} />
-                <span style={{ fontSize: 16, fontWeight: 600 }}>
+                <span
+                  style={{
+                    fontSize: 16,
+                    fontWeight: 600,
+                    fontFamily: "Raleway",
+                  }}
+                >
                   Properties by Type
                 </span>
               </div>
@@ -837,9 +661,11 @@ function Dash() {
                           background: colors[i],
                         }}
                       />
-                      <Text>{item.type}</Text>
+                      <Text style={{ fontFamily: "Raleway" }}>{item.type}</Text>
                     </div>
-                    <Text strong>{item.value}</Text>
+                    <Text strong style={{ fontFamily: "Raleway" }}>
+                      {item.value}
+                    </Text>
                   </div>
                 );
               })}
@@ -851,7 +677,6 @@ function Dash() {
       {/* Content Row */}
       <Row gutter={[16, 16]} style={{ marginBottom: "24px" }}>
         {/* Top Performing Properties */}
-        
 
         {/* Upcoming Viewings */}
         <Col xs={24} lg={24}>

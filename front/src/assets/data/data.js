@@ -365,7 +365,7 @@ export const mockData = {
     {
       id: 1,
       title: "3BR Apartment in Westlands",
-      price: "KSh 85,000/mo",
+      price: "KES 85,000/mo",
       views: 342,
       inquiries: 28,
       status: "hot",
@@ -374,7 +374,7 @@ export const mockData = {
     {
       id: 2,
       title: "4BR Villa in Karen",
-      price: "KSh 12.5M",
+      price: "KES 12.5M",
       views: 289,
       inquiries: 15,
       status: "active",
@@ -383,7 +383,7 @@ export const mockData = {
     {
       id: 3,
       title: "2BR Studio in Kilimani",
-      price: "KSh 55,000/mo",
+      price: "KES 55,000/mo",
       views: 234,
       inquiries: 19,
       status: "active",

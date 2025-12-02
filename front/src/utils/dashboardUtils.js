@@ -1,15 +1,16 @@
 import {
   EyeOutlined,
-  HeartFilled,
   HomeOutlined,
+  LikeFilled,
+  LinkOutlined,
   MailOutlined,
-  PlusCircleOutlined,
   UserOutlined,
 } from "@ant-design/icons";
 import useFetchClients from "../hooks/fetchClients";
 import useFetchAllProperties from "../hooks/fetchAllProperties";
 import useFetchAllEmails from "../hooks/fetchAllEmails";
 import useFetchAnalytics from "../hooks/fetchAnalytics";
+import CountUp from "react-countup";
 
 function DashUtils() {
   const { clients } = useFetchClients(); //clientsLoading
@@ -19,12 +20,14 @@ function DashUtils() {
 
   const unreadMessages = emails?.filter((email) => email.read === false);
 
+  const formatter = (value) => <CountUp end={value} separator="," />;
+
   return {
     stats: [
       {
         title: "Total Users",
+        //value: formatter(clients.length),
         value: clients.length.toLocaleString(),
-        //change: 2,
         icon: <UserOutlined />,
         color: "#52c41a",
         loading: !true,
@@ -47,7 +50,7 @@ function DashUtils() {
       {
         title: "Total Likes",
         value: summary?.totalLikes?.toLocaleString(),
-        icon: <HeartFilled style={{ color: "red" }} />,
+        icon: <LikeFilled style={{ color: "red" }} />,
         color: "#cf2626",
         trend: "down",
         loading: !true,
@@ -55,7 +58,7 @@ function DashUtils() {
       {
         title: "Total Clicks",
         value: summary?.totalClicks?.toLocaleString(),
-        icon: <PlusCircleOutlined />,
+        icon: <LinkOutlined />,
         color: "#1a80cf",
         trend: "down",
         loading: !true,
