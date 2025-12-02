@@ -55,7 +55,7 @@ const fetchClientDetails = async (req, res) => {
         },
       },
     ]);
-    res.status(200).json([{ success: true, clientDetails: clientDetails }]);
+    res.status(200).json({ success: true, clientDetails: clientDetails });
   } catch (error) {
     console.error("Error when fetching client details:", error);
     return res
