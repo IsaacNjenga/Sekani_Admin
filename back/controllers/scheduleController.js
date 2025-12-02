@@ -22,7 +22,7 @@ const createSchedule = async (req, res) => {
       createdBy,
       {
         $addToSet: { viewings: newSchedule._id },
-        $inc: { "stats.viewings": -1 },
+        $inc: { "stats.viewings": 1 },
       },
       { new: true }
     );
@@ -99,7 +99,7 @@ const updateSchedule = async (req, res) => {
 
 const deleteSchedule = async (req, res) => {
   try {
-    const { id, email } = req.query;
+    const { id, createdBy } = req.query;
     const deletedSchedule = await SchedulesModel.findByIdAndDelete(id);
     if (!deletedSchedule) {
       return res.status(404).json({ message: "Schedule not found" });
@@ -115,7 +115,7 @@ const deleteSchedule = async (req, res) => {
     );
 
     await ClientModel.findOneAndUpdate(
-      { email },
+      { createdBy: _id },
       {
         $pull: { viewings: deletedSchedule._id },
         $inc: { "stats.viewings": -1 },
