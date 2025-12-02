@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import Swal from "sweetalert2";
+import { useNotification } from "../contexts/NotificationContext";
 
 function useFetchAllProperties() {
   const [properties, setProperties] = useState([]);
@@ -10,6 +10,7 @@ function useFetchAllProperties() {
   const [propertiesLoading, setPropertiesLoading] = useState(false);
   const [refreshKey, setRefreshKey] = useState(0);
   const [errorMessage, setErrorMessage] = useState(null);
+  const openNotification = useNotification();
 
   const fetchProperties = async (pageNum = 1, refresh = false) => {
     setPropertiesLoading(true);
@@ -41,16 +42,12 @@ function useFetchAllProperties() {
         setPage(pageNum);
         setErrorMessage(null);
       } else {
-        setErrorMessage(res.data.message || "Failed to fetch properties.");
+        openNotification("warning", res.data.message, "Error");
       }
     } catch (error) {
       console.error("Error fetching properties:", error);
       setErrorMessage("An unexpected error occurred. Please try again later.");
-      Swal.fire({
-        icon: "warning",
-        title: "Error",
-        text: errorMessage,
-      });
+      openNotification("warning", errorMessage, "Error");
     } finally {
       setRefreshing(false);
       setPropertiesLoading(false);
@@ -59,7 +56,7 @@ function useFetchAllProperties() {
 
   useEffect(() => {
     fetchProperties();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [refreshKey]);
 
   const handleLoadMore = async () => {

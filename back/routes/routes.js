@@ -124,7 +124,7 @@ router.post("/analytics/clicks/:propertyId", incrementClicks);
 router.post("/analytics/views/:propertyId", incrementViews);
 router.post("/analytics/like/:propertyId", incrementLikes);
 router.post("/analytics/unlike/:propertyId", decrementLikes);
-router.get("/fetch-analytics", fetchAnalytics);
+router.get("/fetch-analytics",protectRoute, fetchAnalytics);
 router.get("/fetch-analytic", fetchAnalytic);
 router.put("/update-analytic", updateAnalytics);
 

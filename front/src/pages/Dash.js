@@ -265,8 +265,6 @@ import {
 import {
   MailOutlined,
   PlusOutlined,
-  ArrowUpOutlined,
-  ArrowDownOutlined,
   ClockCircleOutlined,
   EyeOutlined,
   UserOutlined,
@@ -276,8 +274,8 @@ import {
   LineChartOutlined,
 } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
-import { mockData, stats } from "../assets/data/data";
-import useFetchAvailableProperties from "../hooks/fetchAvailableProperty";
+import { mockData } from "../assets/data/data";
+import DashUtils from "../utils/dashboardUtils";
 
 const { Title, Text } = Typography;
 
@@ -325,7 +323,7 @@ const MiniBarChart = ({ data }) => {
       {data.map((d, i) => {
         const barWidth = 80 / data.length;
         const x = 10 + (i * 100) / data.length;
-        const height = (d.value / max) * 80;
+        const height = (d.value / max) * 100;
         const y = 90 - height;
 
         return (
@@ -403,6 +401,7 @@ const Header = () => {
 };
 
 const QuickStats = () => {
+  const { stats } = DashUtils();
   return (
     <Row gutter={[16, 16]} style={{ marginBottom: "24px" }}>
       {stats.map((item, i) => (
@@ -435,9 +434,9 @@ const QuickStats = () => {
                   {item.title}
                 </Text>
                 <Title level={2} style={{ margin: 0, marginBottom: 8 }}>
-                  {item.value}
+                  {item.loading ? <Spin size="large" /> : item.value}
                 </Title>
-                <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
+                {/* <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
                   {item.trend === "up" ? (
                     <ArrowUpOutlined
                       style={{ color: "#52c41a", fontSize: 12 }}
@@ -459,7 +458,7 @@ const QuickStats = () => {
                   <Text style={{ fontSize: 14, color: "#8c8c8c" }}>
                     vs last month
                   </Text>
-                </div>
+                </div> */}
               </div>
               <div
                 style={{
@@ -708,7 +707,6 @@ const RecentActivity = () => {
 
 function Dash() {
   const loading = false;
-  const { properties, propertiesLoading } = useFetchAvailableProperties();
 
   const propertyTypes = [
     { type: "Houses", value: 45 },
@@ -742,7 +740,7 @@ function Dash() {
 
       {/* Charts Row */}
       <Row gutter={[16, 16]} style={{ marginBottom: "24px" }}>
-        <Col xs={24} lg={14}>
+        {/* <Col xs={24} lg={14}>
           <Card
             title={
               <div
@@ -792,6 +790,10 @@ function Dash() {
               ))}
             </div>
           </Card>
+        </Col> */}
+
+        <Col xs={24} lg={14}>
+          <TopProperties />
         </Col>
 
         <Col xs={24} lg={10}>
@@ -808,10 +810,11 @@ function Dash() {
               borderRadius: 16,
               border: "none",
               boxShadow: "0 4px 12px rgba(0,0,0,0.08)",
+              height: "100%",
             }}
           >
             <MiniBarChart data={propertyTypes} />
-            <div style={{ marginTop: 16 }}>
+            <div style={{ marginTop: 10 }}>
               {propertyTypes.map((item, i) => {
                 const colors = ["#1890ff", "#52c41a", "#faad14", "#722ed1"];
                 return (
@@ -828,8 +831,8 @@ function Dash() {
                     >
                       <div
                         style={{
-                          width: 12,
-                          height: 12,
+                          width: 16,
+                          height: 16,
                           borderRadius: "50%",
                           background: colors[i],
                         }}
@@ -848,12 +851,10 @@ function Dash() {
       {/* Content Row */}
       <Row gutter={[16, 16]} style={{ marginBottom: "24px" }}>
         {/* Top Performing Properties */}
-        <Col xs={24} lg={12}>
-          <TopProperties />
-        </Col>
+        
 
         {/* Upcoming Viewings */}
-        <Col xs={24} lg={12}>
+        <Col xs={24} lg={24}>
           <UpcomingViewings />
         </Col>
       </Row>

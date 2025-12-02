@@ -98,14 +98,28 @@ const decrementLikes = async (req, res) => {
 
 const fetchAnalytics = async (req, res) => {
   try {
-    const allAnalytics = await AnalyticsModel.find({}).populate("propertyId");
+    const summary = await AnalyticsModel.aggregate([
+      {
+        $group: {
+          _id: null,
+          totalClicks: { $sum: "$clicks" },
+          totalViews: { $sum: "$views" },
+          totalLikes: { $sum: "$likes" },
+          totalPropertiesTracked: { $sum: 1 }
+        }
+      }
+    ]);
 
-    res.status(200).json({ success: true, analytics: allAnalytics });
+    res.status(200).json({
+      success: true,
+      summary: summary[0] || {}
+    });
   } catch (error) {
     console.error("Error in analytics fetch:", error);
     return res.status(500).json({ message: "Internal server error" });
   }
 };
+
 
 const fetchAnalytic = async (req, res) => {
   const { id } = req.query;
