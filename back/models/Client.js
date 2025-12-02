@@ -12,9 +12,22 @@ const clientSchema = mongoose.Schema(
       reviews: { type: Number, default: 0 },
       viewings: { type: Number, default: 0 },
     },
-    favourites: { type: Array, default: [] },
-    reviews: { type: Array, default: [] },
-    viewings: { type: Array, default: [] },
+    favourites: {
+      type: [mongoose.Schema.Types.ObjectId],
+      ref: "properties",
+      default: [],
+    },
+    reviews: {
+      type: [mongoose.Schema.Types.ObjectId],
+      ref: "reviews",
+      default: [],
+    },
+    viewings: {
+      //scheduled viewings
+      type: [mongoose.Schema.Types.ObjectId],
+      ref: "schedules",
+      default: [],
+    },
   },
   { collection: "web_users", timestamps: true }
 );

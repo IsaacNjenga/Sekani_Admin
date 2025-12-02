@@ -1,7 +1,5 @@
 import ClientModel from "../models/Client.js";
 
-
-
 const fetchClient = async (req, res) => {
   const { id } = req.query;
   try {
@@ -26,4 +24,43 @@ const fetchClients = async (req, res) => {
   }
 };
 
-export { fetchClient, fetchClients };
+const fetchClientDetails = async (req, res) => {
+  const { email } = req.query;
+  try {
+    const clientDetails = await ClientModel.aggregate([
+      { $match: { email } },
+      {
+        $lookup: {
+          from: "schedules",
+          localField: "viewings",
+          foreignField: "_id",
+          as: "viewings",
+        },
+      },
+      {
+        $lookup: {
+          from: "properties",
+          localField: "favourites",
+          foreignField: "_id",
+          as: "favourites",
+        },
+      },
+      {
+        $lookup: {
+          from: "reviews",
+          localField: "reviews",
+          foreignField: "_id",
+          as: "reviews",
+        },
+      },
+    ]);
+    res.status(200).json([{ success: true, clientDetails: clientDetails }]);
+  } catch (error) {
+    console.error("Error when fetching client details:", error);
+    return res
+      .status(500)
+      .json({ success: false, message: "Internal server error" });
+  }
+};
+
+export { fetchClient, fetchClients, fetchClientDetails };
