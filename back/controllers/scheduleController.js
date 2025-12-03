@@ -1,6 +1,7 @@
 import ClientModel from "../models/Client.js";
 import SchedulesModel from "../models/Schedules.js";
 import { logActivity } from "../utils/logActivity.js";
+import { appointmentNotification } from "./twilioController.js";
 
 const createSchedule = async (req, res) => {
   const { createdBy } = req.query;
@@ -14,6 +15,10 @@ const createSchedule = async (req, res) => {
       `Viewing scheduled for ${newSchedule.date} at ${newSchedule.time}`,
       `${newSchedule.name} has scheduled to view a property on ${newSchedule.date} at ${newSchedule.time}`,
       "schedules"
+    );
+
+    await appointmentNotification(
+      `New viewing scheduled:\nName: ${newSchedule.name}\nDate: ${newSchedule.date}\nTime: ${newSchedule.time}\nContact: ${newSchedule.phone}`
     );
 
     await newSchedule.save();
