@@ -12,6 +12,7 @@ import {
   Badge,
   Timeline,
   Spin,
+  Divider,
 } from "antd";
 import {
   PlusOutlined,
@@ -77,26 +78,37 @@ const MiniBarChart = ({ data }) => {
   const colors = ["#1890ff", "#52c41a", "#faad14", "#722ed1"];
 
   return (
-    <svg width="100%" height="100" style={{ display: "block" }}>
-      {data.map((d, i) => {
-        const barWidth = 80 / data.length;
-        const x = 10 + (i * 100) / data.length;
-        const height = (d.value / max) * 100;
-        const y = 90 - height;
+    <div
+      style={{
+        margin: "auto",
+        width: "100%",
+        padding: 16,
+        background: "linear-gradient(135deg, #667eea28 0%, #764ba21c 100%)",
+        height: "100%",
+        borderRadius: 12,
+      }}
+    >
+      <svg width="100%" height="130" style={{ display: "block" }}>
+        {data.map((d, i) => {
+          const barWidth = 60 / data.length;
+          const x = 10 + (i * 90) / data.length;
+          const height = (d.value / max) * 120;
+          const y = 130 - height;
 
-        return (
-          <rect
-            key={i}
-            x={`${x}%`}
-            y={y}
-            width={`${barWidth}%`}
-            height={height}
-            fill={colors[i % colors.length]}
-            rx="4"
-          />
-        );
-      })}
-    </svg>
+          return (
+            <rect
+              key={i}
+              x={`${x}%`}
+              y={y}
+              width={`${barWidth}%`}
+              height={height}
+              fill={colors[i % colors.length]}
+              rx="4"
+            />
+          );
+        })}
+      </svg>
+    </div>
   );
 };
 
@@ -168,7 +180,7 @@ const QuickStats = () => {
   return (
     <Row gutter={[16, 16]} style={{ marginBottom: "24px" }}>
       {stats.map((item, i) => (
-        <Col xs={24} sm={12} lg={6} key={i}>
+        <Col xs={24} sm={12} lg={8} key={i}>
           <Card
             style={{
               background: "#fff",
@@ -498,8 +510,6 @@ const UpcomingViewings = () => {
 const RecentActivity = () => {
   const { recentActivities, activitiesLoading } = DashUtils();
 
-  console.log(recentActivities);
-
   const IconRender = (type) => {
     switch (type) {
       case "schedule":
@@ -602,12 +612,7 @@ const RecentActivity = () => {
 function Dash() {
   const loading = false;
 
-  const propertyTypes = [
-    { type: "Houses", value: 45 },
-    { type: "Apartments", value: 38 },
-    { type: "Land", value: 12 },
-    { type: "Commercial", value: 5 },
-  ];
+  const { propertyTypes } = DashUtils();
 
   if (loading) {
     return (
@@ -714,7 +719,16 @@ function Dash() {
             }}
           >
             <MiniBarChart data={propertyTypes} />
-            <div style={{ marginTop: 10 }}>
+            <Divider />
+            <div
+              style={{
+                marginTop: 16,
+                background:
+                  "linear-gradient(to top, #667eea0f 0%, #764ba20f 100%)",
+                padding: 16,
+                borderRadius: 12,
+              }}
+            >
               {propertyTypes.map((item, i) => {
                 const colors = ["#1890ff", "#52c41a", "#faad14", "#722ed1"];
                 return (

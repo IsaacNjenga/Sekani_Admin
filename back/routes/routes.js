@@ -67,6 +67,7 @@ import {
   fetchClientDetails,
   fetchClients,
 } from "../controllers/clientController.js";
+import { sendMessage } from "../controllers/twilioController.js";
 
 const router = express.Router();
 
@@ -132,7 +133,10 @@ router.get("/fetch-analytic", fetchAnalytic);
 router.put("/update-analytic", updateAnalytics);
 router.get("/top-analytics", protectRoute, topAnalytics);
 
+//twilio routes
+router.post("/reply-via-twilio", sendMessage);
+
 //activities route
-router.get("/fetch-activities",  fetchActivities);
+router.get("/fetch-activities", fetchActivities);
 
 export { router as Router };

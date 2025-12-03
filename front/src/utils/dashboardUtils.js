@@ -30,6 +30,18 @@ function DashUtils() {
     time: activity.createdAt,
   }));
 
+  const cleanedPropertyTypes = properties.reduce((acc, property) => {
+    const existingType = acc.find(
+      (item) => item.type === property.propertyType
+    );
+    if (existingType) {
+      existingType.value += 1;
+    } else {
+      acc.push({ type: property.propertyType, value: 1 });
+    }
+    return acc;
+  }, []);
+
   // const formatter = (value) => <CountUp end={value} separator="," />;
 
   return {
@@ -86,6 +98,7 @@ function DashUtils() {
     schedulesRefresh: schedulesRefresh,
     recentActivities: cleanedActivities,
     activitiesLoading: activitiesLoading,
+    propertyTypes: cleanedPropertyTypes,
   };
 }
 export default DashUtils;
