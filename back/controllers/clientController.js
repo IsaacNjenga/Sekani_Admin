@@ -1,7 +1,8 @@
+import { connectDB } from "../config/db.js";
 import ClientModel from "../models/Client.js";
-import mongoose from "mongoose";
 
 const fetchClient = async (req, res) => {
+  await connectDB();
   const { id } = req.query;
   try {
     const client = await ClientModel.findById(id);
@@ -16,6 +17,7 @@ const fetchClient = async (req, res) => {
 };
 
 const fetchClients = async (req, res) => {
+  await connectDB();
   try {
     const clients = await ClientModel.find({});
     res.status(200).json({ success: true, clients: clients });
@@ -26,6 +28,7 @@ const fetchClients = async (req, res) => {
 };
 
 const fetchClientDetails = async (req, res) => {
+  await connectDB();
   const { email } = req.query;
   try {
     const clientDetails = await ClientModel.aggregate([

@@ -1,8 +1,10 @@
+import { connectDB } from "../config/db.js";
 import ClientModel from "../models/Client.js";
 import ReviewsModel from "../models/Reviews.js";
 import { logActivity } from "../utils/logActivity.js";
 
 const createReview = async (req, res) => {
+  await connectDB();
   const { email, propertyId } = req.body;
 
   try {
@@ -46,6 +48,7 @@ const createReview = async (req, res) => {
 };
 
 const fetchReviews = async (req, res) => {
+  await connectDB();
   try {
     const reviews = await ReviewsModel.find({}).populate("propertyId");
     res.status(200).json({ success: true, reviews: reviews });
@@ -58,6 +61,7 @@ const fetchReviews = async (req, res) => {
 };
 
 const updateReview = async (req, res) => {
+  await connectDB();
   try {
     const { id } = req.query;
     const updatedReview = await ReviewsModel.findByIdAndUpdate(id, req.body, {
@@ -86,6 +90,7 @@ const updateReview = async (req, res) => {
 };
 
 const deleteReview = async (req, res) => {
+  await connectDB();
   try {
     const { id, email } = req.query;
     const deletedReview = await ReviewsModel.findByIdAndDelete(id);

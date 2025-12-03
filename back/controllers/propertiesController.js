@@ -1,8 +1,10 @@
 import mongoose from "mongoose";
 import PropertiesModel from "../models/Properties.js";
 import { logActivity } from "../utils/logActivity.js";
+import { connectDB } from "../config/db.js";
 
 const createProperty = async (req, res) => {
+  await connectDB();
   try {
     const newProperty = new PropertiesModel(req.body);
 
@@ -25,6 +27,7 @@ const createProperty = async (req, res) => {
 };
 
 const fetchProperty = async (req, res) => {
+  await connectDB();
   const { id } = req.query;
   try {
     const property = await PropertiesModel.aggregate([
@@ -58,6 +61,7 @@ const fetchProperty = async (req, res) => {
 };
 
 const fetchProperties = async (req, res) => {
+  await connectDB();
   const page = parseInt(req.query.page) || 1;
   const limit = parseInt(req.query.limit) || 12;
   const skip = (page - 1) * limit;
@@ -111,6 +115,7 @@ const fetchProperties = async (req, res) => {
 };
 
 const fetchAvailableProperties = async (req, res) => {
+  await connectDB();
   try {
     const availableProperty = await PropertiesModel.aggregate([
       { $match: { status: "Available" } },
@@ -135,6 +140,7 @@ const fetchAvailableProperties = async (req, res) => {
 };
 
 const updateProperty = async (req, res) => {
+  await connectDB();
   try {
     const { id } = req.query;
     const updatedProperty = await PropertiesModel.findByIdAndUpdate(
@@ -163,6 +169,7 @@ const updateProperty = async (req, res) => {
 };
 
 const deleteProperty = async (req, res) => {
+  await connectDB();
   try {
     const { id } = req.query;
     const deletedProperty = await PropertiesModel.findByIdAndDelete(id);

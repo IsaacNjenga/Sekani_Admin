@@ -1,9 +1,11 @@
+import { connectDB } from "../config/db.js";
 import ClientModel from "../models/Client.js";
 import SchedulesModel from "../models/Schedules.js";
 import { logActivity } from "../utils/logActivity.js";
 import { appointmentNotification } from "./twilioController.js";
 
 const createSchedule = async (req, res) => {
+  await connectDB();
   const { createdBy } = req.query;
   try {
     const newSchedule = new SchedulesModel(req.body);
@@ -42,6 +44,7 @@ const createSchedule = async (req, res) => {
 };
 
 const fetchSchedules = async (req, res) => {
+  await connectDB();
   try {
     const allSchedules = await SchedulesModel.find({})
       .populate("propertyId")
@@ -57,6 +60,7 @@ const fetchSchedules = async (req, res) => {
 };
 
 const fetchSchedule = async (req, res) => {
+  await connectDB();
   const { id } = req.query;
   try {
     const schedule = await SchedulesModel.findById(id).populate("propertyId");
@@ -73,6 +77,7 @@ const fetchSchedule = async (req, res) => {
 };
 
 const upcomingViewings = async (req, res) => {
+  await connectDB();
   try {
     const upcomingViewings = await SchedulesModel.find({
       //date: { $gte: new Date() },
@@ -96,6 +101,7 @@ const upcomingViewings = async (req, res) => {
 };
 
 const updateSchedule = async (req, res) => {
+  await connectDB();
   try {
     const { id } = req.query;
     const updatedSchedule = await SchedulesModel.findByIdAndUpdate(
@@ -126,6 +132,7 @@ const updateSchedule = async (req, res) => {
 };
 
 const deleteSchedule = async (req, res) => {
+  await connectDB();
   try {
     const { id, createdBy } = req.query;
     const deletedSchedule = await SchedulesModel.findByIdAndDelete(id);
@@ -161,6 +168,7 @@ const deleteSchedule = async (req, res) => {
 };
 
 const scheduleBookings = async (req, res) => {
+  await connectDB();
   try {
     const { date } = req.query;
     const allocatedTime = await SchedulesModel.find({

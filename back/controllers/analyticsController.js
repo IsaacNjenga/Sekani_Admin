@@ -1,7 +1,9 @@
+import { connectDB } from "../config/db.js";
 import AnalyticsModel from "../models/Analytics.js";
 import ClientModel from "../models/Client.js";
 
 const createAnalytics = async (req, res) => {
+  await connectDB();
   try {
     const newAnalytic = new AnalyticsModel(req.body);
     await newAnalytic.save();
@@ -13,6 +15,7 @@ const createAnalytics = async (req, res) => {
 };
 
 const incrementViews = async (req, res) => {
+  await connectDB();
   const { propertyId } = req.params;
   try {
     await AnalyticsModel.findOneAndUpdate(
@@ -29,6 +32,7 @@ const incrementViews = async (req, res) => {
 };
 
 const incrementClicks = async (req, res) => {
+  await connectDB();
   const { propertyId } = req.params;
   try {
     await AnalyticsModel.findOneAndUpdate(
@@ -45,6 +49,7 @@ const incrementClicks = async (req, res) => {
 };
 
 const incrementLikes = async (req, res) => {
+  await connectDB();
   const { propertyId } = req.params;
   const { email } = req.query;
   try {
@@ -71,6 +76,7 @@ const incrementLikes = async (req, res) => {
 };
 
 const decrementLikes = async (req, res) => {
+  await connectDB();
   const { propertyId } = req.params;
   const { email } = req.query;
   try {
@@ -97,6 +103,7 @@ const decrementLikes = async (req, res) => {
 };
 
 const fetchAnalytics = async (req, res) => {
+  await connectDB();
   try {
     const summary = await AnalyticsModel.aggregate([
       {
@@ -121,6 +128,7 @@ const fetchAnalytics = async (req, res) => {
 };
 
 const topAnalytics = async (req, res) => {
+  await connectDB();
   try {
     const topViewed = await AnalyticsModel.find()
       .sort({ views: -1 })
@@ -135,6 +143,7 @@ const topAnalytics = async (req, res) => {
 };
 
 const fetchAnalytic = async (req, res) => {
+  await connectDB();
   const { id } = req.query;
   try {
     const analytic = await AnalyticsModel.findById(id).populate("propertyId");
@@ -149,6 +158,7 @@ const fetchAnalytic = async (req, res) => {
 };
 
 const updateAnalytics = async (req, res) => {
+  await connectDB();
   const { id } = req.query;
   try {
     const updateAnalytic = await AnalyticsModel.findByIdAndUpdate(

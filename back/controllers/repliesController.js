@@ -1,7 +1,9 @@
+import { connectDB } from "../config/db.js";
 import RepliesModel from "../models/Replies.js";
 import { logActivity } from "../utils/logActivity.js";
 
 const createReply = async (req, res) => {
+  await connectDB();
   try {
     const newReply = new RepliesModel(req.body);
 
@@ -25,6 +27,7 @@ const createReply = async (req, res) => {
 };
 
 const fetchReplies = async (req, res) => {
+  await connectDB();
   try {
     const replies = await RepliesModel.find({})
       .populate("original_message")
@@ -37,6 +40,7 @@ const fetchReplies = async (req, res) => {
 };
 
 const fetchReply = async (req, res) => {
+  await connectDB();
   const { id } = req.query;
   try {
     const reply = await RepliesModel.findById(id).populate("original_message");
