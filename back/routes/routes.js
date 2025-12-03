@@ -133,6 +133,6 @@ router.put("/update-analytic", updateAnalytics);
 router.get("/top-analytics", protectRoute, topAnalytics);
 
 //activities route
-router.get("/fetch-activities", protectRoute, fetchActivities);
+router.get("/fetch-activities",  fetchActivities);
 
 export { router as Router };

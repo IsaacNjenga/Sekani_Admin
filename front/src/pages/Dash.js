@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import {
   Card,
   Row,
@@ -24,11 +24,15 @@ import {
   CheckCircleOutlined,
   ClockCircleFilled,
   LinkOutlined,
+  LikeFilled,
+  MailOutlined,
+  HomeOutlined,
+  StarOutlined,
 } from "@ant-design/icons";
 import { Link, useNavigate } from "react-router-dom";
-import { mockData } from "../assets/data/data";
+//import { mockData } from "../assets/data/data";
 import DashUtils from "../utils/dashboardUtils";
-import { format } from "date-fns";
+import { format, formatDistanceToNow } from "date-fns";
 import ScheduleDetails from "../components/ScheduleDetails";
 
 const { Title, Text } = Typography;
@@ -492,6 +496,28 @@ const UpcomingViewings = () => {
 };
 
 const RecentActivity = () => {
+  const { recentActivities, activitiesLoading } = DashUtils();
+
+  console.log(recentActivities);
+
+  const IconRender = (type) => {
+    switch (type) {
+      case "schedule":
+        return <CalendarOutlined style={{ color: "#1890ff" }} />;
+      case "reply":
+        return <MailOutlined style={{ color: "#faad14" }} />;
+      case "mail":
+        return <MailOutlined style={{ color: "#faad14" }} />;
+      case "review":
+        return <LikeFilled style={{ color: "red" }} />;
+      case "property":
+        return <HomeOutlined style={{ color: "#52c41a" }} />;
+
+      default:
+        return <StarOutlined style={{ color: "#8c8c8c" }} />;
+    }
+  };
+
   return (
     <Row gutter={[16, 16]}>
       <Col xs={24}>
@@ -512,54 +538,61 @@ const RecentActivity = () => {
             boxShadow: "0 4px 12px rgba(0,0,0,0.08)",
           }}
         >
-          <Timeline
-            items={mockData.recentActivities.map((activity, idx) => ({
-              dot: (
-                <div
-                  style={{
-                    width: 32,
-                    height: 32,
-                    borderRadius: "50%",
-                    background:
-                      idx === 0
-                        ? "linear-gradient(135deg, #667eea, #764ba2)"
-                        : "#f0f0f0",
-                    color: idx === 0 ? "white" : "#8c8c8c",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    fontSize: 14,
-                  }}
-                >
-                  {activity.icon}
-                </div>
-              ),
-              children: (
-                <div style={{ paddingBottom: 16 }}>
-                  <Text
-                    strong
+          {activitiesLoading ? (
+            <Spin
+              size="large"
+              style={{ margin: "auto", width: "100%", padding: 20 }}
+            />
+          ) : (
+            <Timeline
+              items={recentActivities.map((activity, idx) => ({
+                dot: (
+                  <div
                     style={{
-                      display: "block",
-                      fontSize: 15,
-                      marginBottom: 4,
-                      fontFamily: "Raleway",
+                      width: 32,
+                      height: 32,
+                      borderRadius: "50%",
+                      background:
+                        idx === 0
+                          ? "linear-gradient(135deg, #667eea, #764ba2)"
+                          : "#f0f0f0",
+                      color: idx === 0 ? "white" : "#8c8c8c",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      fontSize: 14,
                     }}
                   >
-                    {activity.message}
-                  </Text>
-                  <Text
-                    style={{
-                      fontSize: 13,
-                      color: "#8c8c8c",
-                      fontFamily: "Roboto",
-                    }}
-                  >
-                    {activity.time}
-                  </Text>
-                </div>
-              ),
-            }))}
-          />
+                    {IconRender(activity.type)}
+                  </div>
+                ),
+                children: (
+                  <div style={{ paddingBottom: 16 }}>
+                    <Text
+                      strong
+                      style={{
+                        display: "block",
+                        fontSize: 15,
+                        marginBottom: 4,
+                        fontFamily: "Raleway",
+                      }}
+                    >
+                      {activity.message}
+                    </Text>
+                    <Text
+                      style={{
+                        fontSize: 13,
+                        color: "#8c8c8c",
+                        fontFamily: "Roboto",
+                      }}
+                    >
+                      {formatDistanceToNow(new Date(activity.time))} ago
+                    </Text>
+                  </div>
+                ),
+              }))}
+            />
+          )}
         </Card>
       </Col>
     </Row>

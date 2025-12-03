@@ -475,3 +475,5 @@ export const stats = [
     trend: "up",
   },
 ];
+
+//schedule review(for rating) property mail reply

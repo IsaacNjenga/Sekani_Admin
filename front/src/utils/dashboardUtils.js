@@ -10,6 +10,7 @@ import useFetchClients from "../hooks/fetchClients";
 import useFetchAllProperties from "../hooks/fetchAllProperties";
 import useFetchAllEmails from "../hooks/fetchAllEmails";
 import useFetchAnalytics from "../hooks/fetchAnalytics";
+import useFetchActivity from "../hooks/fetchActivity";
 import useFetchUpcomingViewings from "../hooks/fetchUpcomingViewings";
 // import CountUp from "react-countup";
 
@@ -19,8 +20,15 @@ function DashUtils() {
   const { emails } = useFetchAllEmails(); //emailsLoading
   const { summary, topViewed } = useFetchAnalytics(); //summaryLoading
   const { schedules, schedulesRefresh } = useFetchUpcomingViewings(); //schedulesLoading
+  const { activities, activitiesLoading } = useFetchActivity();
 
   const unreadMessages = emails?.filter((email) => email.read === false);
+
+  const cleanedActivities = activities.map((activity) => ({
+    type: activity.type,
+    message: activity.title,
+    time: activity.createdAt,
+  }));
 
   // const formatter = (value) => <CountUp end={value} separator="," />;
 
@@ -76,6 +84,8 @@ function DashUtils() {
     topViewed: topViewed,
     upcomingViewings: schedules,
     schedulesRefresh: schedulesRefresh,
+    recentActivities: cleanedActivities,
+    activitiesLoading: activitiesLoading,
   };
 }
 export default DashUtils;
