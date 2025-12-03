@@ -27,6 +27,7 @@ import { format } from "date-fns";
 import { useNotification } from "../contexts/NotificationContext";
 import axios from "axios";
 import { useAuth } from "../contexts/AuthContext";
+import { useState } from "react";
 
 const { Title, Text, Paragraph } = Typography;
 
@@ -38,9 +39,11 @@ const ScheduleDetails = ({
 }) => {
   const property = content?.propertyId;
   const openNotification = useNotification();
+  const [loading, setLoading] = useState(false);
   const { token } = useAuth();
 
   const updateSchedule = async (id, updateData) => {
+    setLoading(true);
     try {
       const mailValues = {
         to: content?.email,
@@ -86,6 +89,8 @@ const ScheduleDetails = ({
         "Failed to update schedule. Try again",
         "There was an error"
       );
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -147,6 +152,7 @@ const ScheduleDetails = ({
                 <Button
                   type="primary"
                   size="large"
+                  loading={loading}
                   style={{
                     borderRadius: 50,
                     paddingInline: 28,
@@ -167,6 +173,7 @@ const ScheduleDetails = ({
                   <Button
                     type="primary"
                     size="large"
+                    loading={loading}
                     style={{
                       borderRadius: 50,
                       paddingInline: 28,
@@ -184,6 +191,7 @@ const ScheduleDetails = ({
                 <Button
                   danger
                   size="large"
+                  loading={loading}
                   style={{
                     borderRadius: 50,
                     paddingInline: 28,

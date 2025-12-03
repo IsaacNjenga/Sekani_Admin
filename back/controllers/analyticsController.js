@@ -105,14 +105,14 @@ const fetchAnalytics = async (req, res) => {
           totalClicks: { $sum: "$clicks" },
           totalViews: { $sum: "$views" },
           totalLikes: { $sum: "$likes" },
-          totalPropertiesTracked: { $sum: 1 }
-        }
-      }
+          totalPropertiesTracked: { $sum: 1 },
+        },
+      },
     ]);
 
     res.status(200).json({
       success: true,
-      summary: summary[0] || {}
+      summary: summary[0] || {},
     });
   } catch (error) {
     console.error("Error in analytics fetch:", error);
@@ -120,6 +120,19 @@ const fetchAnalytics = async (req, res) => {
   }
 };
 
+const topAnalytics = async (req, res) => {
+  try {
+    const topViewed = await AnalyticsModel.find()
+      .sort({ views: -1 })
+      .limit(5)
+      .populate("propertyId");
+
+    res.status(200).json({ success: true, topViewed: topViewed });
+  } catch (error) {
+    console.error("Error in analytics fetch:", error);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+};
 
 const fetchAnalytic = async (req, res) => {
   const { id } = req.query;
@@ -164,4 +177,5 @@ export {
   incrementViews,
   incrementLikes,
   decrementLikes,
+  topAnalytics,
 };

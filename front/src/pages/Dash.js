@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Card,
   Row,
@@ -23,10 +23,13 @@ import {
   FireFilled,
   CheckCircleOutlined,
   ClockCircleFilled,
+  LinkOutlined,
 } from "@ant-design/icons";
 import { Link, useNavigate } from "react-router-dom";
 import { mockData } from "../assets/data/data";
 import DashUtils from "../utils/dashboardUtils";
+import { format } from "date-fns";
+import ScheduleDetails from "../components/ScheduleDetails";
 
 const { Title, Text } = Typography;
 
@@ -240,6 +243,8 @@ const QuickStats = () => {
 };
 
 const TopProperties = () => {
+  const { topViewed } = DashUtils();
+
   return (
     <Card
       title={
@@ -265,7 +270,7 @@ const TopProperties = () => {
     >
       <List
         itemLayout="horizontal"
-        dataSource={mockData.topProperties}
+        dataSource={topViewed.slice(0, 3)}
         renderItem={(item) => (
           <List.Item
             style={{
@@ -280,24 +285,15 @@ const TopProperties = () => {
           >
             <List.Item.Meta
               avatar={
-                <div
-                  style={{
-                    width: 48,
-                    height: 48,
-                    borderRadius: 12,
-                    background: "linear-gradient(135deg, #667eea30, #764ba230)",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    fontSize: 24,
-                  }}
-                >
-                  {item.image}
-                </div>
+                <Avatar
+                  size={70}
+                  src={item.propertyId.img[0]}
+                  style={{ width: 58, height: 58, borderRadius: 8 }}
+                />
               }
               title={
                 <Text strong style={{ fontSize: 16, fontFamily: "Raleway" }}>
-                  {item.title}
+                  {item.propertyId.address}
                 </Text>
               }
               description={
@@ -310,7 +306,7 @@ const TopProperties = () => {
                       fontFamily: "Raleway",
                     }}
                   >
-                    {item.price}
+                    KES {item.propertyId.price.toLocaleString()}
                   </Text>
                   <Space size={16}>
                     <span>
@@ -324,7 +320,21 @@ const TopProperties = () => {
                           fontFamily: "Raleway",
                         }}
                       >
-                        {item.views}
+                        {item.views.toLocaleString()}
+                      </Text>
+                    </span>
+                    <span>
+                      <LinkOutlined
+                        style={{ color: "#8c8c8c", marginRight: 4 }}
+                      />
+                      <Text
+                        style={{
+                          fontSize: 13,
+                          color: "#8c8c8c",
+                          fontFamily: "Raleway",
+                        }}
+                      >
+                        {item.clicks.toLocaleString()}
                       </Text>
                     </span>
                     {/* <span>
@@ -347,104 +357,137 @@ const TopProperties = () => {
 };
 
 const UpcomingViewings = () => {
+  const { upcomingViewings, schedulesRefresh } = DashUtils();
+  const [openScheduleModal, setOpenScheduleModal] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [content, setContent] = useState(null);
+
+  const viewScheduleDetails = (payload) => {
+    setLoading(true);
+    setContent(payload);
+    setOpenScheduleModal(true);
+    setTimeout(() => setLoading(false), 120);
+  };
+
   return (
-    <Card
-      title={
-        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-          <CalendarOutlined style={{ color: "#1890ff" }} />
-          <span
-            style={{ fontSize: 16, fontWeight: 600, fontFamily: "Raleway" }}
-          >
-            Upcoming Viewings
-          </span>
-          <Badge count={3} style={{ marginLeft: 8 }} />
-        </div>
-      }
-      extra={
-        <Button type="link" style={{ fontFamily: "Raleway" }}>
-          <Link to="/schedules">View All</Link>
-        </Button>
-      }
-      style={{
-        borderRadius: 16,
-        border: "none",
-        boxShadow: "0 4px 12px rgba(0,0,0,0.08)",
-      }}
-    >
-      <List
-        itemLayout="horizontal"
-        dataSource={mockData.upcomingViewings}
-        renderItem={(item) => (
-          <List.Item
-            style={{
-              padding: "16px 0",
-              borderBottom: "1px solid #f0f0f0",
-            }}
-            actions={[
-              <Tag
-                color="white"
-                style={{
-                  fontFamily: "Raleway",
-                  backgroundColor:
-                    item.status === "confirmed" ? "green" : "orange",
-                  padding: "6px 12px",
-                  borderRadius: 8,
-                  color: "white",
-                }}
-              >
-                {" "}
-                <span>
-                  {item.status === "confirmed" ? "Confirmed" : "Pending"}
-                </span>
-                {item.status === "confirmed" ? (
-                  <CheckCircleOutlined />
-                ) : (
-                  <ClockCircleOutlined />
-                )}{" "}
-              </Tag>,
-            ]}
-          >
-            <List.Item.Meta
-              avatar={
-                <Avatar
-                  size={48}
+    <>
+      <Card
+        title={
+          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+            <CalendarOutlined style={{ color: "#1890ff" }} />
+            <span
+              style={{ fontSize: 16, fontWeight: 600, fontFamily: "Raleway" }}
+            >
+              Upcoming Viewings
+            </span>
+            <Badge count={upcomingViewings.length} style={{ marginLeft: 8 }} />
+          </div>
+        }
+        extra={
+          <Button type="link" style={{ fontFamily: "Raleway" }}>
+            <Link to="/schedules">View All</Link>
+          </Button>
+        }
+        style={{
+          borderRadius: 16,
+          border: "none",
+          boxShadow: "0 4px 12px rgba(0,0,0,0.08)",
+        }}
+      >
+        <List
+          itemLayout="horizontal"
+          dataSource={upcomingViewings}
+          renderItem={(item) => (
+            <List.Item
+              style={{
+                padding: "16px 0",
+                borderBottom: "1px solid #f0f0f0",
+                cursor: "pointer",
+              }}
+              onClick={() => viewScheduleDetails(item)}
+              actions={[
+                <Tag
+                  color="white"
                   style={{
-                    background: "linear-gradient(135deg, #667eea, #764ba2)",
+                    fontFamily: "Raleway",
+                    backgroundColor:
+                      item.status === "confirmed" ? "green" : "orange",
+                    padding: "6px 12px",
+                    borderRadius: 8,
+                    color: "white",
                   }}
                 >
-                  {item.client[0]}
-                </Avatar>
-              }
-              title={
-                <Text strong style={{ fontSize: 15, fontFamily: "Raleway" }}>
-                  {item.property}
-                </Text>
-              }
-              description={
-                <Space direction="vertical" size={2}>
-                  <Text style={{ fontSize: 14, fontFamily: "Raleway" }}>
-                    <UserOutlined
-                      style={{ marginRight: 4, color: "#8c8c8c" }}
-                    />
-                    {item.client}
-                  </Text>
-                  <Text
+                  {" "}
+                  <span>
+                    {item.status === "confirmed" ? "Confirmed" : "Pending"}
+                  </span>
+                  {item.status === "confirmed" ? (
+                    <CheckCircleOutlined />
+                  ) : (
+                    <ClockCircleOutlined />
+                  )}{" "}
+                </Tag>,
+              ]}
+            >
+              <List.Item.Meta
+                avatar={
+                  <Avatar
+                    size={48}
                     style={{
-                      fontSize: 13,
-                      color: "#1890ff",
-                      fontFamily: "Raleway",
+                      background: "linear-gradient(135deg, #667eea, #764ba2)",
                     }}
                   >
-                    <ClockCircleOutlined style={{ marginRight: 4 }} />
-                    {item.time}
+                    {item.name[0]}
+                  </Avatar>
+                }
+                title={
+                  <Text strong style={{ fontSize: 15, fontFamily: "Raleway" }}>
+                    {item.propertyId.address}, {item.propertyId.city}
                   </Text>
-                </Space>
-              }
-            />
-          </List.Item>
-        )}
+                }
+                description={
+                  <Space direction="vertical" size={2}>
+                    <Text style={{ fontSize: 14, fontFamily: "Raleway" }}>
+                      <UserOutlined
+                        style={{ marginRight: 4, color: "#8c8c8c" }}
+                      />
+                      {item.name}
+                    </Text>{" "}
+                    <Text
+                      style={{
+                        fontSize: 13,
+                        color: "#401c37ff",
+                        fontFamily: "Raleway",
+                      }}
+                    >
+                      <CalendarOutlined style={{ marginRight: 4 }} />
+                      {format(new Date(item.date), "MMM dd, yyyy")}
+                    </Text>
+                    <Text
+                      style={{
+                        fontSize: 13,
+                        color: "#1890ff",
+                        fontFamily: "Raleway",
+                      }}
+                    >
+                      <ClockCircleOutlined style={{ marginRight: 4 }} />
+                      {item.time}
+                    </Text>
+                  </Space>
+                }
+              />
+            </List.Item>
+          )}
+        />
+      </Card>
+      <ScheduleDetails
+        content={content}
+        openScheduleModal={openScheduleModal}
+        setOpenScheduleModal={setOpenScheduleModal}
+        schedulesRefresh={schedulesRefresh}
+        loading={loading}
       />
-    </Card>
+    </>
   );
 };
 

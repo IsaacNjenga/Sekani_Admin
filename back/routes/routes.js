@@ -49,6 +49,7 @@ import {
   fetchSchedules,
   scheduleBookings,
   updateSchedule,
+  upcomingViewings,
 } from "../controllers/scheduleController.js";
 import {
   createAnalytics,
@@ -59,6 +60,7 @@ import {
   incrementLikes,
   incrementViews,
   updateAnalytics,
+  topAnalytics,
 } from "../controllers/analyticsController.js";
 import {
   fetchClient,
@@ -117,6 +119,7 @@ router.get("/fetch-schedule", fetchSchedule);
 router.put("/update-schedule", updateSchedule);
 router.delete("/delete-schedule", deleteSchedule);
 router.get("/schedule-bookings", scheduleBookings);
+router.get("/upcoming-viewings", protectRoute, upcomingViewings);
 
 // analytics route
 router.post("/create-analytics", createAnalytics);
@@ -124,9 +127,10 @@ router.post("/analytics/clicks/:propertyId", incrementClicks);
 router.post("/analytics/views/:propertyId", incrementViews);
 router.post("/analytics/like/:propertyId", incrementLikes);
 router.post("/analytics/unlike/:propertyId", decrementLikes);
-router.get("/fetch-analytics",protectRoute, fetchAnalytics);
+router.get("/fetch-analytics", protectRoute, fetchAnalytics);
 router.get("/fetch-analytic", fetchAnalytic);
 router.put("/update-analytic", updateAnalytics);
+router.get("/top-analytics", protectRoute, topAnalytics);
 
 //activities route
 router.get("/fetch-activities", protectRoute, fetchActivities);

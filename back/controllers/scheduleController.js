@@ -67,6 +67,29 @@ const fetchSchedule = async (req, res) => {
   }
 };
 
+const upcomingViewings = async (req, res) => {
+  try {
+    const upcomingViewings = await SchedulesModel.find({
+      //date: { $gte: new Date() },
+      status: { $ne: "cancelled" },
+    })
+      .populate("propertyId")
+      .sort({ date: 1, time: 1 });
+
+    const filteredViewings = upcomingViewings.filter((viewing) => {
+      const viewingDateTime = new Date(`${viewing.date}T${viewing.time}`);
+      return viewingDateTime >= new Date();
+    });
+
+    res.status(200).json({ success: true, upcomingViewings: filteredViewings });
+  } catch (error) {
+    console.error("Error when fetching upcoming schedules:", error);
+    return res
+      .status(500)
+      .json({ success: false, message: "Internal server error" });
+  }
+};
+
 const updateSchedule = async (req, res) => {
   try {
     const { id } = req.query;
@@ -163,4 +186,5 @@ export {
   updateSchedule,
   deleteSchedule,
   scheduleBookings,
+  upcomingViewings,
 };
