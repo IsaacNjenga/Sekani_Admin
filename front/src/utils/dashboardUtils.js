@@ -12,15 +12,15 @@ import useFetchAllEmails from "../hooks/fetchAllEmails";
 import useFetchAnalytics from "../hooks/fetchAnalytics";
 import useFetchActivity from "../hooks/fetchActivity";
 import useFetchUpcomingViewings from "../hooks/fetchUpcomingViewings";
-// import CountUp from "react-countup";
 
 function DashUtils() {
-  const { clients } = useFetchClients(); //clientsLoading
-  const { properties } = useFetchAllProperties(); //propertiesLoading
-  const { emails } = useFetchAllEmails(); //emailsLoading
-  const { summary, topViewed } = useFetchAnalytics(); //summaryLoading
-  const { schedules, schedulesRefresh } = useFetchUpcomingViewings(); //schedulesLoading
+  const { clients, clientsLoading } = useFetchClients();
+  const { properties, propertiesLoading } = useFetchAllProperties();
+  const { emails, emailsLoading } = useFetchAllEmails();
+  const { summary, topViewed, summaryLoading } = useFetchAnalytics();
   const { activities, activitiesLoading } = useFetchActivity();
+  const { schedules, schedulesRefresh, schedulesLoading } =
+    useFetchUpcomingViewings();
 
   const unreadMessages = emails?.filter((email) => email.read === false);
 
@@ -42,24 +42,21 @@ function DashUtils() {
     return acc;
   }, []);
 
-  // const formatter = (value) => <CountUp end={value} separator="," />;
-
   return {
     stats: [
       {
         title: "Total Users",
-        //value: formatter(clients.length),
         value: clients.length.toLocaleString(),
         icon: <UserOutlined />,
         color: "#52c41a",
-        loading: !true,
+        loading: clientsLoading,
       },
       {
         title: "Active Listings",
         value: properties.length.toLocaleString(),
         icon: <HomeOutlined />,
         color: "#1890ff",
-        loading: !true,
+        loading: propertiesLoading,
       },
       {
         title: "Total Views",
@@ -67,7 +64,7 @@ function DashUtils() {
         icon: <EyeOutlined />,
         color: "#722ed1",
         trend: "down",
-        loading: !true,
+        loading: summaryLoading,
       },
       {
         title: "Total Likes",
@@ -75,7 +72,7 @@ function DashUtils() {
         icon: <LikeFilled style={{ color: "red" }} />,
         color: "#cf2626",
         trend: "down",
-        loading: !true,
+        loading: summaryLoading,
       },
       {
         title: "Total Clicks",
@@ -83,14 +80,14 @@ function DashUtils() {
         icon: <LinkOutlined />,
         color: "#1a80cf",
         trend: "down",
-        loading: !true,
+        loading: summaryLoading,
       },
       {
         title: "New Inquiries",
         value: unreadMessages.length.toLocaleString(),
         icon: <MailOutlined />,
         color: "#faad14",
-        loading: !true,
+        loading: emailsLoading,
       },
     ],
     topViewed: topViewed,
@@ -99,6 +96,11 @@ function DashUtils() {
     recentActivities: cleanedActivities,
     activitiesLoading: activitiesLoading,
     propertyTypes: cleanedPropertyTypes,
+    clientsLoading: clientsLoading,
+    propertiesLoading: propertiesLoading,
+    emailsLoading: emailsLoading,
+    summaryLoading: summaryLoading,
+    schedulesLoading: schedulesLoading,
   };
 }
 export default DashUtils;

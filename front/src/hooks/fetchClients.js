@@ -27,7 +27,7 @@ function useFetchClients() {
         "Something went wrong..."
       );
     } finally {
-      setClientsLoading(true);
+      setClientsLoading(false);
     }
   };
 

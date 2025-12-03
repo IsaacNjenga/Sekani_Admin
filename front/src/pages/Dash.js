@@ -259,7 +259,7 @@ const QuickStats = () => {
 };
 
 const TopProperties = () => {
-  const { topViewed } = DashUtils();
+  const { topViewed, summaryLoading } = DashUtils();
 
   return (
     <Card
@@ -287,6 +287,7 @@ const TopProperties = () => {
       <List
         itemLayout="horizontal"
         dataSource={topViewed.slice(0, 3)}
+        loading={summaryLoading}
         renderItem={(item) => (
           <List.Item
             style={{
@@ -373,7 +374,7 @@ const TopProperties = () => {
 };
 
 const UpcomingViewings = () => {
-  const { upcomingViewings, schedulesRefresh } = DashUtils();
+  const { upcomingViewings, schedulesRefresh, schedulesLoading } = DashUtils();
   const [openScheduleModal, setOpenScheduleModal] = useState(false);
   const [loading, setLoading] = useState(false);
   const [content, setContent] = useState(null);
@@ -413,6 +414,7 @@ const UpcomingViewings = () => {
         <List
           itemLayout="horizontal"
           dataSource={upcomingViewings}
+          loading={schedulesLoading}
           renderItem={(item) => (
             <List.Item
               style={{
@@ -612,7 +614,7 @@ const RecentActivity = () => {
 function Dash() {
   const loading = false;
 
-  const { propertyTypes } = DashUtils();
+  const { propertyTypes, propertiesLoading } = DashUtils();
 
   if (loading) {
     return (
@@ -718,48 +720,63 @@ function Dash() {
               height: "100%",
             }}
           >
-            <MiniBarChart data={propertyTypes} />
-            <Divider />
-            <div
-              style={{
-                marginTop: 16,
-                background:
-                  "linear-gradient(to top, #667eea0f 0%, #764ba20f 100%)",
-                padding: 16,
-                borderRadius: 12,
-              }}
-            >
-              {propertyTypes.map((item, i) => {
-                const colors = ["#1890ff", "#52c41a", "#faad14", "#722ed1"];
-                return (
-                  <div
-                    key={i}
-                    style={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                      marginBottom: 8,
-                    }}
-                  >
-                    <div
-                      style={{ display: "flex", alignItems: "center", gap: 8 }}
-                    >
+            {propertiesLoading ? (
+              <Spin
+                size="large"
+                style={{ margin: "auto", width: "100%", padding: 20 }}
+              />
+            ) : (
+              <>
+                <MiniBarChart data={propertyTypes} />
+                <Divider />
+                <div
+                  style={{
+                    marginTop: 16,
+                    background:
+                      "linear-gradient(to top, #667eea0f 0%, #764ba20f 100%)",
+                    padding: 16,
+                    borderRadius: 12,
+                  }}
+                >
+                  {propertyTypes.map((item, i) => {
+                    const colors = ["#1890ff", "#52c41a", "#faad14", "#722ed1"];
+                    return (
                       <div
+                        key={i}
                         style={{
-                          width: 16,
-                          height: 16,
-                          borderRadius: "50%",
-                          background: colors[i],
+                          display: "flex",
+                          justifyContent: "space-between",
+                          marginBottom: 8,
                         }}
-                      />
-                      <Text style={{ fontFamily: "Raleway" }}>{item.type}</Text>
-                    </div>
-                    <Text strong style={{ fontFamily: "Raleway" }}>
-                      {item.value}
-                    </Text>
-                  </div>
-                );
-              })}
-            </div>
+                      >
+                        <div
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: 8,
+                          }}
+                        >
+                          <div
+                            style={{
+                              width: 16,
+                              height: 16,
+                              borderRadius: "50%",
+                              background: colors[i],
+                            }}
+                          />
+                          <Text style={{ fontFamily: "Raleway" }}>
+                            {item.type}
+                          </Text>
+                        </div>
+                        <Text strong style={{ fontFamily: "Raleway" }}>
+                          {item.value}
+                        </Text>
+                      </div>
+                    );
+                  })}
+                </div>
+              </>
+            )}
           </Card>
         </Col>
       </Row>
