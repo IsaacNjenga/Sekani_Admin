@@ -13,8 +13,8 @@ import ProtectedRoutes from "./components/ProtectedRoute";
 import Emails from "./pages/emails";
 import Schedules from "./pages/Schedules";
 
-//axios.defaults.baseURL = process.env.REACT_APP_DEV_API_URL;
-axios.defaults.baseURL = process.env.REACT_APP_API_URL;
+axios.defaults.baseURL = process.env.REACT_APP_DEV_API_URL;
+//axios.defaults.baseURL = process.env.REACT_APP_API_URL;
 axios.defaults.withCredentials = true;
 
 function App() {
