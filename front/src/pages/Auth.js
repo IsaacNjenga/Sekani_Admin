@@ -1,6 +1,4 @@
 import { useState } from "react";
-import signInImg from "../assets/images/sign-in.png";
-import signUpImg from "../assets/images/sign-up2.png";
 import { Button, Card, Divider, Form, Input, Typography } from "antd";
 import { EyeInvisibleOutlined, EyeTwoTone } from "@ant-design/icons";
 import axios from "axios";
@@ -8,40 +6,6 @@ import { useAuth } from "../contexts/AuthContext";
 import { useNotification } from "../contexts/NotificationContext";
 
 const { Title, Text } = Typography;
-
-const containerStyle = {
-  position: "relative",
-  minHeight: "100vh",
-  padding: 0,
-  maxWidth: "100vw",
-};
-const imgStyle = {
-  position: "absolute",
-  top: 0,
-  left: 0,
-  width: "100vw",
-  height: "100vh",
-  objectFit: "contain", //from contain
-  background: "linear-gradient(to right, #d6a4df, #def7e4)",
-};
-
-const innerDivStyle = {
-  position: "absolute",
-  margin: "auto",
-  display: "flex",
-  width: "100%",
-  borderRadius: 12,
-  border: "0px solid #fff",
-  maxWidth: "85vw",
-  alignContent: "center",
-  alignItems: "center",
-  alignSelf: "center",
-  top: 0,
-  left: 0,
-  right: 0,
-  bottom: 0,
-  boxShadow: "0 4px 3px 0 rgba(0, 0, 0, 0.12), 0 2px 7px 0 rgba(0, 0, 0, 0.1)",
-};
 
 const cardStyle = {
   maxHeight: "95vh",
@@ -147,159 +111,219 @@ function Auth() {
   };
 
   return (
-    <div style={containerStyle}>
-      <img src={isSignIn ? signInImg : signUpImg} alt="img" style={imgStyle} />
-      <div style={{ ...innerDivStyle, flexDirection: "row" }}>
-        <div style={{ width: "50%" }}>
-          <Card style={{ ...cardStyle, width: 600 }}>
-            <Divider style={{ borderColor: "#fff" }}>
-              <Title level={1} style={{ ...titleStyle, fontSize: 50 }}>
-                {isSignIn ? "Sign In" : "Sign Up"}
-              </Title>
-            </Divider>
-            <div>
-              <Form layout="vertical" form={form} onFinish={handleSubmit}>
-                {!isSignIn && (
-                  <Form.Item
-                    label={<span style={labelStyle}>Username</span>}
-                    name={"username"}
-                  >
-                    <Input
-                      value={values.username}
-                      onChange={(e) => handleChange("username", e.target.value)}
-                      style={inputStyle}
-                      type="text"
-                    />
-                  </Form.Item>
-                )}
-                <Form.Item
-                  label={<span style={labelStyle}>Email Address</span>}
-                  name={"email"}
-                >
-                  <Input
-                    value={values.email}
-                    onChange={(e) => handleChange("email", e.target.value)}
-                    style={inputStyle}
-                    type="email"
-                  />
-                </Form.Item>
-                <Form.Item
-                  label={<span style={labelStyle}>Password</span>}
-                  name={"password"}
-                >
-                  <Input.Password
-                    iconRender={(visible) =>
-                      visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />
-                    }
-                    value={values.password}
-                    onChange={(e) => handleChange("email", e.target.value)}
-                    style={inputStyle}
-                    allowClear
-                  />
-                </Form.Item>
-                {!isSignIn && (
-                  <Form.Item
-                    dependencies={["password"]}
-                    hasFeedback
-                    label={
-                      <span style={labelStyle}>Confirm Your Password</span>
-                    }
-                    name={"confirmPassword"}
-                    rules={[
-                      {
-                        required: true,
-                        message: "Please confirm your password",
-                      },
-                      ({ getFieldValue }) => ({
-                        validator(_, value) {
-                          if (!value || getFieldValue("password") === value) {
-                            return Promise.resolve();
+    <div
+      style={{
+        position: "relative",
+        minHeight: "100vh",
+        background: `url(${"https://images.unsplash.com/photo-1478760329108-5c3ed9d495a0?w=900"}) no-repeat center center/cover`,
+      }}
+    >
+      <div
+        style={{
+          position: "absolute",
+          padding: 28,
+          top: "50%",
+          left: "50%",
+          transform: "translate(-50%, -50%)",
+          margin: "10px 0",
+          border: "none",
+        }}
+      >
+        <Card
+          style={{
+            margin: 0,
+            border: "none",
+            background: "transparent",
+            borderRadius: 20,
+          }}
+        >
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "row",
+              padding: 0,
+              margin: 0,
+              border: "none",
+              background: "transparent",
+              borderRadius: 20,
+            }}
+          >
+            <div
+              style={{
+                background: `url(${"https://images.unsplash.com/photo-1448630360428-65456885c650?w=900"}) no-repeat center center/cover`,
+                width: 400,
+                height: "auto",
+                border: "none",
+                borderTopLeftRadius: 20,
+                borderBottomLeftRadius: 20,
+              }}
+            ></div>
+            <div
+              style={{
+                background:
+                  "linear-gradient(to right, #011b22 0%, #18839b 100%)",
+                width: 500,
+                height: "auto",
+                border: "none",
+                borderTopRightRadius: 20,
+                borderBottomRightRadius: 20,
+              }}
+            >
+              <Card style={{ ...cardStyle, width: "auto" }}>
+                <Divider style={{ borderColor: "#fff" }}>
+                  <Title level={1} style={{ ...titleStyle, fontSize: 50 }}>
+                    {isSignIn ? "Sign In" : "Sign Up"}
+                  </Title>
+                </Divider>
+                <div>
+                  <Form layout="vertical" form={form} onFinish={handleSubmit}>
+                    {!isSignIn && (
+                      <Form.Item
+                        label={<span style={labelStyle}>Username</span>}
+                        name={"username"}
+                      >
+                        <Input
+                          value={values.username}
+                          onChange={(e) =>
+                            handleChange("username", e.target.value)
                           }
-                          return Promise.reject(
-                            new Error("Passwords do not match")
-                          );
-                        },
-                      }),
-                    ]}
-                  >
-                    <Input.Password
-                      iconRender={(visible) =>
-                        visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />
-                      }
-                      style={inputStyle}
-                    />
-                  </Form.Item>
-                )}
+                          style={inputStyle}
+                          type="text"
+                        />
+                      </Form.Item>
+                    )}
+                    <Form.Item
+                      label={<span style={labelStyle}>Email Address</span>}
+                      name={"email"}
+                    >
+                      <Input
+                        value={values.email}
+                        onChange={(e) => handleChange("email", e.target.value)}
+                        style={inputStyle}
+                        type="email"
+                      />
+                    </Form.Item>
+                    <Form.Item
+                      label={<span style={labelStyle}>Password</span>}
+                      name={"password"}
+                    >
+                      <Input.Password
+                        iconRender={(visible) =>
+                          visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />
+                        }
+                        value={values.password}
+                        onChange={(e) => handleChange("email", e.target.value)}
+                        style={inputStyle}
+                        allowClear
+                      />
+                    </Form.Item>
+                    {!isSignIn && (
+                      <Form.Item
+                        dependencies={["password"]}
+                        hasFeedback
+                        label={
+                          <span style={labelStyle}>Confirm Your Password</span>
+                        }
+                        name={"confirmPassword"}
+                        rules={[
+                          {
+                            required: true,
+                            message: "Please confirm your password",
+                          },
+                          ({ getFieldValue }) => ({
+                            validator(_, value) {
+                              if (
+                                !value ||
+                                getFieldValue("password") === value
+                              ) {
+                                return Promise.resolve();
+                              }
+                              return Promise.reject(
+                                new Error("Passwords do not match")
+                              );
+                            },
+                          }),
+                        ]}
+                      >
+                        <Input.Password
+                          iconRender={(visible) =>
+                            visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />
+                          }
+                          style={inputStyle}
+                        />
+                      </Form.Item>
+                    )}
 
-                {isSignIn && (
-                  <div style={{ marginTop: 0, marginBottom: 10 }}>
-                    <Text style={{ color: "#fff", cursor: "pointer" }}>
-                      Forgot your password?
-                    </Text>
-                  </div>
-                )}
+                    {isSignIn && (
+                      <div style={{ marginTop: 0, marginBottom: 10 }}>
+                        <Text style={{ color: "#fff", cursor: "pointer" }}>
+                          Forgot your password?
+                        </Text>
+                      </div>
+                    )}
 
-                <Form.Item>
-                  <Button
-                    block
-                    loading={loading}
-                    type="primary"
-                    style={submitBtnStyle}
-                    htmlType="submit"
-                    disabled={!values.email}
-                    onMouseEnter={(e) =>
-                      (e.currentTarget.style.transform = "scale(1.05)")
-                    }
-                    onMouseLeave={(e) =>
-                      (e.currentTarget.style.transform = "scale(1)")
-                    }
-                  >
-                    {loading
-                      ? isSignIn
-                        ? "Signing in..."
-                        : "Signing up..."
-                      : isSignIn
-                      ? "Sign in"
-                      : "Sign up"}
-                  </Button>
-                </Form.Item>
+                    <Form.Item>
+                      <Button
+                        block
+                        loading={loading}
+                        type="primary"
+                        style={submitBtnStyle}
+                        htmlType="submit"
+                        disabled={!values.email}
+                        onMouseEnter={(e) =>
+                          (e.currentTarget.style.transform = "scale(1.05)")
+                        }
+                        onMouseLeave={(e) =>
+                          (e.currentTarget.style.transform = "scale(1)")
+                        }
+                      >
+                        {loading
+                          ? isSignIn
+                            ? "Signing in..."
+                            : "Signing up..."
+                          : isSignIn
+                          ? "Sign in"
+                          : "Sign up"}
+                      </Button>
+                    </Form.Item>
 
-                <div
-                  style={{
-                    textAlign: "center",
-                    marginTop: 5,
-                    fontWeight: 500,
-                  }}
-                >
-                  {isSignIn ? (
-                    <Text
+                    <div
                       style={{
-                        color: "#ffffff",
+                        textAlign: "center",
+                        marginTop: 5,
+                        fontWeight: 500,
                       }}
                     >
-                      Don't have an account?{" "}
-                      <span onClick={toggleSignIn} style={signInTextStyle}>
-                        Sign Up
-                      </span>
-                    </Text>
-                  ) : (
-                    <Text
-                      style={{
-                        color: "#ffffff",
-                      }}
-                    >
-                      Already have an account?{" "}
-                      <span onClick={toggleSignIn} style={signInTextStyle}>
-                        Sign In
-                      </span>
-                    </Text>
-                  )}
+                      {isSignIn ? (
+                        <Text
+                          style={{
+                            color: "#ffffff",
+                          }}
+                        >
+                          Don't have an account?{" "}
+                          <span onClick={toggleSignIn} style={signInTextStyle}>
+                            Sign Up
+                          </span>
+                        </Text>
+                      ) : (
+                        <Text
+                          style={{
+                            color: "#ffffff",
+                          }}
+                        >
+                          Already have an account?{" "}
+                          <span onClick={toggleSignIn} style={signInTextStyle}>
+                            Sign In
+                          </span>
+                        </Text>
+                      )}
+                    </div>
+                  </Form>
                 </div>
-              </Form>
+              </Card>
             </div>
-          </Card>
-        </div>
-        <div style={{ width: "50%", display: "none" }}></div>
+          </div>
+        </Card>
       </div>
     </div>
   );
