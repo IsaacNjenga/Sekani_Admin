@@ -16,6 +16,7 @@ import {
   fetchAvailableProperties,
   fetchProperties,
   fetchProperty,
+  generateDescription,
   updateProperty,
 } from "../controllers/propertiesController.js";
 
@@ -96,6 +97,7 @@ router.get("/fetch-all-properties", fetchProperties);
 router.get("/fetch-available-properties", fetchAvailableProperties);
 router.put("/update-property", protectRoute, updateProperty);
 router.delete("/delete-property", protectRoute, deleteProperty);
+router.post("/generate-description", generateDescription);
 
 //mail routes
 router.post("/create-mail", createMail);

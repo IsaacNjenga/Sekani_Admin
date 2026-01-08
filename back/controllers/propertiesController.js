@@ -2,6 +2,49 @@ import mongoose from "mongoose";
 import PropertiesModel from "../models/Properties.js";
 import { logActivity } from "../utils/logActivity.js";
 import { connectDB } from "../config/db.js";
+import { CohereClientV2 } from "cohere-ai";
+import dotenv from "dotenv";
+
+dotenv.config();
+
+const cohere = new CohereClientV2({ token: process.env.COHERE_API_KEY });
+
+const generateDescription = async (req, res) => {
+  try {
+    const { type, bathrooms, bedrooms } = req.body;
+
+    const response = await cohere.chat({
+      model: "command-a-03-2025",
+      messages: [
+        {
+          role: "user",
+          content: `You are an expert real estate copywriter.
+          Generate a compelling, customer-focused property description for the property with the following attributes:
+          Property Type: "${type}", "${bedrooms}" bedrooms, "${bathrooms}" bathrooms
+
+          Guidelines:
+          - Length: 2 short and precise paragraphs (30-40 words total)
+          - Tone: professional, engaging, and persuasive
+          - Clearly highlight key features and benefits
+          - Explain how the property can be used and who it is ideal for
+          - Focus on value and customer outcomes, not just features
+          - Avoid emojis, hashtags, and marketing clichés
+          - Do not include pricing information.
+
+          The description should make the property feel high-quality, trustworthy, and worth buying.
+          The description should be written in the first person. Use the pronouns "you" and "your".`,
+        },
+      ],
+    });
+
+    res
+      .status(200)
+      .json({ success: true, reply: response.message.content[0].text });
+  } catch (error) {
+    console.error("Error in generating description:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
 
 const createProperty = async (req, res) => {
   await connectDB();
@@ -200,4 +243,5 @@ export {
   updateProperty,
   fetchAvailableProperties,
   deleteProperty,
+  generateDescription,
 };
