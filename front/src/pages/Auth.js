@@ -116,6 +116,7 @@ function Auth() {
         position: "relative",
         minHeight: "100vh",
         background: `url(${"https://images.unsplash.com/photo-1478760329108-5c3ed9d495a0?w=900"}) no-repeat center center/cover`,
+        overflowY: "none",
       }}
     >
       <div
