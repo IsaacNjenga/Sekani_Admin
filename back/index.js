@@ -3,10 +3,12 @@ import dotenv from "dotenv";
 import cors from "cors";
 import { Router } from "./routes/routes.js";
 import "./config/db.js";
+import { connectDB } from "./config/db.js";
 
 dotenv.config();
 
 const app = express();
+const PORT = process.env.PORT;
 
 const corsOptions = {
   origin: [
@@ -20,11 +22,23 @@ const corsOptions = {
   optionsSuccessStatus: 200,
 };
 
-app.use(cors(corsOptions));
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+async function startServer() {
+  try {
+    await connectDB();
+    app.use(cors(corsOptions));
+    app.use(express.json());
+    app.use(express.urlencoded({ extended: true }));
 
-app.use("/Sekani", Router);
+    app.use("/Sekani", Router);
+
+    app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+  } catch (error) {
+    console.error("Failed to start server:", error);
+    process.exit(1);
+  }
+}
+
+startServer();
 
 app.use((req, res, next) => {
   if (req.method === "OPTIONS") {
@@ -35,9 +49,4 @@ app.use((req, res, next) => {
     return res.sendStatus(200);
   }
   next();
-});
-
-const PORT = process.env.PORT;
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
 });

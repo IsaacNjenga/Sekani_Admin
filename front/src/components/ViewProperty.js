@@ -1,7 +1,6 @@
 import {
   Carousel,
   Col,
-  Image,
   Modal,
   Row,
   Typography,
@@ -32,6 +31,7 @@ import Swal from "sweetalert2";
 import axios from "axios";
 import VideoCarousel from "./VideoCarousel";
 import { useNotification } from "../contexts/NotificationContext";
+import React from "react";
 const { Title, Text, Paragraph } = Typography;
 
 function PropertyModal({ openModal, setOpenModal, loading, content, token }) {
@@ -49,7 +49,14 @@ function PropertyModal({ openModal, setOpenModal, loading, content, token }) {
   return (
     <Modal
       footer={
-        <div style={{ gap: 10, display: "flex", justifyContent: "flex-end" }}>
+        <div
+          style={{
+            gap: 10,
+            display: "flex",
+            justifyContent: "flex-end",
+            margin: 10,
+          }}
+        >
           <Button
             style={{
               borderRadius: 18,
@@ -105,34 +112,33 @@ function PropertyModal({ openModal, setOpenModal, loading, content, token }) {
           </Button>
         </div>
       }
+      centered
       open={openModal}
       onCancel={() => setOpenModal(false)}
       confirmLoading={loading}
-      width="95%"
+      width={1200}
       closeIcon={
         <CloseOutlined
           style={{
-            fontSize: 24,
             color: "#fff",
-            background: "rgba(0,0,0,0.5)",
-            padding: 8,
+            fontSize: 16,
+            background: "rgba(0, 0, 0, 0.55)",
             borderRadius: "50%",
+            padding: 6,
           }}
         />
       }
-      bodyStyle={{
-        padding: 0,
-        background: "linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%)",
-        borderRadius: 16,
-        overflow: "hidden",
-      }}
-      style={{ top: 20 }}
       styles={{
-        body: {
-          maxHeight: "80vh",
-          overflowY: "auto",
+        mask: { backdropFilter: "blur(2px)" },
+        content: {
+          background: "linear-gradient(135deg, #ffa4495e, #242437 100%)",
+          border: "none",
+          borderRadius: 12,
+          overflow: "hidden",
+          padding: 0,
         },
       }}
+      style={{ top: 10 }}
     >
       <div
         style={{
@@ -164,58 +170,35 @@ function PropertyModal({ openModal, setOpenModal, loading, content, token }) {
                 children: (
                   <div
                     style={{
-                      height: "50vh",
-                      minHeight: 300,
-                      maxHeight: 400,
-                      margin: "auto",
-                      width: "50%",
+                      background: "linear-gradient(135deg, #fff7e8, #ffe0ba)",
+                      padding: 0,
+                      display: "flex",
+                      flexDirection: "column",
+                      position: "relative",
                     }}
                   >
-                    <Carousel
-                      autoplay
-                      autoplaySpeed={4000}
-                      arrows
-                      dots
-                      dotPosition="top"
-                      style={{
-                        height: "auto",
-                        margin: "auto",
-                        width: "50%",
-                      }}
-                    >
-                      {(Array.isArray(content?.img)
-                        ? content.img
-                        : [content?.img]
-                      ).map((img, index) => (
-                        <div
-                          key={index}
-                          style={{
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "center",
-                            background: "#000",
-                            height: "90vh",
-                            overflow: "hidden",
-                            margin: "auto",
-                            width: "50%",
-                            alignContent: "center",
-                            alignSelf: "center",
-                          }}
-                        >
-                          <Image
-                            src={img}
-                            alt={`Property ${index + 1}`}
-                            preview={{
-                              mask: "⛶ Click to view",
-                            }}
+                    <Carousel autoplay autoplaySpeed={4000}>
+                      {content?.img?.map((img, i) => (
+                        <div key={i}>
+                          <div
                             style={{
-                              width: "100%",
-                              height: "90vh",
-                              objectFit: "contain",
-                              objectPosition: "center",
-                              marginTop: 0,
+                              height: 550,
+                              background: `url(${img}) center/cover`,
+                              position: "relative",
                             }}
-                          />
+                          >
+                            <div
+                              style={{
+                                position: "absolute",
+                                bottom: 0,
+                                left: 0,
+                                right: 0,
+                                height: "50%",
+                                background:
+                                  "linear-gradient(to top, #ffa4495e ,transparent)",
+                              }}
+                            />
+                          </div>
                         </div>
                       ))}
                     </Carousel>
@@ -272,7 +255,7 @@ function PropertyModal({ openModal, setOpenModal, loading, content, token }) {
       </div>
 
       {/* Content Section */}
-      <div style={{ padding: 40,marginTop:20 }}>
+      <div style={{ padding: 40, marginTop: 20 }}>
         <Row gutter={[32, 32]}>
           {/* Left Column - Main Info */}
           <Col xs={24} lg={16}>
@@ -807,4 +790,4 @@ const StatCard = ({ icon, label, value }) => (
   </div>
 );
 
-export default PropertyModal;
+export default React.memo(PropertyModal);

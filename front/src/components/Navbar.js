@@ -18,7 +18,7 @@ import {
   MailOutlined,
   MenuFoldOutlined,
   MenuUnfoldOutlined,
-  PlusCircleOutlined,
+  //PlusCircleOutlined,
   PoweroffOutlined,
 } from "@ant-design/icons";
 import { useAuth } from "../contexts/AuthContext";
@@ -34,10 +34,11 @@ function getItem(label, path, key, icon, children) {
 
 const items = [
   getItem("Dashboard", "/", 1, AppstoreOutlined),
-  getItem("Properties", "", 2, HomeOutlined, [
-    getItem("View Properties", "/properties", 3, HomeOutlined),
-    getItem("Create Property", "/create-property", 4, PlusCircleOutlined),
-  ]),
+  getItem("Properties", "/properties", 2, HomeOutlined),
+  // getItem("Properties", "", 2, HomeOutlined, [
+  //   getItem("View Properties", "/properties", 3, HomeOutlined),
+  //   getItem("Create Property", "/create-property", 4, PlusCircleOutlined),
+  // ]),
   getItem("Emails", "/emails", 5, MailOutlined),
   getItem("Schedules", "/schedules", 6, ClockCircleOutlined),
 ];
@@ -58,8 +59,7 @@ const getTitleFromPath = (path) => {
 
 function Navbar() {
   const location = useLocation();
-  const { logout, user } = useAuth();
-  const [collapsed, setCollapsed] = useState(false);
+  const { logout, user, collapsed, setCollapsed } = useAuth();
   const [current, setCurrent] = useState(location.pathname);
 
   const handleClick = (e) => {
@@ -92,9 +92,16 @@ function Navbar() {
           onBreakpoint={(broken) => setCollapsed(broken)}
           width={250}
           style={{
-            padding: 6,
+            padding: collapsed ? 6 : 12,
             background:
               "linear-gradient(to bottom, #000000d6 0%, #232527ff 100%)",
+            overflow: "auto",
+            height: "100vh",
+            position: "sticky",
+            insetInlineStart: 0,
+            top: 0,
+            scrollbarWidth: "thin",
+            scrollbarGutter: "stable",
           }}
         >
           <div style={{ margin: "4px 0px" }}>
@@ -251,10 +258,9 @@ function Navbar() {
         <Layout>
           <Header
             style={{
-              padding: 0,
+              padding: "0 20px",
               background:
-                "linear-gradient(to left, #ffffffd6 0%, #ffffffff 100%)",
-              borderBottom: "1px solid #ccc",
+                "linear-gradient(to bottom, #000000d6 0%, #232527ff 100%)",
               height: 80,
             }}
           >
@@ -268,7 +274,7 @@ function Navbar() {
               }}
             >
               <div style={{ marginLeft: 10 }}>
-                <Title style={{ fontFamily: "Raleway" }}>
+                <Title style={{ fontFamily: "Raleway", color: "#fff" }}>
                   {getTitleFromPath(current)}
                 </Title>
               </div>

@@ -13,6 +13,7 @@ import {
   Timeline,
   Spin,
   Divider,
+  Empty,
 } from "antd";
 import {
   PlusOutlined,
@@ -31,7 +32,6 @@ import {
   StarOutlined,
 } from "@ant-design/icons";
 import { Link, useNavigate } from "react-router-dom";
-//import { mockData } from "../assets/data/data";
 import DashUtils from "../utils/dashboardUtils";
 import { format, formatDistanceToNow } from "date-fns";
 import ScheduleDetails from "../components/ScheduleDetails";
@@ -411,92 +411,101 @@ const UpcomingViewings = () => {
           boxShadow: "0 4px 12px rgba(0,0,0,0.08)",
         }}
       >
-        <List
-          itemLayout="horizontal"
-          dataSource={upcomingViewings}
-          loading={schedulesLoading}
-          renderItem={(item) => (
-            <List.Item
-              style={{
-                padding: "16px 0",
-                borderBottom: "1px solid #f0f0f0",
-                cursor: "pointer",
-              }}
-              onClick={() => viewScheduleDetails(item)}
-              actions={[
-                <Tag
-                  color="white"
-                  style={{
-                    fontFamily: "Raleway",
-                    backgroundColor:
-                      item.status === "confirmed" ? "green" : "orange",
-                    padding: "6px 12px",
-                    borderRadius: 8,
-                    color: "white",
-                  }}
-                >
-                  {" "}
-                  <span>
-                    {item.status === "confirmed" ? "Confirmed" : "Pending"}
-                  </span>
-                  {item.status === "confirmed" ? (
-                    <CheckCircleOutlined />
-                  ) : (
-                    <ClockCircleOutlined />
-                  )}{" "}
-                </Tag>,
-              ]}
-            >
-              <List.Item.Meta
-                avatar={
-                  <Avatar
-                    size={48}
+        {upcomingViewings.length === 0 && !schedulesLoading ? (
+          <div>
+            <Empty description="No Viewing Scheduled" />
+          </div>
+        ) : (
+          <List
+            itemLayout="horizontal"
+            dataSource={upcomingViewings}
+            loading={schedulesLoading}
+            renderItem={(item) => (
+              <List.Item
+                style={{
+                  padding: "16px 0",
+                  borderBottom: "1px solid #f0f0f0",
+                  cursor: "pointer",
+                }}
+                onClick={() => viewScheduleDetails(item)}
+                actions={[
+                  <Tag
+                    color="white"
                     style={{
-                      background: "linear-gradient(135deg, #667eea, #764ba2)",
+                      fontFamily: "Raleway",
+                      backgroundColor:
+                        item.status === "confirmed" ? "green" : "orange",
+                      padding: "6px 12px",
+                      borderRadius: 8,
+                      color: "white",
                     }}
                   >
-                    {item.name[0]}
-                  </Avatar>
-                }
-                title={
-                  <Text strong style={{ fontSize: 15, fontFamily: "Raleway" }}>
-                    {item.propertyId.address}, {item.propertyId.city}
-                  </Text>
-                }
-                description={
-                  <Space direction="vertical" size={2}>
-                    <Text style={{ fontSize: 14, fontFamily: "Raleway" }}>
-                      <UserOutlined
-                        style={{ marginRight: 4, color: "#8c8c8c" }}
-                      />
-                      {item.name}
-                    </Text>{" "}
-                    <Text
+                    {" "}
+                    <span>
+                      {item.status === "confirmed" ? "Confirmed" : "Pending"}
+                    </span>
+                    {item.status === "confirmed" ? (
+                      <CheckCircleOutlined />
+                    ) : (
+                      <ClockCircleOutlined />
+                    )}{" "}
+                  </Tag>,
+                ]}
+              >
+                <List.Item.Meta
+                  avatar={
+                    <Avatar
+                      size={48}
                       style={{
-                        fontSize: 13,
-                        color: "#401c37ff",
-                        fontFamily: "Raleway",
+                        background: "linear-gradient(135deg, #667eea, #764ba2)",
                       }}
                     >
-                      <CalendarOutlined style={{ marginRight: 4 }} />
-                      {format(new Date(item.date), "MMM dd, yyyy")}
-                    </Text>
+                      {item.name[0]}
+                    </Avatar>
+                  }
+                  title={
                     <Text
-                      style={{
-                        fontSize: 13,
-                        color: "#1890ff",
-                        fontFamily: "Raleway",
-                      }}
+                      strong
+                      style={{ fontSize: 15, fontFamily: "Raleway" }}
                     >
-                      <ClockCircleOutlined style={{ marginRight: 4 }} />
-                      {item.time}
+                      {item.propertyId.address}, {item.propertyId.city}
                     </Text>
-                  </Space>
-                }
-              />
-            </List.Item>
-          )}
-        />
+                  }
+                  description={
+                    <Space direction="vertical" size={2}>
+                      <Text style={{ fontSize: 14, fontFamily: "Raleway" }}>
+                        <UserOutlined
+                          style={{ marginRight: 4, color: "#8c8c8c" }}
+                        />
+                        {item.name}
+                      </Text>{" "}
+                      <Text
+                        style={{
+                          fontSize: 13,
+                          color: "#401c37ff",
+                          fontFamily: "Raleway",
+                        }}
+                      >
+                        <CalendarOutlined style={{ marginRight: 4 }} />
+                        {format(new Date(item.date), "MMM dd, yyyy")}
+                      </Text>
+                      <Text
+                        style={{
+                          fontSize: 13,
+                          color: "#1890ff",
+                          fontFamily: "Raleway",
+                        }}
+                      >
+                        <ClockCircleOutlined style={{ marginRight: 4 }} />
+                        {item.time}
+                      </Text>
+                    </Space>
+                  }
+                />
+              </List.Item>
+            )}
+          />
+        )}
       </Card>
       <ScheduleDetails
         content={content}

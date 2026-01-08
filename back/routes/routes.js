@@ -2,6 +2,8 @@ import express from "express";
 
 import {
   ChangePassword,
+  checkEmailExists,
+  checkUserExists,
   Login,
   Register,
 } from "../controllers/authController.js";
@@ -75,6 +77,8 @@ const router = express.Router();
 router.post("/sign-up", Register);
 router.post("/sign-in", Login);
 router.post("/change-password", ChangePassword);
+router.get("/check-email-exists", checkEmailExists);
+router.get("/check-username-exists", checkUserExists);
 
 //user routes
 router.put("/change-avatar", updateAvatar);
